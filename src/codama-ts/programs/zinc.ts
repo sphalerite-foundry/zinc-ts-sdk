@@ -107,6 +107,7 @@ import {
   getClosePdaInstructionAsync,
   getCloseRoundAccountsInstructionAsync,
   getCloseRoundInstructionAsync,
+  getCloseStockpileAccountsInstructionAsync,
   getCloseStockpileInstructionAsync,
   getCloseTreasuryTokenAccountInstructionAsync,
   getCreateBuybackPoolInstructionAsync,
@@ -154,6 +155,7 @@ import {
   parseClosePdaInstruction,
   parseCloseRoundAccountsInstruction,
   parseCloseRoundInstruction,
+  parseCloseStockpileAccountsInstruction,
   parseCloseStockpileInstruction,
   parseCloseTreasuryTokenAccountInstruction,
   parseCreateBuybackPoolInstruction,
@@ -201,6 +203,7 @@ import {
   type ClosePdaAsyncInput,
   type CloseRoundAccountsAsyncInput,
   type CloseRoundAsyncInput,
+  type CloseStockpileAccountsAsyncInput,
   type CloseStockpileAsyncInput,
   type CloseTreasuryTokenAccountAsyncInput,
   type CreateBuybackPoolAsyncInput,
@@ -232,6 +235,7 @@ import {
   type ParsedClosePdaInstruction,
   type ParsedCloseRoundAccountsInstruction,
   type ParsedCloseRoundInstruction,
+  type ParsedCloseStockpileAccountsInstruction,
   type ParsedCloseStockpileInstruction,
   type ParsedCloseTreasuryTokenAccountInstruction,
   type ParsedCreateBuybackPoolInstruction,
@@ -577,6 +581,7 @@ export enum ZincInstruction {
   CloseRound,
   CloseRoundAccounts,
   CloseStockpile,
+  CloseStockpileAccounts,
   CloseTreasuryTokenAccount,
   CreateBuybackPool,
   DeployRound,
@@ -749,6 +754,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.CloseStockpile;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([27, 1, 160, 18, 86, 108, 220, 239])
+      ),
+      0
+    )
+  ) {
+    return ZincInstruction.CloseStockpileAccounts;
   }
   if (
     containsBytes(
@@ -1181,6 +1197,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.CloseStockpile;
     } & ParsedCloseStockpileInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.CloseStockpileAccounts;
+    } & ParsedCloseStockpileAccountsInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.CloseTreasuryTokenAccount;
     } & ParsedCloseTreasuryTokenAccountInstruction<TProgram>)
   | ({
@@ -1373,6 +1392,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.CloseStockpile,
         ...parseCloseStockpileInstruction(instruction),
+      };
+    }
+    case ZincInstruction.CloseStockpileAccounts: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.CloseStockpileAccounts,
+        ...parseCloseStockpileAccountsInstruction(instruction),
       };
     }
     case ZincInstruction.CloseTreasuryTokenAccount: {
@@ -1730,6 +1756,10 @@ export type ZincPluginInstructions = {
     input: CloseStockpileAsyncInput
   ) => ReturnType<typeof getCloseStockpileInstructionAsync> &
     SelfPlanAndSendFunctions;
+  closeStockpileAccounts: (
+    input: CloseStockpileAccountsAsyncInput
+  ) => ReturnType<typeof getCloseStockpileAccountsInstructionAsync> &
+    SelfPlanAndSendFunctions;
   closeTreasuryTokenAccount: (
     input: CloseTreasuryTokenAccountAsyncInput
   ) => ReturnType<typeof getCloseTreasuryTokenAccountInstructionAsync> &
@@ -2007,6 +2037,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getCloseStockpileInstructionAsync(input)
+            ),
+          closeStockpileAccounts: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getCloseStockpileAccountsInstructionAsync(input)
             ),
           closeTreasuryTokenAccount: (input) =>
             addSelfPlanAndSendFunctions(
