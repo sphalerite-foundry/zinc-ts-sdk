@@ -6,8 +6,7 @@
   "license": "UNLICENSED",
   "description": "TypeScript SDK for the Zinc protocol",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
