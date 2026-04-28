@@ -1,4 +1,5 @@
 export * from "./claimAffiliate";
+export * from "./shared";
 export * from "./claimStakingYield";
 export * from "./claimRound";
 export * from "./closeConfig";
