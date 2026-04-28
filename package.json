@@ -35,8 +35,13 @@
     "prepack": "npm run typecheck && npm test && npm run build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "tsx --test \"src/**/*.test.ts\"",
+    "lint": "npm run lint:format",
+    "prettier:check": "npm run lint:format",
+    "hooks:pre-commit": "npm run lint && lint-staged",
+    "hooks:pre-push": "npm run lint && npm run prettier:check && npm test",
     "lint:format": "prettier \"src/**/*.ts\" \"*.json\" --check",
-    "lint:fix": "prettier \"src/**/*.ts\" \"*.json\" -w --loglevel warn"
+    "lint:fix": "prettier \"src/**/*.ts\" \"*.json\" -w --loglevel warn",
+    "prepare": "husky"
   },
   "dependencies": {
     "@arcium-hq/client": "0.9.2",
@@ -47,10 +52,16 @@
     "bn.js": "^5.2.3",
     "buffer": "^6.0.3"
   },
+  "lint-staged": {
+    "src/**/*.ts": "prettier --write",
+    "*.json": "prettier --write"
+  },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
     "@types/node": "^24.9.1",
     "prettier": "2.8.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "tsup": "^8.5.0",
     "tsx": "^4.21.0",
     "typescript": "^5.7.3"
