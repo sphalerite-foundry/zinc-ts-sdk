@@ -1,0 +1,58 @@
+{
+  "name": "@sphalerite-foundry/zinc-ts-sdk",
+  "version": "0.1.73",
+  "private": false,
+  "type": "module",
+  "license": "UNLICENSED",
+  "description": "TypeScript SDK for the Zinc protocol",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./codama-ts": {
+      "types": "./dist/codama-ts/index.d.ts",
+      "import": "./dist/codama-ts/index.js",
+      "require": "./dist/codama-ts/index.cjs"
+    },
+    "./codama-ts-custom": {
+      "types": "./dist/codama-ts-custom/index.d.ts",
+      "import": "./dist/codama-ts-custom/index.js",
+      "require": "./dist/codama-ts-custom/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts src/codama-ts/index.ts src/codama-ts-custom/index.ts --format esm,cjs --dts --clean --sourcemap",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test \"src/**/*.test.ts\"",
+    "lint:format": "prettier \"src/**/*.ts\" \"*.json\" --check",
+    "lint:fix": "prettier \"src/**/*.ts\" \"*.json\" -w --loglevel warn"
+  },
+  "dependencies": {
+    "@arcium-hq/client": "0.9.2",
+    "@solana/kit": "^6.8.0",
+    "@solana/program-client-core": "^6.8.0",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "bn.js": "^5.2.3",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0",
+    "@types/node": "^24.9.1",
+    "prettier": "2.8.8",
+    "tsup": "^8.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3"
+  }
+}

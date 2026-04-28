@@ -1,0 +1,96 @@
+import { PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { getUpdateConfigInstructionAsync } from "../../codama-ts";
+import { getBoardAddress, getConfigAddress } from "../pda";
+import {
+  toTransactionInstruction,
+  toTransactionSigner,
+} from "../utils/sol-helpers";
+import { toAddress, toNullable } from "./shared";
+
+export type BuildUpdateConfigInstruction = {
+  admin: PublicKey;
+  crank?: PublicKey;
+  deployTotalFeeBps?: number | bigint;
+  deployAdminFeeBps?: number | bigint;
+  deployStockpileFeeBps?: number | bigint;
+  deployAffiliateFeeBps?: number | bigint;
+  deployAffiliateBonusBricksX10k?: number | bigint;
+  affiliateWithdrawalsEnabled?: boolean;
+  roundDurationSlots?: number | bigint;
+  stockpileDurationSlots?: number | bigint;
+  stockpileMinEntryBricksX10k?: number | bigint;
+  curveAdminFeeBps?: number | bigint;
+  winnerZincShareBps?: number | bigint;
+  stockpileZincShareBps?: number | bigint;
+  minDeployLamports?: number | bigint;
+  curveMaxRoundMint?: number | bigint;
+  curveSaturationLamports?: number | bigint;
+  curveHistoryMinted?: number | bigint;
+  curveTargetSupportLamportsPerZinc?: number | bigint;
+  curveMaxSupply?: number | bigint;
+  wildcatRoundFrequency?: number | bigint;
+  wildcatWinnerZincSharePpm?: number | bigint;
+  bonanzaHitDivisor?: number | bigint;
+};
+
+export async function buildUpdateConfigInstruction({
+  admin,
+  crank,
+  deployTotalFeeBps,
+  deployAdminFeeBps,
+  deployStockpileFeeBps,
+  deployAffiliateFeeBps,
+  deployAffiliateBonusBricksX10k,
+  affiliateWithdrawalsEnabled,
+  roundDurationSlots,
+  stockpileDurationSlots,
+  stockpileMinEntryBricksX10k,
+  curveAdminFeeBps,
+  winnerZincShareBps,
+  stockpileZincShareBps,
+  minDeployLamports,
+  curveMaxRoundMint,
+  curveSaturationLamports,
+  curveHistoryMinted,
+  curveTargetSupportLamportsPerZinc,
+  curveMaxSupply,
+  wildcatRoundFrequency,
+  wildcatWinnerZincSharePpm,
+  bonanzaHitDivisor,
+}: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
+  const config = getConfigAddress()[0];
+  const board = getBoardAddress()[0];
+  const instruction = await getUpdateConfigInstructionAsync({
+    admin: toTransactionSigner(admin),
+    config: toAddress(config),
+    board: toAddress(board),
+    deployTotalFeeBps: toNullable(deployTotalFeeBps),
+    deployAdminFeeBps: toNullable(deployAdminFeeBps),
+    deployStockpileFeeBps: toNullable(deployStockpileFeeBps),
+    deployAffiliateFeeBps: toNullable(deployAffiliateFeeBps),
+    deployAffiliateBonusBricksX10k: toNullable(deployAffiliateBonusBricksX10k),
+    affiliateWithdrawalsEnabled: toNullable(affiliateWithdrawalsEnabled),
+    roundDurationSlots: toNullable(roundDurationSlots),
+    stockpileDurationSlots: toNullable(stockpileDurationSlots),
+    stockpileMinEntryBricksX10k: toNullable(stockpileMinEntryBricksX10k),
+    curveAdminFeeBps: toNullable(curveAdminFeeBps),
+    winnerZincShareBps: toNullable(winnerZincShareBps),
+    stockpileZincShareBps: toNullable(stockpileZincShareBps),
+    minDeployLamports: toNullable(minDeployLamports),
+    curveMaxRoundMint: toNullable(curveMaxRoundMint),
+    curveSaturationLamports: toNullable(curveSaturationLamports),
+    curveHistoryMinted: toNullable(curveHistoryMinted),
+    curveTargetSupportLamportsPerZinc: toNullable(
+      curveTargetSupportLamportsPerZinc
+    ),
+    curveMaxSupply: toNullable(curveMaxSupply),
+    wildcatRoundFrequency: toNullable(wildcatRoundFrequency),
+    wildcatWinnerZincSharePpm: toNullable(wildcatWinnerZincSharePpm),
+    bonanzaHitDivisor: toNullable(bonanzaHitDivisor),
+    crank: crank ? toAddress(crank) : null,
+  });
+
+  return toTransactionInstruction(
+    instruction as Parameters<typeof toTransactionInstruction>[0]
+  );
+}
