@@ -18,6 +18,7 @@ export * from "./closePda";
 export * from "./closeRound";
 export * from "./closeRoundAccounts";
 export * from "./closeStockpile";
+export * from "./closeStockpileAccounts";
 export * from "./closeTreasuryTokenAccount";
 export * from "./createBuybackPool";
 export * from "./deployRound";

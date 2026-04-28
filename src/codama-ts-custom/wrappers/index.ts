@@ -7,6 +7,7 @@ export * from "./closeMiner";
 export * from "./closeRoundAccounts";
 export * from "./closeTreasuryTokenAccount";
 export * from "./closeStockpile";
+export * from "./closeStockpileAccounts";
 export * from "./closeRound";
 export * from "./buyback";
 export * from "./deployRound";
