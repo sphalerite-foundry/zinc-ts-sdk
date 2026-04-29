@@ -17,7 +17,7 @@ export async function findBoardPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "2uFqkFyohWCGiRUytZrmRknaVeaqo3hYtnL3sZ912zSP" as Address<"2uFqkFyohWCGiRUytZrmRknaVeaqo3hYtnL3sZ912zSP">,
+    programAddress = "HqFuhkdvmkFA2PJDCE7s2869z5hMH8CCtTQEk5TTDpa" as Address<"HqFuhkdvmkFA2PJDCE7s2869z5hMH8CCtTQEk5TTDpa">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
