@@ -17,6 +17,7 @@ export * from "./closeMiner";
 export * from "./closePda";
 export * from "./closeRound";
 export * from "./closeRoundAccounts";
+export * from "./closeRoundTokenAccount";
 export * from "./closeStockpile";
 export * from "./closeStockpileAccounts";
 export * from "./closeTreasuryTokenAccount";
