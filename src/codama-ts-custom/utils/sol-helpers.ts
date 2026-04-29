@@ -26,24 +26,83 @@ export type TxnResult = {
 };
 
 const DEFAULT_MAX_COMPUTE_UNIT_LIMIT = 1_400_000;
+const COMPUTE_UNIT_PRICE_ENV = "ZINC_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS";
+const DEFAULT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS = 10_000;
+const COMPUTE_BUDGET_SET_COMPUTE_UNIT_PRICE_TAG = 3;
 
-/** Prepends the max compute-unit limit unless the caller already supplied compute-budget instructions. */
-function withDefaultComputeUnitLimit(
+type ProcessGlobal = typeof globalThis & {
+  process?: {
+    env?: Record<string, string | undefined>;
+  };
+};
+
+/** Returns whether one instruction targets the compute-budget program with a specific variant tag. */
+function isComputeBudgetInstructionWithTag(
+  instruction: TransactionInstruction,
+  tag: number,
+): boolean {
+  return (
+    instruction.programId.equals(ComputeBudgetProgram.programId) &&
+    instruction.data[0] === tag
+  );
+}
+
+/** Loads the configured compute-unit price for priority fees. */
+function getComputeUnitPriceMicroLamports(): number | undefined {
+  const processEnv = (globalThis as ProcessGlobal).process?.env;
+  const rawValue =
+    processEnv?.[COMPUTE_UNIT_PRICE_ENV] ??
+    String(DEFAULT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS);
+  const trimmedValue = rawValue.trim();
+  const price = Number(trimmedValue);
+  if (!Number.isSafeInteger(price) || price < 0) {
+    throw new Error(
+      `Invalid ${COMPUTE_UNIT_PRICE_ENV} value ${JSON.stringify(trimmedValue)}`,
+    );
+  }
+
+  return price > 0 ? price : undefined;
+}
+
+/** Prepends default compute-budget instructions unless the caller already supplied them. */
+function withDefaultComputeBudget(
   instructions: readonly TransactionInstruction[],
 ): TransactionInstruction[] {
   const callerConfiguredComputeBudget = instructions.some((instruction) =>
     instruction.programId.equals(ComputeBudgetProgram.programId),
   );
-  if (callerConfiguredComputeBudget) {
+  const callerConfiguredComputeUnitPrice = instructions.some((instruction) =>
+    isComputeBudgetInstructionWithTag(
+      instruction,
+      COMPUTE_BUDGET_SET_COMPUTE_UNIT_PRICE_TAG,
+    ),
+  );
+  const computeBudgetInstructions: TransactionInstruction[] = [];
+
+  if (!callerConfiguredComputeBudget) {
+    computeBudgetInstructions.push(
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
+      }),
+    );
+  }
+
+  if (!callerConfiguredComputeUnitPrice) {
+    const computeUnitPrice = getComputeUnitPriceMicroLamports();
+    if (computeUnitPrice !== undefined) {
+      computeBudgetInstructions.push(
+        ComputeBudgetProgram.setComputeUnitPrice({
+          microLamports: computeUnitPrice,
+        }),
+      );
+    }
+  }
+
+  if (computeBudgetInstructions.length === 0) {
     return [...instructions];
   }
 
-  return [
-    ComputeBudgetProgram.setComputeUnitLimit({
-      units: DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
-    }),
-    ...instructions,
-  ];
+  return [...computeBudgetInstructions, ...instructions];
 }
 
 export function toAccountMeta(
@@ -87,8 +146,7 @@ export async function processTransaction(
   lookupTableAccount?: AddressLookupTableAccount,
 ): Promise<TxnResult> {
   const blockhash = await connection.getLatestBlockhash();
-  const instructionsWithComputeBudget =
-    withDefaultComputeUnitLimit(instructions);
+  const instructionsWithComputeBudget = withDefaultComputeBudget(instructions);
 
   if (lookupTableAccount) {
     const messageV0 = new TransactionMessage({
