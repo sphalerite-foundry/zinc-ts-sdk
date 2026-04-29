@@ -107,6 +107,7 @@ import {
   getClosePdaInstructionAsync,
   getCloseRoundAccountsInstructionAsync,
   getCloseRoundInstructionAsync,
+  getCloseRoundTokenAccountInstructionAsync,
   getCloseStockpileAccountsInstructionAsync,
   getCloseStockpileInstructionAsync,
   getCloseTreasuryTokenAccountInstructionAsync,
@@ -155,6 +156,7 @@ import {
   parseClosePdaInstruction,
   parseCloseRoundAccountsInstruction,
   parseCloseRoundInstruction,
+  parseCloseRoundTokenAccountInstruction,
   parseCloseStockpileAccountsInstruction,
   parseCloseStockpileInstruction,
   parseCloseTreasuryTokenAccountInstruction,
@@ -203,6 +205,7 @@ import {
   type ClosePdaAsyncInput,
   type CloseRoundAccountsAsyncInput,
   type CloseRoundAsyncInput,
+  type CloseRoundTokenAccountAsyncInput,
   type CloseStockpileAccountsAsyncInput,
   type CloseStockpileAsyncInput,
   type CloseTreasuryTokenAccountAsyncInput,
@@ -235,6 +238,7 @@ import {
   type ParsedClosePdaInstruction,
   type ParsedCloseRoundAccountsInstruction,
   type ParsedCloseRoundInstruction,
+  type ParsedCloseRoundTokenAccountInstruction,
   type ParsedCloseStockpileAccountsInstruction,
   type ParsedCloseStockpileInstruction,
   type ParsedCloseTreasuryTokenAccountInstruction,
@@ -313,7 +317,7 @@ import {
 } from "../pdas";
 
 export const ZINC_PROGRAM_ADDRESS =
-  "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">;
+  "2uFqkFyohWCGiRUytZrmRknaVeaqo3hYtnL3sZ912zSP" as Address<"2uFqkFyohWCGiRUytZrmRknaVeaqo3hYtnL3sZ912zSP">;
 
 export enum ZincAccount {
   ArciumSignerAccount,
@@ -580,6 +584,7 @@ export enum ZincInstruction {
   ClosePda,
   CloseRound,
   CloseRoundAccounts,
+  CloseRoundTokenAccount,
   CloseStockpile,
   CloseStockpileAccounts,
   CloseTreasuryTokenAccount,
@@ -743,6 +748,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.CloseRoundAccounts;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([65, 206, 161, 77, 196, 20, 201, 63]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.CloseRoundTokenAccount;
   }
   if (
     containsBytes(
@@ -1158,7 +1174,7 @@ export function identifyZincInstruction(
 }
 
 export type ParsedZincInstruction<
-  TProgram extends string = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y",
+  TProgram extends string = "2uFqkFyohWCGiRUytZrmRknaVeaqo3hYtnL3sZ912zSP",
 > =
   | ({
       instructionType: ZincInstruction.Buyback;
@@ -1193,6 +1209,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.CloseRoundAccounts;
     } & ParsedCloseRoundAccountsInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.CloseRoundTokenAccount;
+    } & ParsedCloseRoundTokenAccountInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.CloseStockpile;
     } & ParsedCloseStockpileInstruction<TProgram>)
@@ -1385,6 +1404,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.CloseRoundAccounts,
         ...parseCloseRoundAccountsInstruction(instruction),
+      };
+    }
+    case ZincInstruction.CloseRoundTokenAccount: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.CloseRoundTokenAccount,
+        ...parseCloseRoundTokenAccountInstruction(instruction),
       };
     }
     case ZincInstruction.CloseStockpile: {
@@ -1752,6 +1778,10 @@ export type ZincPluginInstructions = {
     input: CloseRoundAccountsAsyncInput,
   ) => ReturnType<typeof getCloseRoundAccountsInstructionAsync> &
     SelfPlanAndSendFunctions;
+  closeRoundTokenAccount: (
+    input: CloseRoundTokenAccountAsyncInput,
+  ) => ReturnType<typeof getCloseRoundTokenAccountInstructionAsync> &
+    SelfPlanAndSendFunctions;
   closeStockpile: (
     input: CloseStockpileAsyncInput,
   ) => ReturnType<typeof getCloseStockpileInstructionAsync> &
@@ -2032,6 +2062,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getCloseRoundAccountsInstructionAsync(input),
+            ),
+          closeRoundTokenAccount: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getCloseRoundTokenAccountInstructionAsync(input),
             ),
           closeStockpile: (input) =>
             addSelfPlanAndSendFunctions(
