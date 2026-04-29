@@ -35,6 +35,6 @@ export function buildCloseMinerInstruction({
     player: toAddress(player),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

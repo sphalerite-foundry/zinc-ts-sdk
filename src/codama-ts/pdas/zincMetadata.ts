@@ -21,7 +21,7 @@ export type ZincMetadataSeeds = {
 
 export async function findZincMetadataPda(
   seeds: ZincMetadataSeeds,
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -30,7 +30,7 @@ export async function findZincMetadataPda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([109, 101, 116, 97, 100, 97, 116, 97])
+        new Uint8Array([109, 101, 116, 97, 100, 97, 116, 97]),
       ),
       getAddressEncoder().encode(seeds.metadataProgram),
       getAddressEncoder().encode(seeds.zincMint),

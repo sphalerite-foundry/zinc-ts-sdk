@@ -42,7 +42,7 @@ export async function buildInitConfigInstruction({
     args: metadata,
   });
   const transactionInstruction = toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
   return transactionInstruction;
 }

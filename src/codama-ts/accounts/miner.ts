@@ -133,7 +133,7 @@ export function getMinerEncoder(): Encoder<MinerArgs> {
       ["minerIndex", getU64Encoder()],
       ["hiddenBonusBricksX10k", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: MINER_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: MINER_DISCRIMINATOR }),
   );
 }
 
@@ -161,24 +161,24 @@ export function getMinerCodec(): Codec<MinerArgs, Miner> {
 }
 
 export function decodeMiner<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<Miner, TAddress>;
 export function decodeMiner<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Miner, TAddress>;
 export function decodeMiner<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Miner, TAddress> | MaybeAccount<Miner, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getMinerDecoder()
+    getMinerDecoder(),
   );
 }
 
 export async function fetchMiner<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<Miner, TAddress>> {
   const maybeAccount = await fetchMaybeMiner(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -188,7 +188,7 @@ export async function fetchMiner<TAddress extends string = string>(
 export async function fetchMaybeMiner<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Miner, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeMiner(maybeAccount);
@@ -197,7 +197,7 @@ export async function fetchMaybeMiner<TAddress extends string = string>(
 export async function fetchAllMiner(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<Miner>[]> {
   const maybeAccounts = await fetchAllMaybeMiner(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -207,7 +207,7 @@ export async function fetchAllMiner(
 export async function fetchAllMaybeMiner(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Miner>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeMiner(maybeAccount));

@@ -46,7 +46,7 @@ export const QUEUE_STOCKPILE_REVEAL_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getQueueStockpileRevealDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    QUEUE_STOCKPILE_REVEAL_DISCRIMINATOR
+    QUEUE_STOCKPILE_REVEAL_DISCRIMINATOR,
   );
 }
 
@@ -64,19 +64,15 @@ export type QueueStockpileRevealInstruction<
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountPoolAccount extends
-    | string
-    | AccountMeta<string> = "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
-  TAccountClockAccount extends
-    | string
-    | AccountMeta<string> = "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountPoolAccount extends string | AccountMeta<string> =
+    "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
+  TAccountClockAccount extends string | AccountMeta<string> =
+    "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -130,7 +126,7 @@ export type QueueStockpileRevealInstruction<
       TAccountArciumProgram extends string
         ? ReadonlyAccount<TAccountArciumProgram>
         : TAccountArciumProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -152,7 +148,7 @@ export function getQueueStockpileRevealInstructionDataEncoder(): FixedSizeEncode
     (value) => ({
       ...value,
       discriminator: QUEUE_STOCKPILE_REVEAL_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -169,7 +165,7 @@ export function getQueueStockpileRevealInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getQueueStockpileRevealInstructionDataEncoder(),
-    getQueueStockpileRevealInstructionDataDecoder()
+    getQueueStockpileRevealInstructionDataDecoder(),
   );
 }
 
@@ -189,7 +185,7 @@ export type QueueStockpileRevealAsyncInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Crank authorized to reveal settled stockpile entropy. */
   signer: TransactionSigner<TAccountSigner>;
@@ -238,7 +234,7 @@ export async function getQueueStockpileRevealInstructionAsync<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueStockpileRevealAsyncInput<
     TAccountSigner,
@@ -258,7 +254,7 @@ export async function getQueueStockpileRevealInstructionAsync<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   QueueStockpileRevealInstruction<
     TProgramAddress,
@@ -364,10 +360,28 @@ export async function getQueueStockpileRevealInstructionAsync<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueStockpileRevealInstructionDataEncoder().encode(
-      args as QueueStockpileRevealInstructionDataArgs
+      args as QueueStockpileRevealInstructionDataArgs,
     ),
     programAddress,
-  } as QueueStockpileRevealInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountStockpileSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueStockpileRevealInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type QueueStockpileRevealInput<
@@ -386,7 +400,7 @@ export type QueueStockpileRevealInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Crank authorized to reveal settled stockpile entropy. */
   signer: TransactionSigner<TAccountSigner>;
@@ -435,7 +449,7 @@ export function getQueueStockpileRevealInstruction<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueStockpileRevealInput<
     TAccountSigner,
@@ -455,7 +469,7 @@ export function getQueueStockpileRevealInstruction<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): QueueStockpileRevealInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -550,15 +564,33 @@ export function getQueueStockpileRevealInstruction<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueStockpileRevealInstructionDataEncoder().encode(
-      args as QueueStockpileRevealInstructionDataArgs
+      args as QueueStockpileRevealInstructionDataArgs,
     ),
     programAddress,
-  } as QueueStockpileRevealInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountStockpileSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueStockpileRevealInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type ParsedQueueStockpileRevealInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -595,11 +627,11 @@ export type ParsedQueueStockpileRevealInstruction<
 
 export function parseQueueStockpileRevealInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedQueueStockpileRevealInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 16) {
     throw new SolanaError(
@@ -607,7 +639,7 @@ export function parseQueueStockpileRevealInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 16,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -637,7 +669,7 @@ export function parseQueueStockpileRevealInstruction<
       arciumProgram: getNextAccount(),
     },
     data: getQueueStockpileRevealInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

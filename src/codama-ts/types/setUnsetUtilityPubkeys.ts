@@ -96,7 +96,7 @@ export function getSetUnsetUtilityPubkeysCodec(): Codec<
 > {
   return combineCodec(
     getSetUnsetUtilityPubkeysEncoder(),
-    getSetUnsetUtilityPubkeysDecoder()
+    getSetUnsetUtilityPubkeysDecoder(),
   );
 }
 
@@ -107,7 +107,7 @@ export function setUnsetUtilityPubkeys(
     SetUnsetUtilityPubkeysArgs,
     "__kind",
     "Set"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<SetUnsetUtilityPubkeysArgs, "__kind", "Set">;
 export function setUnsetUtilityPubkeys(
   kind: "Unset",
@@ -115,11 +115,11 @@ export function setUnsetUtilityPubkeys(
     SetUnsetUtilityPubkeysArgs,
     "__kind",
     "Unset"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<SetUnsetUtilityPubkeysArgs, "__kind", "Unset">;
 export function setUnsetUtilityPubkeys<
   K extends SetUnsetUtilityPubkeysArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -127,10 +127,10 @@ export function setUnsetUtilityPubkeys<
 }
 
 export function isSetUnsetUtilityPubkeys<
-  K extends SetUnsetUtilityPubkeys["__kind"]
+  K extends SetUnsetUtilityPubkeys["__kind"],
 >(
   kind: K,
-  value: SetUnsetUtilityPubkeys
+  value: SetUnsetUtilityPubkeys,
 ): value is SetUnsetUtilityPubkeys & { __kind: K } {
   return value.__kind === kind;
 }

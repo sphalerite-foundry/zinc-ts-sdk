@@ -47,26 +47,24 @@ export const SETTLE_WINNING_STAKES_BATCH_CALLBACK_DISCRIMINATOR: ReadonlyUint8Ar
 
 export function getSettleWinningStakesBatchCallbackDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    SETTLE_WINNING_STAKES_BATCH_CALLBACK_DISCRIMINATOR
+    SETTLE_WINNING_STAKES_BATCH_CALLBACK_DISCRIMINATOR,
   );
 }
 
 export type SettleWinningStakesBatchCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountInstructionsSysvar extends
-    | string
-    | AccountMeta<string> = "Sysvar1nstructions1111111111111111111111111",
+  TAccountInstructionsSysvar extends string | AccountMeta<string> =
+    "Sysvar1nstructions1111111111111111111111111",
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -98,7 +96,7 @@ export type SettleWinningStakesBatchCallbackInstruction<
       TAccountTreasury extends string
         ? WritableAccount<TAccountTreasury>
         : TAccountTreasury,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -123,7 +121,7 @@ export function getSettleWinningStakesBatchCallbackInstructionDataEncoder(): Enc
     (value) => ({
       ...value,
       discriminator: SETTLE_WINNING_STAKES_BATCH_CALLBACK_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -143,7 +141,7 @@ export function getSettleWinningStakesBatchCallbackInstructionDataCodec(): Codec
 > {
   return combineCodec(
     getSettleWinningStakesBatchCallbackInstructionDataEncoder(),
-    getSettleWinningStakesBatchCallbackInstructionDataDecoder()
+    getSettleWinningStakesBatchCallbackInstructionDataDecoder(),
   );
 }
 
@@ -156,7 +154,7 @@ export type SettleWinningStakesBatchCallbackAsyncInput<
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
   TAccountConfig extends string = string,
-  TAccountTreasury extends string = string
+  TAccountTreasury extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -186,7 +184,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
   TAccountRound extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: SettleWinningStakesBatchCallbackAsyncInput<
     TAccountArciumProgram,
@@ -199,7 +197,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
     TAccountConfig,
     TAccountTreasury
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   SettleWinningStakesBatchCallbackInstruction<
     TProgramAddress,
@@ -273,10 +271,21 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
       getAccountMeta("treasury", accounts.treasury),
     ],
     data: getSettleWinningStakesBatchCallbackInstructionDataEncoder().encode(
-      args as SettleWinningStakesBatchCallbackInstructionDataArgs
+      args as SettleWinningStakesBatchCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as SettleWinningStakesBatchCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountRound, TAccountConfig, TAccountTreasury>);
+  } as SettleWinningStakesBatchCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountRound,
+    TAccountConfig,
+    TAccountTreasury
+  >);
 }
 
 export type SettleWinningStakesBatchCallbackInput<
@@ -288,7 +297,7 @@ export type SettleWinningStakesBatchCallbackInput<
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
   TAccountConfig extends string = string,
-  TAccountTreasury extends string = string
+  TAccountTreasury extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -318,7 +327,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
   TAccountRound extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: SettleWinningStakesBatchCallbackInput<
     TAccountArciumProgram,
@@ -331,7 +340,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
     TAccountConfig,
     TAccountTreasury
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): SettleWinningStakesBatchCallbackInstruction<
   TProgramAddress,
   TAccountArciumProgram,
@@ -397,15 +406,26 @@ export function getSettleWinningStakesBatchCallbackInstruction<
       getAccountMeta("treasury", accounts.treasury),
     ],
     data: getSettleWinningStakesBatchCallbackInstructionDataEncoder().encode(
-      args as SettleWinningStakesBatchCallbackInstructionDataArgs
+      args as SettleWinningStakesBatchCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as SettleWinningStakesBatchCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountRound, TAccountConfig, TAccountTreasury>);
+  } as SettleWinningStakesBatchCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountRound,
+    TAccountConfig,
+    TAccountTreasury
+  >);
 }
 
 export type ParsedSettleWinningStakesBatchCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -430,11 +450,11 @@ export type ParsedSettleWinningStakesBatchCallbackInstruction<
 
 export function parseSettleWinningStakesBatchCallbackInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSettleWinningStakesBatchCallbackInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -442,7 +462,7 @@ export function parseSettleWinningStakesBatchCallbackInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -465,7 +485,7 @@ export function parseSettleWinningStakesBatchCallbackInstruction<
       treasury: getNextAccount(),
     },
     data: getSettleWinningStakesBatchCallbackInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

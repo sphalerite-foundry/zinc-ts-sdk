@@ -16,11 +16,11 @@ export type DecodedStakePositionAccount = {
 /** Derives the canonical stake-position PDA for one authority. */
 export function getStakePositionAddress(
   authority: PublicKey,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(STAKE_POSITION_SEED), authority.toBuffer()],
-    programId
+    programId,
   );
 }
 

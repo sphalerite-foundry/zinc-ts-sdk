@@ -49,7 +49,7 @@ export const FINALIZE_NO_WINNER_ROUND_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getFinalizeNoWinnerRoundDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    FINALIZE_NO_WINNER_ROUND_DISCRIMINATOR
+    FINALIZE_NO_WINNER_ROUND_DISCRIMINATOR,
   );
 }
 
@@ -62,15 +62,13 @@ export type FinalizeNoWinnerRoundInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountStockpileSolVault extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
-  TAccountRoundZincPayoutTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountRoundZincPayoutTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountBonanzaTokenAccount extends string | AccountMeta<string> = string,
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -109,7 +107,7 @@ export type FinalizeNoWinnerRoundInstruction<
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -125,7 +123,7 @@ export function getFinalizeNoWinnerRoundInstructionDataEncoder(): FixedSizeEncod
     (value) => ({
       ...value,
       discriminator: FINALIZE_NO_WINNER_ROUND_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -141,7 +139,7 @@ export function getFinalizeNoWinnerRoundInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getFinalizeNoWinnerRoundInstructionDataEncoder(),
-    getFinalizeNoWinnerRoundInstructionDataDecoder()
+    getFinalizeNoWinnerRoundInstructionDataDecoder(),
   );
 }
 
@@ -156,7 +154,7 @@ export type FinalizeNoWinnerRoundAsyncInput<
   TAccountRoundZincPayoutTokenAccount extends string = string,
   TAccountBonanzaTokenAccount extends string = string,
   TAccountStockpileTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Crank authorized to finalize a zero-winner round. */
   signer: TransactionSigner<TAccountSigner>;
@@ -194,7 +192,7 @@ export async function getFinalizeNoWinnerRoundInstructionAsync<
   TAccountBonanzaTokenAccount extends string,
   TAccountStockpileTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: FinalizeNoWinnerRoundAsyncInput<
     TAccountSigner,
@@ -209,7 +207,7 @@ export async function getFinalizeNoWinnerRoundInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   FinalizeNoWinnerRoundInstruction<
     TProgramAddress,
@@ -290,7 +288,7 @@ export async function getFinalizeNoWinnerRoundInstructionAsync<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("bonanzaTokenAccount", accounts.bonanzaTokenAccount),
       getAccountMeta("stockpileTokenAccount", accounts.stockpileTokenAccount),
@@ -298,7 +296,20 @@ export async function getFinalizeNoWinnerRoundInstructionAsync<
     ],
     data: getFinalizeNoWinnerRoundInstructionDataEncoder().encode({}),
     programAddress,
-  } as FinalizeNoWinnerRoundInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountTreasury, TAccountStockpileSolVault, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountBonanzaTokenAccount, TAccountStockpileTokenAccount, TAccountTokenProgram>);
+  } as FinalizeNoWinnerRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountStockpileTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type FinalizeNoWinnerRoundInput<
@@ -312,7 +323,7 @@ export type FinalizeNoWinnerRoundInput<
   TAccountRoundZincPayoutTokenAccount extends string = string,
   TAccountBonanzaTokenAccount extends string = string,
   TAccountStockpileTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Crank authorized to finalize a zero-winner round. */
   signer: TransactionSigner<TAccountSigner>;
@@ -350,7 +361,7 @@ export function getFinalizeNoWinnerRoundInstruction<
   TAccountBonanzaTokenAccount extends string,
   TAccountStockpileTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: FinalizeNoWinnerRoundInput<
     TAccountSigner,
@@ -365,7 +376,7 @@ export function getFinalizeNoWinnerRoundInstruction<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): FinalizeNoWinnerRoundInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -432,7 +443,7 @@ export function getFinalizeNoWinnerRoundInstruction<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("bonanzaTokenAccount", accounts.bonanzaTokenAccount),
       getAccountMeta("stockpileTokenAccount", accounts.stockpileTokenAccount),
@@ -440,12 +451,25 @@ export function getFinalizeNoWinnerRoundInstruction<
     ],
     data: getFinalizeNoWinnerRoundInstructionDataEncoder().encode({}),
     programAddress,
-  } as FinalizeNoWinnerRoundInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountTreasury, TAccountStockpileSolVault, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountBonanzaTokenAccount, TAccountStockpileTokenAccount, TAccountTokenProgram>);
+  } as FinalizeNoWinnerRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountStockpileTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type ParsedFinalizeNoWinnerRoundInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -477,11 +501,11 @@ export type ParsedFinalizeNoWinnerRoundInstruction<
 
 export function parseFinalizeNoWinnerRoundInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedFinalizeNoWinnerRoundInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 11) {
     throw new SolanaError(
@@ -489,7 +513,7 @@ export function parseFinalizeNoWinnerRoundInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 11,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -514,7 +538,7 @@ export function parseFinalizeNoWinnerRoundInstruction<
       tokenProgram: getNextAccount(),
     },
     data: getFinalizeNoWinnerRoundInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

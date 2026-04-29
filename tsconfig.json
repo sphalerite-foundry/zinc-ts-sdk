@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "types": ["node"],
     "lib": ["es2022", "dom"],
     "module": "esnext",

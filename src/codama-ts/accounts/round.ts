@@ -218,7 +218,7 @@ export function getRoundEncoder(): Encoder<RoundArgs> {
       ["wildcatClaimed", getBooleanEncoder()],
       ["wildcatEntries", getArrayEncoder(getRoundWildcatEntryRangeEncoder())],
     ]),
-    (value) => ({ ...value, discriminator: ROUND_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: ROUND_DISCRIMINATOR }),
   );
 }
 
@@ -263,24 +263,24 @@ export function getRoundCodec(): Codec<RoundArgs, Round> {
 }
 
 export function decodeRound<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<Round, TAddress>;
 export function decodeRound<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Round, TAddress>;
 export function decodeRound<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Round, TAddress> | MaybeAccount<Round, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getRoundDecoder()
+    getRoundDecoder(),
   );
 }
 
 export async function fetchRound<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<Round, TAddress>> {
   const maybeAccount = await fetchMaybeRound(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -290,7 +290,7 @@ export async function fetchRound<TAddress extends string = string>(
 export async function fetchMaybeRound<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Round, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeRound(maybeAccount);
@@ -299,7 +299,7 @@ export async function fetchMaybeRound<TAddress extends string = string>(
 export async function fetchAllRound(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<Round>[]> {
   const maybeAccounts = await fetchAllMaybeRound(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -309,7 +309,7 @@ export async function fetchAllRound(
 export async function fetchAllMaybeRound(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Round>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeRound(maybeAccount));

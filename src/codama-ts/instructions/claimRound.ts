@@ -55,21 +55,17 @@ export type ClaimRoundInstruction<
   TAccountPlayer extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
-  TAccountRoundZincPayoutTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountRoundZincPayoutTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountBonanzaTokenAccount extends string | AccountMeta<string> = string,
   TAccountPlayerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -111,7 +107,7 @@ export type ClaimRoundInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -122,7 +118,7 @@ export type ClaimRoundInstructionDataArgs = {};
 export function getClaimRoundInstructionDataEncoder(): FixedSizeEncoder<ClaimRoundInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLAIM_ROUND_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLAIM_ROUND_DISCRIMINATOR }),
   );
 }
 
@@ -138,7 +134,7 @@ export function getClaimRoundInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClaimRoundInstructionDataEncoder(),
-    getClaimRoundInstructionDataDecoder()
+    getClaimRoundInstructionDataDecoder(),
   );
 }
 
@@ -154,7 +150,7 @@ export type ClaimRoundAsyncInput<
   TAccountPlayerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Signer that submits the claim transaction and pays ATA rent if needed. */
   signer: TransactionSigner<TAccountSigner>;
@@ -193,7 +189,7 @@ export async function getClaimRoundInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimRoundAsyncInput<
     TAccountSigner,
@@ -209,7 +205,7 @@ export async function getClaimRoundInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   ClaimRoundInstruction<
     TProgramAddress,
@@ -290,7 +286,7 @@ export async function getClaimRoundInstructionAsync<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("bonanzaTokenAccount", accounts.bonanzaTokenAccount),
       getAccountMeta("playerZincTokenAccount", accounts.playerZincTokenAccount),
@@ -300,7 +296,21 @@ export async function getClaimRoundInstructionAsync<
     ],
     data: getClaimRoundInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimRoundInstruction<TProgramAddress, TAccountSigner, TAccountRound, TAccountMiner, TAccountPlayer, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountBonanzaTokenAccount, TAccountPlayerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountPlayerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ClaimRoundInput<
@@ -315,7 +325,7 @@ export type ClaimRoundInput<
   TAccountPlayerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Signer that submits the claim transaction and pays ATA rent if needed. */
   signer: TransactionSigner<TAccountSigner>;
@@ -354,7 +364,7 @@ export function getClaimRoundInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimRoundInput<
     TAccountSigner,
@@ -370,7 +380,7 @@ export function getClaimRoundInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): ClaimRoundInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -446,7 +456,7 @@ export function getClaimRoundInstruction<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("bonanzaTokenAccount", accounts.bonanzaTokenAccount),
       getAccountMeta("playerZincTokenAccount", accounts.playerZincTokenAccount),
@@ -456,12 +466,26 @@ export function getClaimRoundInstruction<
     ],
     data: getClaimRoundInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimRoundInstruction<TProgramAddress, TAccountSigner, TAccountRound, TAccountMiner, TAccountPlayer, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountBonanzaTokenAccount, TAccountPlayerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountPlayerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedClaimRoundInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -493,11 +517,11 @@ export type ParsedClaimRoundInstruction<
 
 export function parseClaimRoundInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimRoundInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 12) {
     throw new SolanaError(
@@ -505,7 +529,7 @@ export function parseClaimRoundInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 12,
-      }
+      },
     );
   }
   let accountIndex = 0;

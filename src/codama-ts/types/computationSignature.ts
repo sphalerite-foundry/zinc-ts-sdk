@@ -58,6 +58,6 @@ export function getComputationSignatureCodec(): Codec<
 > {
   return combineCodec(
     getComputationSignatureEncoder(),
-    getComputationSignatureDecoder()
+    getComputationSignatureDecoder(),
   );
 }

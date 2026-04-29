@@ -51,6 +51,6 @@ export function getSettleWinningStakesBatchOutputCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getSettleWinningStakesBatchOutputEncoder(),
-    getSettleWinningStakesBatchOutputDecoder()
+    getSettleWinningStakesBatchOutputDecoder(),
   );
 }

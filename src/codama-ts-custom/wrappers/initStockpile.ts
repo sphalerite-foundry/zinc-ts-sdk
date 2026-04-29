@@ -33,7 +33,7 @@ import {
 
 function getInitStockpileRandCompDefOffset(): number {
   return Buffer.from(
-    getCompDefAccOffset(INIT_STOCKPILE_RAND_CIRCUIT)
+    getCompDefAccOffset(INIT_STOCKPILE_RAND_CIRCUIT),
   ).readUInt32LE(0);
 }
 
@@ -70,11 +70,11 @@ export async function buildInitStockpileInstruction({
   const executingPool = getExecutingPoolAccAddress(clusterOffset);
   const computationAccount = getComputationAccAddress(
     clusterOffset,
-    computationOffsetBn
+    computationOffsetBn,
   );
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getInitStockpileRandCompDefOffset()
+    getInitStockpileRandCompDefOffset(),
   );
   const clusterAccount = getClusterAccAddress(clusterOffset);
   const instruction = await getInitStockpileInstructionAsync({
@@ -95,11 +95,11 @@ export async function buildInitStockpileInstruction({
     computationOffset,
   });
   const transactionInstruction = toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
   if (
     !transactionInstruction.keys.some(({ pubkey }) =>
-      pubkey.equals(ASSOCIATED_TOKEN_PROGRAM_ID)
+      pubkey.equals(ASSOCIATED_TOKEN_PROGRAM_ID),
     )
   ) {
     transactionInstruction.keys.push({

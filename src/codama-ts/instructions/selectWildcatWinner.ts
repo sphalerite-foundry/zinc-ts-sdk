@@ -44,7 +44,7 @@ export const SELECT_WILDCAT_WINNER_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getSelectWildcatWinnerDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    SELECT_WILDCAT_WINNER_DISCRIMINATOR
+    SELECT_WILDCAT_WINNER_DISCRIMINATOR,
   );
 }
 
@@ -53,7 +53,7 @@ export type SelectWildcatWinnerInstruction<
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -68,7 +68,7 @@ export type SelectWildcatWinnerInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -84,7 +84,7 @@ export function getSelectWildcatWinnerInstructionDataEncoder(): FixedSizeEncoder
     (value) => ({
       ...value,
       discriminator: SELECT_WILDCAT_WINNER_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -100,14 +100,14 @@ export function getSelectWildcatWinnerInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getSelectWildcatWinnerInstructionDataEncoder(),
-    getSelectWildcatWinnerInstructionDataDecoder()
+    getSelectWildcatWinnerInstructionDataDecoder(),
   );
 }
 
 export type SelectWildcatWinnerAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
-  TAccountRound extends string = string
+  TAccountRound extends string = string,
 > = {
   /** Crank signer authorized to resolve Wildcat selection. */
   signer: TransactionSigner<TAccountSigner>;
@@ -121,14 +121,14 @@ export async function getSelectWildcatWinnerInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: SelectWildcatWinnerAsyncInput<
     TAccountSigner,
     TAccountConfig,
     TAccountRound
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   SelectWildcatWinnerInstruction<
     TProgramAddress,
@@ -165,13 +165,18 @@ export async function getSelectWildcatWinnerInstructionAsync<
     ],
     data: getSelectWildcatWinnerInstructionDataEncoder().encode({}),
     programAddress,
-  } as SelectWildcatWinnerInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound>);
+  } as SelectWildcatWinnerInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound
+  >);
 }
 
 export type SelectWildcatWinnerInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
-  TAccountRound extends string = string
+  TAccountRound extends string = string,
 > = {
   /** Crank signer authorized to resolve Wildcat selection. */
   signer: TransactionSigner<TAccountSigner>;
@@ -185,14 +190,14 @@ export function getSelectWildcatWinnerInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: SelectWildcatWinnerInput<
     TAccountSigner,
     TAccountConfig,
     TAccountRound
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): SelectWildcatWinnerInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -222,12 +227,17 @@ export function getSelectWildcatWinnerInstruction<
     ],
     data: getSelectWildcatWinnerInstructionDataEncoder().encode({}),
     programAddress,
-  } as SelectWildcatWinnerInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound>);
+  } as SelectWildcatWinnerInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound
+  >);
 }
 
 export type ParsedSelectWildcatWinnerInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -243,11 +253,11 @@ export type ParsedSelectWildcatWinnerInstruction<
 
 export function parseSelectWildcatWinnerInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSelectWildcatWinnerInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     throw new SolanaError(
@@ -255,7 +265,7 @@ export function parseSelectWildcatWinnerInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 3,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -272,7 +282,7 @@ export function parseSelectWildcatWinnerInstruction<
       round: getNextAccount(),
     },
     data: getSelectWildcatWinnerInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

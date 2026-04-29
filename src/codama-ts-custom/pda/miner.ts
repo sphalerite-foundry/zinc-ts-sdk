@@ -16,7 +16,7 @@ function getRoundIdBytes(roundId: number | bigint): Uint8Array {
 export function getMinerAddress(
   roundId: number | bigint,
   player: PublicKey,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [
@@ -24,18 +24,18 @@ export function getMinerAddress(
       getRoundIdBytes(roundId),
       player.toBytes(),
     ],
-    programId
+    programId,
   );
 }
 
 export async function fetchMinerAccount(
   connection: Connection,
-  minerAddress: PublicKey
+  minerAddress: PublicKey,
 ): Promise<DecodedMinerAccount> {
   return fetchDecodedAccount(
     connection,
     minerAddress,
     getMinerDecoder(),
-    "Miner"
+    "Miner",
   );
 }

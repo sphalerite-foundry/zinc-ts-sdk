@@ -72,19 +72,15 @@ export type InitRoundInstruction<
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountPoolAccount extends
-    | string
-    | AccountMeta<string> = "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
-  TAccountClockAccount extends
-    | string
-    | AccountMeta<string> = "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountPoolAccount extends string | AccountMeta<string> =
+    "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
+  TAccountClockAccount extends string | AccountMeta<string> =
+    "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -141,7 +137,7 @@ export type InitRoundInstruction<
       TAccountArciumProgram extends string
         ? ReadonlyAccount<TAccountArciumProgram>
         : TAccountArciumProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -163,7 +159,7 @@ export function getInitRoundInstructionDataEncoder(): FixedSizeEncoder<InitRound
       ["roundId", getU64Encoder()],
       ["computationOffset", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: INIT_ROUND_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: INIT_ROUND_DISCRIMINATOR }),
   );
 }
 
@@ -181,7 +177,7 @@ export function getInitRoundInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitRoundInstructionDataEncoder(),
-    getInitRoundInstructionDataDecoder()
+    getInitRoundInstructionDataDecoder(),
   );
 }
 
@@ -202,7 +198,7 @@ export type InitRoundAsyncInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Pays for the round accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -255,7 +251,7 @@ export async function getInitRoundInstructionAsync<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitRoundAsyncInput<
     TAccountPayer,
@@ -276,7 +272,7 @@ export async function getInitRoundInstructionAsync<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitRoundInstruction<
     TProgramAddress,
@@ -395,10 +391,29 @@ export async function getInitRoundInstructionAsync<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getInitRoundInstructionDataEncoder().encode(
-      args as InitRoundInstructionDataArgs
+      args as InitRoundInstructionDataArgs,
     ),
     programAddress,
-  } as InitRoundInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountBoard, TAccountTreasury, TAccountRound, TAccountRoundSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as InitRoundInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type InitRoundInput<
@@ -418,7 +433,7 @@ export type InitRoundInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Pays for the round accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -471,7 +486,7 @@ export function getInitRoundInstruction<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitRoundInput<
     TAccountPayer,
@@ -492,7 +507,7 @@ export function getInitRoundInstruction<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitRoundInstruction<
   TProgramAddress,
   TAccountPayer,
@@ -587,15 +602,34 @@ export function getInitRoundInstruction<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getInitRoundInstructionDataEncoder().encode(
-      args as InitRoundInstructionDataArgs
+      args as InitRoundInstructionDataArgs,
     ),
     programAddress,
-  } as InitRoundInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountBoard, TAccountTreasury, TAccountRound, TAccountRoundSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as InitRoundInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type ParsedInitRoundInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -634,11 +668,11 @@ export type ParsedInitRoundInstruction<
 
 export function parseInitRoundInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitRoundInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 17) {
     throw new SolanaError(
@@ -646,7 +680,7 @@ export function parseInitRoundInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 17,
-      }
+      },
     );
   }
   let accountIndex = 0;

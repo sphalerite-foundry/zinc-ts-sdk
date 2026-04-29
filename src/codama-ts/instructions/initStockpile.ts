@@ -54,7 +54,7 @@ export const INIT_STOCKPILE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getInitStockpileDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INIT_STOCKPILE_DISCRIMINATOR
+    INIT_STOCKPILE_DISCRIMINATOR,
   );
 }
 
@@ -75,27 +75,21 @@ export type InitStockpileInstruction<
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountPoolAccount extends
-    | string
-    | AccountMeta<string> = "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
-  TAccountClockAccount extends
-    | string
-    | AccountMeta<string> = "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
+  TAccountPoolAccount extends string | AccountMeta<string> =
+    "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
+  TAccountClockAccount extends string | AccountMeta<string> =
+    "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
   TAccountStockpileSolVault extends string | AccountMeta<string> = string,
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -170,7 +164,7 @@ export type InitStockpileInstruction<
       TAccountAssociatedTokenProgram extends string
         ? ReadonlyAccount<TAccountAssociatedTokenProgram>
         : TAccountAssociatedTokenProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -189,7 +183,7 @@ export function getInitStockpileInstructionDataEncoder(): FixedSizeEncoder<InitS
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["computationOffset", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: INIT_STOCKPILE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: INIT_STOCKPILE_DISCRIMINATOR }),
   );
 }
 
@@ -206,7 +200,7 @@ export function getInitStockpileInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitStockpileInstructionDataEncoder(),
-    getInitStockpileInstructionDataDecoder()
+    getInitStockpileInstructionDataDecoder(),
   );
 }
 
@@ -233,7 +227,7 @@ export type InitStockpileAsyncInput<
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string
+  TAccountAssociatedTokenProgram extends string = string,
 > = {
   /** Pays for the stockpile accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -299,7 +293,7 @@ export async function getInitStockpileInstructionAsync<
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
   TAccountAssociatedTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileAsyncInput<
     TAccountPayer,
@@ -326,7 +320,7 @@ export async function getInitStockpileInstructionAsync<
     TAccountArciumProgram,
     TAccountAssociatedTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitStockpileInstruction<
     TProgramAddress,
@@ -476,10 +470,35 @@ export async function getInitStockpileInstructionAsync<
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
     ],
     data: getInitStockpileInstructionDataEncoder().encode(
-      args as InitStockpileInstructionDataArgs
+      args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountBoard, TAccountTreasury, TAccountZincMint, TAccountStockpile, TAccountStockpileSecret, TAccountStockpileExtras, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountStockpileSolVault, TAccountStockpileTokenAccount, TAccountTokenProgram, TAccountSystemProgram, TAccountArciumProgram, TAccountAssociatedTokenProgram>);
+  } as InitStockpileInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpile,
+    TAccountStockpileSecret,
+    TAccountStockpileExtras,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountStockpileSolVault,
+    TAccountStockpileTokenAccount,
+    TAccountTokenProgram,
+    TAccountSystemProgram,
+    TAccountArciumProgram,
+    TAccountAssociatedTokenProgram
+  >);
 }
 
 export type InitStockpileInput<
@@ -505,7 +524,7 @@ export type InitStockpileInput<
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string
+  TAccountAssociatedTokenProgram extends string = string,
 > = {
   /** Pays for the stockpile accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -571,7 +590,7 @@ export function getInitStockpileInstruction<
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
   TAccountAssociatedTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileInput<
     TAccountPayer,
@@ -598,7 +617,7 @@ export function getInitStockpileInstruction<
     TAccountArciumProgram,
     TAccountAssociatedTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitStockpileInstruction<
   TProgramAddress,
   TAccountPayer,
@@ -728,15 +747,40 @@ export function getInitStockpileInstruction<
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
     ],
     data: getInitStockpileInstructionDataEncoder().encode(
-      args as InitStockpileInstructionDataArgs
+      args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountBoard, TAccountTreasury, TAccountZincMint, TAccountStockpile, TAccountStockpileSecret, TAccountStockpileExtras, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountStockpileSolVault, TAccountStockpileTokenAccount, TAccountTokenProgram, TAccountSystemProgram, TAccountArciumProgram, TAccountAssociatedTokenProgram>);
+  } as InitStockpileInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpile,
+    TAccountStockpileSecret,
+    TAccountStockpileExtras,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountStockpileSolVault,
+    TAccountStockpileTokenAccount,
+    TAccountTokenProgram,
+    TAccountSystemProgram,
+    TAccountArciumProgram,
+    TAccountAssociatedTokenProgram
+  >);
 }
 
 export type ParsedInitStockpileInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -783,11 +827,11 @@ export type ParsedInitStockpileInstruction<
 
 export function parseInitStockpileInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitStockpileInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 23) {
     throw new SolanaError(
@@ -795,7 +839,7 @@ export function parseInitStockpileInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 23,
-      }
+      },
     );
   }
   let accountIndex = 0;

@@ -53,7 +53,7 @@ export async function buildDeployRoundInstruction({
   try {
     const existingPlayerProfile = await fetchPlayerProfileAccount(
       connection,
-      playerProfile
+      playerProfile,
     );
     const boundAffiliate = unwrapOption(existingPlayerProfile.data.affiliate);
     if (boundAffiliate) {
@@ -78,7 +78,7 @@ export async function buildDeployRoundInstruction({
     : null;
   const activeStockpileId = unwrapOption(boardAccount.data.activeStockpileId);
   const unresolvedStockpileId = unwrapOption(
-    boardAccount.data.unresolvedStockpileId
+    boardAccount.data.unresolvedStockpileId,
   );
   const stockpileId = resolveRoundStockpileId({
     activeStockpileId,
@@ -105,6 +105,6 @@ export async function buildDeployRoundInstruction({
     maskCiphertext,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

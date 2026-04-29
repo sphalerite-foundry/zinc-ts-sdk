@@ -39,6 +39,6 @@ export function getRevealRoundRandOutputCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getRevealRoundRandOutputEncoder(),
-    getRevealRoundRandOutputDecoder()
+    getRevealRoundRandOutputDecoder(),
   );
 }

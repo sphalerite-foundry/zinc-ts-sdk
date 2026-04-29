@@ -53,7 +53,7 @@ export const BUYBACK_POOL_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getBuybackPoolDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    BUYBACK_POOL_DISCRIMINATOR
+    BUYBACK_POOL_DISCRIMINATOR,
   );
 }
 
@@ -175,7 +175,7 @@ export function getBuybackPoolEncoder(): Encoder<BuybackPoolArgs> {
       ["sqrtPrice", getU128Encoder()],
       ["activationPoint", getOptionEncoder(getU64Encoder())],
     ]),
-    (value) => ({ ...value, discriminator: BUYBACK_POOL_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: BUYBACK_POOL_DISCRIMINATOR }),
   );
 }
 
@@ -213,24 +213,24 @@ export function getBuybackPoolCodec(): Codec<BuybackPoolArgs, BuybackPool> {
 }
 
 export function decodeBuybackPool<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<BuybackPool, TAddress>;
 export function decodeBuybackPool<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<BuybackPool, TAddress>;
 export function decodeBuybackPool<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<BuybackPool, TAddress> | MaybeAccount<BuybackPool, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getBuybackPoolDecoder()
+    getBuybackPoolDecoder(),
   );
 }
 
 export async function fetchBuybackPool<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<BuybackPool, TAddress>> {
   const maybeAccount = await fetchMaybeBuybackPool(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -240,7 +240,7 @@ export async function fetchBuybackPool<TAddress extends string = string>(
 export async function fetchMaybeBuybackPool<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<BuybackPool, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeBuybackPool(maybeAccount);
@@ -249,7 +249,7 @@ export async function fetchMaybeBuybackPool<TAddress extends string = string>(
 export async function fetchAllBuybackPool(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<BuybackPool>[]> {
   const maybeAccounts = await fetchAllMaybeBuybackPool(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -259,7 +259,7 @@ export async function fetchAllBuybackPool(
 export async function fetchAllMaybeBuybackPool(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<BuybackPool>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeBuybackPool(maybeAccount));

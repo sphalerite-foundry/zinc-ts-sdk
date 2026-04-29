@@ -45,12 +45,12 @@ import {
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const CLOSE_STOCKPILE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array(
-  [101, 6, 219, 243, 219, 170, 245, 147]
+  [101, 6, 219, 243, 219, 170, 245, 147],
 );
 
 export function getCloseStockpileDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_STOCKPILE_DISCRIMINATOR
+    CLOSE_STOCKPILE_DISCRIMINATOR,
   );
 }
 
@@ -63,7 +63,7 @@ export type CloseStockpileInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountStockpileSolVault extends string | AccountMeta<string> = string,
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -90,7 +90,7 @@ export type CloseStockpileInstruction<
       TAccountStockpileTokenAccount extends string
         ? WritableAccount<TAccountStockpileTokenAccount>
         : TAccountStockpileTokenAccount,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -103,7 +103,7 @@ export type CloseStockpileInstructionDataArgs = {};
 export function getCloseStockpileInstructionDataEncoder(): FixedSizeEncoder<CloseStockpileInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLOSE_STOCKPILE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLOSE_STOCKPILE_DISCRIMINATOR }),
   );
 }
 
@@ -119,7 +119,7 @@ export function getCloseStockpileInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseStockpileInstructionDataEncoder(),
-    getCloseStockpileInstructionDataDecoder()
+    getCloseStockpileInstructionDataDecoder(),
   );
 }
 
@@ -130,7 +130,7 @@ export type CloseStockpileAsyncInput<
   TAccountStockpile extends string = string,
   TAccountTreasury extends string = string,
   TAccountStockpileSolVault extends string = string,
-  TAccountStockpileTokenAccount extends string = string
+  TAccountStockpileTokenAccount extends string = string,
 > = {
   /** Crank authorized to close the active stockpile. */
   signer: TransactionSigner<TAccountSigner>;
@@ -156,7 +156,7 @@ export async function getCloseStockpileInstructionAsync<
   TAccountTreasury extends string,
   TAccountStockpileSolVault extends string,
   TAccountStockpileTokenAccount extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseStockpileAsyncInput<
     TAccountSigner,
@@ -167,7 +167,7 @@ export async function getCloseStockpileInstructionAsync<
     TAccountStockpileSolVault,
     TAccountStockpileTokenAccount
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CloseStockpileInstruction<
     TProgramAddress,
@@ -231,7 +231,16 @@ export async function getCloseStockpileInstructionAsync<
     ],
     data: getCloseStockpileInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountTreasury, TAccountStockpileSolVault, TAccountStockpileTokenAccount>);
+  } as CloseStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountStockpileTokenAccount
+  >);
 }
 
 export type CloseStockpileInput<
@@ -241,7 +250,7 @@ export type CloseStockpileInput<
   TAccountStockpile extends string = string,
   TAccountTreasury extends string = string,
   TAccountStockpileSolVault extends string = string,
-  TAccountStockpileTokenAccount extends string = string
+  TAccountStockpileTokenAccount extends string = string,
 > = {
   /** Crank authorized to close the active stockpile. */
   signer: TransactionSigner<TAccountSigner>;
@@ -267,7 +276,7 @@ export function getCloseStockpileInstruction<
   TAccountTreasury extends string,
   TAccountStockpileSolVault extends string,
   TAccountStockpileTokenAccount extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseStockpileInput<
     TAccountSigner,
@@ -278,7 +287,7 @@ export function getCloseStockpileInstruction<
     TAccountStockpileSolVault,
     TAccountStockpileTokenAccount
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CloseStockpileInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -326,12 +335,21 @@ export function getCloseStockpileInstruction<
     ],
     data: getCloseStockpileInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountTreasury, TAccountStockpileSolVault, TAccountStockpileTokenAccount>);
+  } as CloseStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountStockpileTokenAccount
+  >);
 }
 
 export type ParsedCloseStockpileInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -355,11 +373,11 @@ export type ParsedCloseStockpileInstruction<
 
 export function parseCloseStockpileInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseStockpileInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 7) {
     throw new SolanaError(
@@ -367,7 +385,7 @@ export function parseCloseStockpileInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 7,
-      }
+      },
     );
   }
   let accountIndex = 0;

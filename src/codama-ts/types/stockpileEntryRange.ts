@@ -61,6 +61,6 @@ export function getStockpileEntryRangeCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getStockpileEntryRangeEncoder(),
-    getStockpileEntryRangeDecoder()
+    getStockpileEntryRangeDecoder(),
   );
 }

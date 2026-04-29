@@ -18,7 +18,7 @@ export type BuildUnstakeInstructionInput = {
 
 /** Builds one native ZINC unstake instruction for the active signer. */
 export async function buildUnstakeInstruction(
-  input: BuildUnstakeInstructionInput
+  input: BuildUnstakeInstructionInput,
 ): Promise<TransactionInstruction> {
   const { connection, signer, amount } = input;
   const treasury = getTreasuryAddress()[0];
@@ -32,6 +32,6 @@ export async function buildUnstakeInstruction(
   });
 
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

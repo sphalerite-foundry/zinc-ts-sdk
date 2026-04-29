@@ -72,6 +72,6 @@ export function getInitStockpileRandOutputCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitStockpileRandOutputEncoder(),
-    getInitStockpileRandOutputDecoder()
+    getInitStockpileRandOutputDecoder(),
   );
 }

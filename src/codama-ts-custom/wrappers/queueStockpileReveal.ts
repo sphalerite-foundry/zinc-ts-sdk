@@ -21,7 +21,7 @@ import { resolveArciumClusterOffset, toAddress } from "./shared";
 
 function getRevealStockpileRandCompDefOffset(): number {
   return Buffer.from(
-    getCompDefAccOffset(REVEAL_STOCKPILE_RAND_CIRCUIT)
+    getCompDefAccOffset(REVEAL_STOCKPILE_RAND_CIRCUIT),
   ).readUInt32LE(0);
 }
 
@@ -47,11 +47,11 @@ export async function buildQueueStockpileRevealInstruction({
   const executingPool = getExecutingPoolAccAddress(clusterOffset);
   const computationAccount = getComputationAccAddress(
     clusterOffset,
-    computationOffsetBn
+    computationOffsetBn,
   );
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getRevealStockpileRandCompDefOffset()
+    getRevealStockpileRandCompDefOffset(),
   );
   const clusterAccount = getClusterAccAddress(clusterOffset);
   const instruction = await getQueueStockpileRevealInstructionAsync({
@@ -67,6 +67,6 @@ export async function buildQueueStockpileRevealInstruction({
     computationOffset,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

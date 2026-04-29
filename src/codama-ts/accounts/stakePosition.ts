@@ -49,7 +49,7 @@ export const STAKE_POSITION_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getStakePositionDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    STAKE_POSITION_DISCRIMINATOR
+    STAKE_POSITION_DISCRIMINATOR,
   );
 }
 
@@ -101,7 +101,7 @@ export function getStakePositionEncoder(): FixedSizeEncoder<StakePositionArgs> {
       ["claimableRewards", getU64Encoder()],
       ["lifetimeRewards", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STAKE_POSITION_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: STAKE_POSITION_DISCRIMINATOR }),
   );
 }
 
@@ -128,24 +128,24 @@ export function getStakePositionCodec(): FixedSizeCodec<
 }
 
 export function decodeStakePosition<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<StakePosition, TAddress>;
 export function decodeStakePosition<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<StakePosition, TAddress>;
 export function decodeStakePosition<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<StakePosition, TAddress> | MaybeAccount<StakePosition, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getStakePositionDecoder()
+    getStakePositionDecoder(),
   );
 }
 
 export async function fetchStakePosition<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<StakePosition, TAddress>> {
   const maybeAccount = await fetchMaybeStakePosition(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -155,7 +155,7 @@ export async function fetchStakePosition<TAddress extends string = string>(
 export async function fetchMaybeStakePosition<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<StakePosition, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeStakePosition(maybeAccount);
@@ -164,12 +164,12 @@ export async function fetchMaybeStakePosition<TAddress extends string = string>(
 export async function fetchAllStakePosition(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<StakePosition>[]> {
   const maybeAccounts = await fetchAllMaybeStakePosition(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -178,7 +178,7 @@ export async function fetchAllStakePosition(
 export async function fetchAllMaybeStakePosition(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<StakePosition>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeStakePosition(maybeAccount));

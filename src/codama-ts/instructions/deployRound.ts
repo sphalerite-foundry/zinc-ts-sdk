@@ -57,7 +57,7 @@ export const DEPLOY_ROUND_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getDeployRoundDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    DEPLOY_ROUND_DISCRIMINATOR
+    DEPLOY_ROUND_DISCRIMINATOR,
   );
 }
 
@@ -75,10 +75,9 @@ export type DeployRoundInstruction<
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountAffiliate extends string | AccountMeta<string> = string,
   TAccountAffiliateProfile extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -123,7 +122,7 @@ export type DeployRoundInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -159,7 +158,7 @@ export function getDeployRoundInstructionDataEncoder(): FixedSizeEncoder<DeployR
       ["maskNonce", getU128Encoder()],
       ["maskCiphertext", fixEncoderSize(getBytesEncoder(), 64)],
     ]),
-    (value) => ({ ...value, discriminator: DEPLOY_ROUND_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: DEPLOY_ROUND_DISCRIMINATOR }),
   );
 }
 
@@ -179,7 +178,7 @@ export function getDeployRoundInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getDeployRoundInstructionDataEncoder(),
-    getDeployRoundInstructionDataDecoder()
+    getDeployRoundInstructionDataDecoder(),
   );
 }
 
@@ -196,7 +195,7 @@ export type DeployRoundAsyncInput<
   TAccountStockpile extends string = string,
   TAccountAffiliate extends string = string,
   TAccountAffiliateProfile extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   signer: TransactionSigner<TAccountSigner>;
   round: Address<TAccountRound>;
@@ -236,7 +235,7 @@ export async function getDeployRoundInstructionAsync<
   TAccountAffiliate extends string,
   TAccountAffiliateProfile extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: DeployRoundAsyncInput<
     TAccountSigner,
@@ -253,7 +252,7 @@ export async function getDeployRoundInstructionAsync<
     TAccountAffiliateProfile,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   DeployRoundInstruction<
     TProgramAddress,
@@ -313,7 +312,7 @@ export async function getDeployRoundInstructionAsync<
     accounts.playerProfile.value = await findPlayerProfilePda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -352,10 +351,25 @@ export async function getDeployRoundInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getDeployRoundInstructionDataEncoder().encode(
-      args as DeployRoundInstructionDataArgs
+      args as DeployRoundInstructionDataArgs,
     ),
     programAddress,
-  } as DeployRoundInstruction<TProgramAddress, TAccountSigner, TAccountRound, TAccountConfig, TAccountMiner, TAccountPlayerProfile, TAccountBoard, TAccountTreasury, TAccountStockpileSolVault, TAccountBuybackSolVault, TAccountStockpile, TAccountAffiliate, TAccountAffiliateProfile, TAccountSystemProgram>);
+  } as DeployRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountRound,
+    TAccountConfig,
+    TAccountMiner,
+    TAccountPlayerProfile,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountBuybackSolVault,
+    TAccountStockpile,
+    TAccountAffiliate,
+    TAccountAffiliateProfile,
+    TAccountSystemProgram
+  >);
 }
 
 export type DeployRoundInput<
@@ -371,7 +385,7 @@ export type DeployRoundInput<
   TAccountStockpile extends string = string,
   TAccountAffiliate extends string = string,
   TAccountAffiliateProfile extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   signer: TransactionSigner<TAccountSigner>;
   round: Address<TAccountRound>;
@@ -411,7 +425,7 @@ export function getDeployRoundInstruction<
   TAccountAffiliate extends string,
   TAccountAffiliateProfile extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: DeployRoundInput<
     TAccountSigner,
@@ -428,7 +442,7 @@ export function getDeployRoundInstruction<
     TAccountAffiliateProfile,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): DeployRoundInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -502,15 +516,30 @@ export function getDeployRoundInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getDeployRoundInstructionDataEncoder().encode(
-      args as DeployRoundInstructionDataArgs
+      args as DeployRoundInstructionDataArgs,
     ),
     programAddress,
-  } as DeployRoundInstruction<TProgramAddress, TAccountSigner, TAccountRound, TAccountConfig, TAccountMiner, TAccountPlayerProfile, TAccountBoard, TAccountTreasury, TAccountStockpileSolVault, TAccountBuybackSolVault, TAccountStockpile, TAccountAffiliate, TAccountAffiliateProfile, TAccountSystemProgram>);
+  } as DeployRoundInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountRound,
+    TAccountConfig,
+    TAccountMiner,
+    TAccountPlayerProfile,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountBuybackSolVault,
+    TAccountStockpile,
+    TAccountAffiliate,
+    TAccountAffiliateProfile,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedDeployRoundInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -538,11 +567,11 @@ export type ParsedDeployRoundInstruction<
 
 export function parseDeployRoundInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedDeployRoundInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 13) {
     throw new SolanaError(
@@ -550,7 +579,7 @@ export function parseDeployRoundInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 13,
-      }
+      },
     );
   }
   let accountIndex = 0;

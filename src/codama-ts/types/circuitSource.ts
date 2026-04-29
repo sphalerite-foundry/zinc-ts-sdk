@@ -105,7 +105,7 @@ export function circuitSource(
     CircuitSourceArgs,
     "__kind",
     "Local"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<CircuitSourceArgs, "__kind", "Local">;
 export function circuitSource(
   kind: "OnChain",
@@ -113,7 +113,7 @@ export function circuitSource(
     CircuitSourceArgs,
     "__kind",
     "OnChain"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<CircuitSourceArgs, "__kind", "OnChain">;
 export function circuitSource(
   kind: "OffChain",
@@ -121,11 +121,11 @@ export function circuitSource(
     CircuitSourceArgs,
     "__kind",
     "OffChain"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<CircuitSourceArgs, "__kind", "OffChain">;
 export function circuitSource<K extends CircuitSourceArgs["__kind"], Data>(
   kind: K,
-  data?: Data
+  data?: Data,
 ) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -134,7 +134,7 @@ export function circuitSource<K extends CircuitSourceArgs["__kind"], Data>(
 
 export function isCircuitSource<K extends CircuitSource["__kind"]>(
   kind: K,
-  value: CircuitSource
+  value: CircuitSource,
 ): value is CircuitSource & { __kind: K } {
   return value.__kind === kind;
 }

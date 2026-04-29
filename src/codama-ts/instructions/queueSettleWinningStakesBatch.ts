@@ -51,7 +51,7 @@ export const QUEUE_SETTLE_WINNING_STAKES_BATCH_DISCRIMINATOR: ReadonlyUint8Array
 
 export function getQueueSettleWinningStakesBatchDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    QUEUE_SETTLE_WINNING_STAKES_BATCH_DISCRIMINATOR
+    QUEUE_SETTLE_WINNING_STAKES_BATCH_DISCRIMINATOR,
   );
 }
 
@@ -70,19 +70,15 @@ export type QueueSettleWinningStakesBatchInstruction<
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountPoolAccount extends
-    | string
-    | AccountMeta<string> = "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
-  TAccountClockAccount extends
-    | string
-    | AccountMeta<string> = "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountPoolAccount extends string | AccountMeta<string> =
+    "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
+  TAccountClockAccount extends string | AccountMeta<string> =
+    "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -139,7 +135,7 @@ export type QueueSettleWinningStakesBatchInstruction<
       TAccountArciumProgram extends string
         ? ReadonlyAccount<TAccountArciumProgram>
         : TAccountArciumProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -161,7 +157,7 @@ export function getQueueSettleWinningStakesBatchInstructionDataEncoder(): FixedS
     (value) => ({
       ...value,
       discriminator: QUEUE_SETTLE_WINNING_STAKES_BATCH_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -178,7 +174,7 @@ export function getQueueSettleWinningStakesBatchInstructionDataCodec(): FixedSiz
 > {
   return combineCodec(
     getQueueSettleWinningStakesBatchInstructionDataEncoder(),
-    getQueueSettleWinningStakesBatchInstructionDataDecoder()
+    getQueueSettleWinningStakesBatchInstructionDataDecoder(),
   );
 }
 
@@ -199,7 +195,7 @@ export type QueueSettleWinningStakesBatchAsyncInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Pays for the queued settlement computation. */
   signer: TransactionSigner<TAccountSigner>;
@@ -251,7 +247,7 @@ export async function getQueueSettleWinningStakesBatchInstructionAsync<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueSettleWinningStakesBatchAsyncInput<
     TAccountSigner,
@@ -272,7 +268,7 @@ export async function getQueueSettleWinningStakesBatchInstructionAsync<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   QueueSettleWinningStakesBatchInstruction<
     TProgramAddress,
@@ -381,10 +377,29 @@ export async function getQueueSettleWinningStakesBatchInstructionAsync<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueSettleWinningStakesBatchInstructionDataEncoder().encode(
-      args as QueueSettleWinningStakesBatchInstructionDataArgs
+      args as QueueSettleWinningStakesBatchInstructionDataArgs,
     ),
     programAddress,
-  } as QueueSettleWinningStakesBatchInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountTreasury, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueSettleWinningStakesBatchInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountTreasury,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type QueueSettleWinningStakesBatchInput<
@@ -404,7 +419,7 @@ export type QueueSettleWinningStakesBatchInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Pays for the queued settlement computation. */
   signer: TransactionSigner<TAccountSigner>;
@@ -456,7 +471,7 @@ export function getQueueSettleWinningStakesBatchInstruction<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueSettleWinningStakesBatchInput<
     TAccountSigner,
@@ -477,7 +492,7 @@ export function getQueueSettleWinningStakesBatchInstruction<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): QueueSettleWinningStakesBatchInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -572,15 +587,34 @@ export function getQueueSettleWinningStakesBatchInstruction<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueSettleWinningStakesBatchInstructionDataEncoder().encode(
-      args as QueueSettleWinningStakesBatchInstructionDataArgs
+      args as QueueSettleWinningStakesBatchInstructionDataArgs,
     ),
     programAddress,
-  } as QueueSettleWinningStakesBatchInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountTreasury, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueSettleWinningStakesBatchInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountTreasury,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type ParsedQueueSettleWinningStakesBatchInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -619,11 +653,11 @@ export type ParsedQueueSettleWinningStakesBatchInstruction<
 
 export function parseQueueSettleWinningStakesBatchInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedQueueSettleWinningStakesBatchInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 17) {
     throw new SolanaError(
@@ -631,7 +665,7 @@ export function parseQueueSettleWinningStakesBatchInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 17,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -662,7 +696,7 @@ export function parseQueueSettleWinningStakesBatchInstruction<
       arciumProgram: getNextAccount(),
     },
     data: getQueueSettleWinningStakesBatchInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

@@ -8,22 +8,22 @@ const TEXT_ENCODER = new TextEncoder();
 export type DecodedBoardAccount = DecodedAccount<Board>;
 
 export function getBoardAddress(
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(BOARD_SEED)],
-    programId
+    programId,
   );
 }
 
 export async function fetchBoardAccount(
-  connection: Connection
+  connection: Connection,
 ): Promise<DecodedBoardAccount> {
   const boardAddress = getBoardAddress()[0];
   return fetchDecodedAccount(
     connection,
     boardAddress,
     getBoardDecoder(),
-    "Board"
+    "Board",
   );
 }

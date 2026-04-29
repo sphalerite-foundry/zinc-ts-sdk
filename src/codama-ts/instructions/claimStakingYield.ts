@@ -51,7 +51,7 @@ export const CLAIM_STAKING_YIELD_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getClaimStakingYieldDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLAIM_STAKING_YIELD_DISCRIMINATOR
+    CLAIM_STAKING_YIELD_DISCRIMINATOR,
   );
 }
 
@@ -61,20 +61,16 @@ export type ClaimStakingYieldInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountStakePosition extends string | AccountMeta<string> = string,
-  TAccountStakingRewardTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -107,7 +103,7 @@ export type ClaimStakingYieldInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -120,7 +116,7 @@ export type ClaimStakingYieldInstructionDataArgs = {};
 export function getClaimStakingYieldInstructionDataEncoder(): FixedSizeEncoder<ClaimStakingYieldInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLAIM_STAKING_YIELD_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLAIM_STAKING_YIELD_DISCRIMINATOR }),
   );
 }
 
@@ -136,7 +132,7 @@ export function getClaimStakingYieldInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClaimStakingYieldInstructionDataEncoder(),
-    getClaimStakingYieldInstructionDataDecoder()
+    getClaimStakingYieldInstructionDataDecoder(),
   );
 }
 
@@ -149,7 +145,7 @@ export type ClaimStakingYieldAsyncInput<
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns the stake position and receives the claimed yield. */
   signer: TransactionSigner<TAccountSigner>;
@@ -179,7 +175,7 @@ export async function getClaimStakingYieldInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimStakingYieldAsyncInput<
     TAccountSigner,
@@ -192,7 +188,7 @@ export async function getClaimStakingYieldInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   ClaimStakingYieldInstruction<
     TProgramAddress,
@@ -244,7 +240,7 @@ export async function getClaimStakingYieldInstructionAsync<
     accounts.stakePosition.value = await findStakePositionPda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -264,20 +260,20 @@ export async function getClaimStakingYieldInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "signer",
-            accounts.signer.value
-          )
+            accounts.signer.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -300,7 +296,7 @@ export async function getClaimStakingYieldInstructionAsync<
       getAccountMeta("stakePosition", accounts.stakePosition),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
@@ -309,7 +305,18 @@ export async function getClaimStakingYieldInstructionAsync<
     ],
     data: getClaimStakingYieldInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimStakingYieldInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountStakePosition, TAccountStakingRewardTokenAccount, TAccountSignerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimStakingYieldInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStakePosition,
+    TAccountStakingRewardTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ClaimStakingYieldInput<
@@ -321,7 +328,7 @@ export type ClaimStakingYieldInput<
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns the stake position and receives the claimed yield. */
   signer: TransactionSigner<TAccountSigner>;
@@ -351,7 +358,7 @@ export function getClaimStakingYieldInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimStakingYieldInput<
     TAccountSigner,
@@ -364,7 +371,7 @@ export function getClaimStakingYieldInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): ClaimStakingYieldInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -429,7 +436,7 @@ export function getClaimStakingYieldInstruction<
       getAccountMeta("stakePosition", accounts.stakePosition),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
@@ -438,12 +445,23 @@ export function getClaimStakingYieldInstruction<
     ],
     data: getClaimStakingYieldInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimStakingYieldInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountStakePosition, TAccountStakingRewardTokenAccount, TAccountSignerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimStakingYieldInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStakePosition,
+    TAccountStakingRewardTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedClaimStakingYieldInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -469,11 +487,11 @@ export type ParsedClaimStakingYieldInstruction<
 
 export function parseClaimStakingYieldInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimStakingYieldInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -481,7 +499,7 @@ export function parseClaimStakingYieldInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;

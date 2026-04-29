@@ -64,13 +64,11 @@ export type StakeInstruction<
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
   TAccountStakePosition extends string | AccountMeta<string> = string,
   TAccountStakingTokenAccount extends string | AccountMeta<string> = string,
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -100,7 +98,7 @@ export type StakeInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -121,7 +119,7 @@ export function getStakeInstructionDataEncoder(): FixedSizeEncoder<StakeInstruct
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STAKE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: STAKE_DISCRIMINATOR }),
   );
 }
 
@@ -138,7 +136,7 @@ export function getStakeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getStakeInstructionDataEncoder(),
-    getStakeInstructionDataDecoder()
+    getStakeInstructionDataDecoder(),
   );
 }
 
@@ -150,7 +148,7 @@ export type StakeAsyncInput<
   TAccountStakePosition extends string = string,
   TAccountStakingTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that stakes ZINC and pays rent when opening its stake position. */
   signer: TransactionSigner<TAccountSigner>;
@@ -179,7 +177,7 @@ export async function getStakeInstructionAsync<
   TAccountStakingTokenAccount extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: StakeAsyncInput<
     TAccountSigner,
@@ -191,7 +189,7 @@ export async function getStakeInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   StakeInstruction<
     TProgramAddress,
@@ -249,20 +247,20 @@ export async function getStakeInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "signer",
-            accounts.signer.value
-          )
+            accounts.signer.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -271,7 +269,7 @@ export async function getStakeInstructionAsync<
     accounts.stakePosition.value = await findStakePositionPda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -296,10 +294,20 @@ export async function getStakeInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getStakeInstructionDataEncoder().encode(
-      args as StakeInstructionDataArgs
+      args as StakeInstructionDataArgs,
     ),
     programAddress,
-  } as StakeInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountSignerZincTokenAccount, TAccountStakePosition, TAccountStakingTokenAccount, TAccountTokenProgram, TAccountSystemProgram>);
+  } as StakeInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountSignerZincTokenAccount,
+    TAccountStakePosition,
+    TAccountStakingTokenAccount,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type StakeInput<
@@ -310,7 +318,7 @@ export type StakeInput<
   TAccountStakePosition extends string = string,
   TAccountStakingTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that stakes ZINC and pays rent when opening its stake position. */
   signer: TransactionSigner<TAccountSigner>;
@@ -339,7 +347,7 @@ export function getStakeInstruction<
   TAccountStakingTokenAccount extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: StakeInput<
     TAccountSigner,
@@ -351,7 +359,7 @@ export function getStakeInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): StakeInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -414,15 +422,25 @@ export function getStakeInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getStakeInstructionDataEncoder().encode(
-      args as StakeInstructionDataArgs
+      args as StakeInstructionDataArgs,
     ),
     programAddress,
-  } as StakeInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountSignerZincTokenAccount, TAccountStakePosition, TAccountStakingTokenAccount, TAccountTokenProgram, TAccountSystemProgram>);
+  } as StakeInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountSignerZincTokenAccount,
+    TAccountStakePosition,
+    TAccountStakingTokenAccount,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedStakeInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -447,11 +465,11 @@ export type ParsedStakeInstruction<
 
 export function parseStakeInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedStakeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     throw new SolanaError(
@@ -459,7 +477,7 @@ export function parseStakeInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 8,
-      }
+      },
     );
   }
   let accountIndex = 0;

@@ -20,7 +20,7 @@ import { toAddress } from "./shared";
 
 function getInitRevealStockpileRandCompDefOffset(): number {
   return Buffer.from(
-    getCompDefAccOffset(REVEAL_STOCKPILE_RAND_CIRCUIT)
+    getCompDefAccOffset(REVEAL_STOCKPILE_RAND_CIRCUIT),
   ).readUInt32LE(0);
 }
 
@@ -39,12 +39,12 @@ export async function buildInitRevealStockpileRandCompDefInstruction({
   const mxeAccount = getMXEAccAddress(ZINC_PROGRAM_ID);
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getInitRevealStockpileRandCompDefOffset()
+    getInitRevealStockpileRandCompDefOffset(),
   );
   const mxe = await fetchDecodedMxeAccount(connection, mxeAccount);
   const addressLookupTable = getLookupTableAddress(
     ZINC_PROGRAM_ID,
-    new BN(mxe.data.lutOffsetSlot.toString())
+    new BN(mxe.data.lutOffsetSlot.toString()),
   );
   const instruction = getInitRevealStockpileRandCompDefInstruction({
     payer: toTransactionSigner(payer),
@@ -57,6 +57,6 @@ export async function buildInitRevealStockpileRandCompDefInstruction({
     },
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

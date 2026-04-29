@@ -3,7 +3,7 @@ import { resolveCompDefSource as resolveConfiguredCompDefSource } from "../utils
 /** Resolves one computation-definition circuit source URL for setup flows. */
 export function resolveCompDefSource(
   circuitName: string,
-  source?: string
+  source?: string,
 ): string {
   return resolveConfiguredCompDefSource(circuitName, source);
 }

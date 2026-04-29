@@ -53,6 +53,6 @@ export function getOffChainCircuitSourceCodec(): Codec<
 > {
   return combineCodec(
     getOffChainCircuitSourceEncoder(),
-    getOffChainCircuitSourceDecoder()
+    getOffChainCircuitSourceDecoder(),
   );
 }

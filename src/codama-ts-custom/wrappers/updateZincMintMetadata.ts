@@ -37,6 +37,6 @@ export async function buildUpdateZincMintMetadataInstruction({
     args: metadata,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

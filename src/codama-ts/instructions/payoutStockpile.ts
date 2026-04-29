@@ -50,7 +50,7 @@ export const PAYOUT_STOCKPILE_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getPayoutStockpileDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    PAYOUT_STOCKPILE_DISCRIMINATOR
+    PAYOUT_STOCKPILE_DISCRIMINATOR,
   );
 }
 
@@ -67,16 +67,13 @@ export type PayoutStockpileInstruction<
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
   TAccountWinner extends string | AccountMeta<string> = string,
   TAccountWinnerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -124,7 +121,7 @@ export type PayoutStockpileInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -137,7 +134,7 @@ export type PayoutStockpileInstructionDataArgs = {};
 export function getPayoutStockpileInstructionDataEncoder(): FixedSizeEncoder<PayoutStockpileInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: PAYOUT_STOCKPILE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: PAYOUT_STOCKPILE_DISCRIMINATOR }),
   );
 }
 
@@ -153,7 +150,7 @@ export function getPayoutStockpileInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getPayoutStockpileInstructionDataEncoder(),
-    getPayoutStockpileInstructionDataDecoder()
+    getPayoutStockpileInstructionDataDecoder(),
   );
 }
 
@@ -171,7 +168,7 @@ export type PayoutStockpileAsyncInput<
   TAccountWinnerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer that submits the payout transaction and pays ATA rent if needed. */
   signer: TransactionSigner<TAccountSigner>;
@@ -216,7 +213,7 @@ export async function getPayoutStockpileInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: PayoutStockpileAsyncInput<
     TAccountSigner,
@@ -234,7 +231,7 @@ export async function getPayoutStockpileInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   PayoutStockpileInstruction<
     TProgramAddress,
@@ -343,7 +340,23 @@ export async function getPayoutStockpileInstructionAsync<
     ],
     data: getPayoutStockpileInstructionDataEncoder().encode({}),
     programAddress,
-  } as PayoutStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountStockpile, TAccountStockpileExtras, TAccountBoard, TAccountTreasury, TAccountStockpileSolVault, TAccountZincMint, TAccountStockpileTokenAccount, TAccountWinner, TAccountWinnerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as PayoutStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileExtras,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountWinner,
+    TAccountWinnerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type PayoutStockpileInput<
@@ -360,7 +373,7 @@ export type PayoutStockpileInput<
   TAccountWinnerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer that submits the payout transaction and pays ATA rent if needed. */
   signer: TransactionSigner<TAccountSigner>;
@@ -405,7 +418,7 @@ export function getPayoutStockpileInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: PayoutStockpileInput<
     TAccountSigner,
@@ -423,7 +436,7 @@ export function getPayoutStockpileInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): PayoutStockpileInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -515,12 +528,28 @@ export function getPayoutStockpileInstruction<
     ],
     data: getPayoutStockpileInstructionDataEncoder().encode({}),
     programAddress,
-  } as PayoutStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountStockpile, TAccountStockpileExtras, TAccountBoard, TAccountTreasury, TAccountStockpileSolVault, TAccountZincMint, TAccountStockpileTokenAccount, TAccountWinner, TAccountWinnerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as PayoutStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileExtras,
+    TAccountBoard,
+    TAccountTreasury,
+    TAccountStockpileSolVault,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountWinner,
+    TAccountWinnerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedPayoutStockpileInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -556,11 +585,11 @@ export type ParsedPayoutStockpileInstruction<
 
 export function parsePayoutStockpileInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedPayoutStockpileInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     throw new SolanaError(
@@ -568,7 +597,7 @@ export function parsePayoutStockpileInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 14,
-      }
+      },
     );
   }
   let accountIndex = 0;

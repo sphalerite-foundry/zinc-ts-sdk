@@ -54,7 +54,7 @@ export type CloseMinerInstruction<
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountMiner extends string | AccountMeta<string> = string,
   TAccountPlayer extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -75,7 +75,7 @@ export type CloseMinerInstruction<
       TAccountPlayer extends string
         ? WritableAccount<TAccountPlayer>
         : TAccountPlayer,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -86,7 +86,7 @@ export type CloseMinerInstructionDataArgs = {};
 export function getCloseMinerInstructionDataEncoder(): FixedSizeEncoder<CloseMinerInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLOSE_MINER_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLOSE_MINER_DISCRIMINATOR }),
   );
 }
 
@@ -102,7 +102,7 @@ export function getCloseMinerInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseMinerInstructionDataEncoder(),
-    getCloseMinerInstructionDataDecoder()
+    getCloseMinerInstructionDataDecoder(),
   );
 }
 
@@ -111,7 +111,7 @@ export type CloseMinerAsyncInput<
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountMiner extends string = string,
-  TAccountPlayer extends string = string
+  TAccountPlayer extends string = string,
 > = {
   /** Crank signer authorized to submit cleanup transactions. */
   signer: TransactionSigner<TAccountSigner>;
@@ -130,7 +130,7 @@ export async function getCloseMinerInstructionAsync<
   TAccountRound extends string,
   TAccountMiner extends string,
   TAccountPlayer extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseMinerAsyncInput<
     TAccountSigner,
@@ -139,7 +139,7 @@ export async function getCloseMinerInstructionAsync<
     TAccountMiner,
     TAccountPlayer
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CloseMinerInstruction<
     TProgramAddress,
@@ -182,7 +182,14 @@ export async function getCloseMinerInstructionAsync<
     ],
     data: getCloseMinerInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseMinerInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound, TAccountMiner, TAccountPlayer>);
+  } as CloseMinerInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer
+  >);
 }
 
 export type CloseMinerInput<
@@ -190,7 +197,7 @@ export type CloseMinerInput<
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountMiner extends string = string,
-  TAccountPlayer extends string = string
+  TAccountPlayer extends string = string,
 > = {
   /** Crank signer authorized to submit cleanup transactions. */
   signer: TransactionSigner<TAccountSigner>;
@@ -209,7 +216,7 @@ export function getCloseMinerInstruction<
   TAccountRound extends string,
   TAccountMiner extends string,
   TAccountPlayer extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseMinerInput<
     TAccountSigner,
@@ -218,7 +225,7 @@ export function getCloseMinerInstruction<
     TAccountMiner,
     TAccountPlayer
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CloseMinerInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -254,12 +261,19 @@ export function getCloseMinerInstruction<
     ],
     data: getCloseMinerInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseMinerInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound, TAccountMiner, TAccountPlayer>);
+  } as CloseMinerInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer
+  >);
 }
 
 export type ParsedCloseMinerInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -278,11 +292,11 @@ export type ParsedCloseMinerInstruction<
 
 export function parseCloseMinerInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseMinerInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     throw new SolanaError(
@@ -290,7 +304,7 @@ export function parseCloseMinerInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 5,
-      }
+      },
     );
   }
   let accountIndex = 0;

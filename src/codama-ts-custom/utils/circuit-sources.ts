@@ -28,7 +28,7 @@ export type PublishedCircuit = {
 
 export function resolveCompDefSource(
   circuitName: string,
-  source?: string
+  source?: string,
 ): string {
   if (source) {
     return source;
@@ -47,14 +47,14 @@ export function resolvePublishedCircuit(
   options?: {
     baseUrl?: string;
     manifestPath?: string;
-  }
+  },
 ): PublishedCircuit {
   const baseUrl = normalizeBaseUrl(
-    options?.baseUrl ?? resolveConfiguredCircuitSourceBaseUrl()
+    options?.baseUrl ?? resolveConfiguredCircuitSourceBaseUrl(),
   );
   if (!baseUrl) {
     throw new Error(
-      "Missing circuit source base URL. Set ZINC_CIRCUIT_SOURCE_BASE_URL or R2_PUBLIC_BASE_URL."
+      "Missing circuit source base URL. Set ZINC_CIRCUIT_SOURCE_BASE_URL or R2_PUBLIC_BASE_URL.",
     );
   }
 
@@ -86,7 +86,7 @@ export function resolveConfiguredCircuitSourceBaseUrl(): string | null {
   return normalizeBaseUrl(
     process.env.ZINC_CIRCUIT_SOURCE_BASE_URL ??
       process.env.R2_PUBLIC_BASE_URL ??
-      null
+      null,
   );
 }
 
@@ -104,7 +104,7 @@ function loadCircuitManifest(manifestPath: string): CircuitManifest {
 
   if (!Array.isArray(manifest.circuits) || manifest.circuits.length === 0) {
     throw new Error(
-      `Circuit manifest ${manifestPath} must contain at least one circuit.`
+      `Circuit manifest ${manifestPath} must contain at least one circuit.`,
     );
   }
 

@@ -26,46 +26,46 @@ function getStockpileIdBytes(stockpileId: number | bigint): Uint8Array {
 /** Derives one stockpile PDA by id. */
 export function getStockpileAddress(
   stockpileId: number | bigint,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(STOCKPILE_SEED), getStockpileIdBytes(stockpileId)],
-    programId
+    programId,
   );
 }
 
 /** Derives the singleton stockpile-extras PDA. */
 export function getStockpileExtrasAddress(
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(STOCKPILE_EXTRAS_SEED)],
-    programId
+    programId,
   );
 }
 
 /** Fetches and decodes one stockpile account. */
 export async function fetchStockpileAccount(
   connection: Connection,
-  stockpileAddress: PublicKey
+  stockpileAddress: PublicKey,
 ): Promise<DecodedStockpileAccount> {
   return fetchDecodedAccount(
     connection,
     stockpileAddress,
     getStockpileDecoder(),
-    "Stockpile"
+    "Stockpile",
   );
 }
 
 /** Fetches and decodes the singleton stockpile-extras account. */
 export async function fetchStockpileExtrasAccount(
   connection: Connection,
-  stockpileExtrasAddress: PublicKey
+  stockpileExtrasAddress: PublicKey,
 ): Promise<DecodedStockpileExtrasAccount> {
   return fetchDecodedAccount(
     connection,
     stockpileExtrasAddress,
     getStockpileExtrasDecoder(),
-    "StockpileExtras"
+    "StockpileExtras",
   );
 }

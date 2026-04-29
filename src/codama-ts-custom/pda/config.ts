@@ -14,23 +14,23 @@ export type DecodedConfigAccount = DecodedAccount<Config>;
 
 /** Derives the singleton config PDA. */
 export function getConfigAddress(
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(CONFIG_SEED)],
-    programId
+    programId,
   );
 }
 
 /** Fetches and decodes the singleton config account. */
 export async function fetchConfigAccount(
-  connection: Connection
+  connection: Connection,
 ): Promise<DecodedConfigAccount> {
   const configAddress = getConfigAddress()[0];
   return fetchDecodedAccount(
     connection,
     configAddress,
     getConfigDecoder(),
-    "Config"
+    "Config",
   );
 }

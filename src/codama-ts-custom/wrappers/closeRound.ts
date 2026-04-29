@@ -39,11 +39,11 @@ export async function buildCloseRoundInstruction({
   const roundZincPayoutTokenAccount = getRoundZincPayoutTokenAccountAddress(
     roundId,
     treasury,
-    zincMint
+    zincMint,
   )[0];
   const activeStockpileId = unwrapOption(boardAccount.data.activeStockpileId);
   const unresolvedStockpileId = unwrapOption(
-    boardAccount.data.unresolvedStockpileId
+    boardAccount.data.unresolvedStockpileId,
   );
   const stockpileId = resolveRoundStockpileId({
     activeStockpileId,
@@ -65,6 +65,6 @@ export async function buildCloseRoundInstruction({
     stockpile: toAddress(stockpile),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

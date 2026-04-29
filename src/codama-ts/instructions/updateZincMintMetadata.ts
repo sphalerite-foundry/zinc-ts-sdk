@@ -51,7 +51,7 @@ export const UPDATE_ZINC_MINT_METADATA_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getUpdateZincMintMetadataDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    UPDATE_ZINC_MINT_METADATA_DISCRIMINATOR
+    UPDATE_ZINC_MINT_METADATA_DISCRIMINATOR,
   );
 }
 
@@ -62,10 +62,9 @@ export type UpdateZincMintMetadataInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountZincMetadata extends string | AccountMeta<string> = string,
-  TAccountMetadataProgram extends
-    | string
-    | AccountMeta<string> = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountMetadataProgram extends string | AccountMeta<string> =
+    "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -89,7 +88,7 @@ export type UpdateZincMintMetadataInstruction<
       TAccountMetadataProgram extends string
         ? ReadonlyAccount<TAccountMetadataProgram>
         : TAccountMetadataProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -111,7 +110,7 @@ export function getUpdateZincMintMetadataInstructionDataEncoder(): Encoder<Updat
     (value) => ({
       ...value,
       discriminator: UPDATE_ZINC_MINT_METADATA_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -128,7 +127,7 @@ export function getUpdateZincMintMetadataInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getUpdateZincMintMetadataInstructionDataEncoder(),
-    getUpdateZincMintMetadataInstructionDataDecoder()
+    getUpdateZincMintMetadataInstructionDataDecoder(),
   );
 }
 
@@ -138,7 +137,7 @@ export type UpdateZincMintMetadataAsyncInput<
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountZincMetadata extends string = string,
-  TAccountMetadataProgram extends string = string
+  TAccountMetadataProgram extends string = string,
 > = {
   /** Admin authorized to update protocol ZINC mint metadata. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -162,7 +161,7 @@ export async function getUpdateZincMintMetadataInstructionAsync<
   TAccountZincMint extends string,
   TAccountZincMetadata extends string,
   TAccountMetadataProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateZincMintMetadataAsyncInput<
     TAccountAdmin,
@@ -172,7 +171,7 @@ export async function getUpdateZincMintMetadataInstructionAsync<
     TAccountZincMetadata,
     TAccountMetadataProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   UpdateZincMintMetadataInstruction<
     TProgramAddress,
@@ -222,11 +221,11 @@ export async function getUpdateZincMintMetadataInstructionAsync<
     accounts.zincMetadata.value = await findZincMetadataPda({
       metadataProgram: getAddressFromResolvedInstructionAccount(
         "metadataProgram",
-        accounts.metadataProgram.value
+        accounts.metadataProgram.value,
       ),
       zincMint: getAddressFromResolvedInstructionAccount(
         "zincMint",
-        accounts.zincMint.value
+        accounts.zincMint.value,
       ),
     });
   }
@@ -242,10 +241,18 @@ export async function getUpdateZincMintMetadataInstructionAsync<
       getAccountMeta("metadataProgram", accounts.metadataProgram),
     ],
     data: getUpdateZincMintMetadataInstructionDataEncoder().encode(
-      args as UpdateZincMintMetadataInstructionDataArgs
+      args as UpdateZincMintMetadataInstructionDataArgs,
     ),
     programAddress,
-  } as UpdateZincMintMetadataInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountZincMetadata, TAccountMetadataProgram>);
+  } as UpdateZincMintMetadataInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountZincMetadata,
+    TAccountMetadataProgram
+  >);
 }
 
 export type UpdateZincMintMetadataInput<
@@ -254,7 +261,7 @@ export type UpdateZincMintMetadataInput<
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountZincMetadata extends string = string,
-  TAccountMetadataProgram extends string = string
+  TAccountMetadataProgram extends string = string,
 > = {
   /** Admin authorized to update protocol ZINC mint metadata. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -278,7 +285,7 @@ export function getUpdateZincMintMetadataInstruction<
   TAccountZincMint extends string,
   TAccountZincMetadata extends string,
   TAccountMetadataProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateZincMintMetadataInput<
     TAccountAdmin,
@@ -288,7 +295,7 @@ export function getUpdateZincMintMetadataInstruction<
     TAccountZincMetadata,
     TAccountMetadataProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): UpdateZincMintMetadataInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -338,15 +345,23 @@ export function getUpdateZincMintMetadataInstruction<
       getAccountMeta("metadataProgram", accounts.metadataProgram),
     ],
     data: getUpdateZincMintMetadataInstructionDataEncoder().encode(
-      args as UpdateZincMintMetadataInstructionDataArgs
+      args as UpdateZincMintMetadataInstructionDataArgs,
     ),
     programAddress,
-  } as UpdateZincMintMetadataInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountZincMetadata, TAccountMetadataProgram>);
+  } as UpdateZincMintMetadataInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountZincMetadata,
+    TAccountMetadataProgram
+  >);
 }
 
 export type ParsedUpdateZincMintMetadataInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -368,11 +383,11 @@ export type ParsedUpdateZincMintMetadataInstruction<
 
 export function parseUpdateZincMintMetadataInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUpdateZincMintMetadataInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     throw new SolanaError(
@@ -380,7 +395,7 @@ export function parseUpdateZincMintMetadataInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 6,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -400,7 +415,7 @@ export function parseUpdateZincMintMetadataInstruction<
       metadataProgram: getNextAccount(),
     },
     data: getUpdateZincMintMetadataInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

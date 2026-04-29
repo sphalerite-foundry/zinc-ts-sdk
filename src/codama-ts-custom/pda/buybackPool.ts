@@ -12,23 +12,23 @@ export type DecodedBuybackPoolAccount = DecodedAccount<BuybackPool>;
 
 /** Derives the singleton Meteora buyback pool manifest PDA. */
 export function getBuybackPoolAddress(
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(BUYBACK_POOL_SEED)],
-    programId
+    programId,
   );
 }
 
 /** Fetches and decodes the singleton Meteora buyback pool manifest account. */
 export async function fetchBuybackPoolAccount(
   connection: Connection,
-  buybackPoolAddress: PublicKey
+  buybackPoolAddress: PublicKey,
 ): Promise<DecodedBuybackPoolAccount> {
   return fetchDecodedAccount(
     connection,
     buybackPoolAddress,
     getBuybackPoolDecoder(),
-    "BuybackPool"
+    "BuybackPool",
   );
 }

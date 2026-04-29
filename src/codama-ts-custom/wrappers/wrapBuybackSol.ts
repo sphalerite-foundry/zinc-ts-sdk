@@ -28,7 +28,7 @@ export async function buildWrapBuybackSolInstruction({
   const buybackSolVault = getBuybackSolVaultAddress()[0];
   const treasuryWsolTokenAccount = getClassicAtaAddress(
     treasury,
-    WSOL_MINT_ADDRESS
+    WSOL_MINT_ADDRESS,
   );
   const instruction = await getWrapBuybackSolInstructionAsync({
     signer: toTransactionSigner(signer),
@@ -41,22 +41,22 @@ export async function buildWrapBuybackSolInstruction({
   });
 
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }
 
 /** Builds the full top-level instruction pair required to wrap and sync buyback SOL. */
 export async function buildWrapBuybackSolInstructions(
-  input: BuildWrapBuybackSolInstruction
+  input: BuildWrapBuybackSolInstruction,
 ): Promise<TransactionInstruction[]> {
   const treasury = getTreasuryAddress()[0];
   const treasuryWsolTokenAccount = getClassicAtaAddress(
     treasury,
-    WSOL_MINT_ADDRESS
+    WSOL_MINT_ADDRESS,
   );
   const wrapInstruction = await buildWrapBuybackSolInstruction(input);
   const syncNativeInstruction = createSyncNativeInstruction(
-    treasuryWsolTokenAccount
+    treasuryWsolTokenAccount,
   );
 
   return [wrapInstruction, syncNativeInstruction];

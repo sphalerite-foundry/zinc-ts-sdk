@@ -44,7 +44,7 @@ export const MIGRATE_CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getMigrateConfigDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    MIGRATE_CONFIG_DISCRIMINATOR
+    MIGRATE_CONFIG_DISCRIMINATOR,
   );
 }
 
@@ -52,10 +52,9 @@ export type MigrateConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -70,7 +69,7 @@ export type MigrateConfigInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -83,7 +82,7 @@ export type MigrateConfigInstructionDataArgs = {};
 export function getMigrateConfigInstructionDataEncoder(): FixedSizeEncoder<MigrateConfigInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: MIGRATE_CONFIG_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: MIGRATE_CONFIG_DISCRIMINATOR }),
   );
 }
 
@@ -99,14 +98,14 @@ export function getMigrateConfigInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getMigrateConfigInstructionDataEncoder(),
-    getMigrateConfigInstructionDataDecoder()
+    getMigrateConfigInstructionDataDecoder(),
   );
 }
 
 export type MigrateConfigInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that pays any rent increase and authorizes the migration. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -118,14 +117,14 @@ export function getMigrateConfigInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: MigrateConfigInput<
     TAccountAdmin,
     TAccountConfig,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): MigrateConfigInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -161,12 +160,17 @@ export function getMigrateConfigInstruction<
     ],
     data: getMigrateConfigInstructionDataEncoder().encode({}),
     programAddress,
-  } as MigrateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountSystemProgram>);
+  } as MigrateConfigInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedMigrateConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -180,11 +184,11 @@ export type ParsedMigrateConfigInstruction<
 
 export function parseMigrateConfigInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedMigrateConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     throw new SolanaError(
@@ -192,7 +196,7 @@ export function parseMigrateConfigInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 3,
-      }
+      },
     );
   }
   let accountIndex = 0;

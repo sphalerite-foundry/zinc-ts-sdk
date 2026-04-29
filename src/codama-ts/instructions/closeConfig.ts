@@ -44,7 +44,7 @@ export const CLOSE_CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getCloseConfigDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_CONFIG_DISCRIMINATOR
+    CLOSE_CONFIG_DISCRIMINATOR,
   );
 }
 
@@ -52,7 +52,7 @@ export type CloseConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -64,7 +64,7 @@ export type CloseConfigInstruction<
       TAccountConfig extends string
         ? WritableAccount<TAccountConfig>
         : TAccountConfig,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -75,7 +75,7 @@ export type CloseConfigInstructionDataArgs = {};
 export function getCloseConfigInstructionDataEncoder(): FixedSizeEncoder<CloseConfigInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLOSE_CONFIG_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLOSE_CONFIG_DISCRIMINATOR }),
   );
 }
 
@@ -91,13 +91,13 @@ export function getCloseConfigInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseConfigInstructionDataEncoder(),
-    getCloseConfigInstructionDataDecoder()
+    getCloseConfigInstructionDataDecoder(),
   );
 }
 
 export type CloseConfigAsyncInput<
   TAccountAdmin extends string = string,
-  TAccountConfig extends string = string
+  TAccountConfig extends string = string,
 > = {
   /** Admin signer that receives the closed config account rent. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -108,10 +108,10 @@ export type CloseConfigAsyncInput<
 export async function getCloseConfigInstructionAsync<
   TAccountAdmin extends string,
   TAccountConfig extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseConfigAsyncInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CloseConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>
 > {
@@ -146,7 +146,7 @@ export async function getCloseConfigInstructionAsync<
 
 export type CloseConfigInput<
   TAccountAdmin extends string = string,
-  TAccountConfig extends string = string
+  TAccountConfig extends string = string,
 > = {
   /** Admin signer that receives the closed config account rent. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -157,10 +157,10 @@ export type CloseConfigInput<
 export function getCloseConfigInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseConfigInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CloseConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig> {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
@@ -188,7 +188,7 @@ export function getCloseConfigInstruction<
 
 export type ParsedCloseConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -202,11 +202,11 @@ export type ParsedCloseConfigInstruction<
 
 export function parseCloseConfigInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     throw new SolanaError(
@@ -214,7 +214,7 @@ export function parseCloseConfigInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 2,
-      }
+      },
     );
   }
   let accountIndex = 0;

@@ -18,22 +18,22 @@ function getRoundIdBytes(roundId: number | bigint): Uint8Array {
 
 export function getRoundSecretAddress(
   roundId: number | bigint,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(ROUND_SECRET_SEED), getRoundIdBytes(roundId)],
-    programId
+    programId,
   );
 }
 
 export async function fetchRoundSecretAccount(
   connection: Connection,
-  roundSecretAddress: PublicKey
+  roundSecretAddress: PublicKey,
 ): Promise<DecodedRoundSecretAccount> {
   return fetchDecodedAccount(
     connection,
     roundSecretAddress,
     getRoundSecretDecoder(),
-    "RoundSecret"
+    "RoundSecret",
   );
 }

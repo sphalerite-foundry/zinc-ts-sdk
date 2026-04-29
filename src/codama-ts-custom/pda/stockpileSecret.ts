@@ -21,26 +21,26 @@ function getStockpileIdBytes(stockpileId: number | bigint): Uint8Array {
 /** Derives one stockpile-secret PDA by stockpile id. */
 export function getStockpileSecretAddress(
   stockpileId: number | bigint,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [
       TEXT_ENCODER.encode(STOCKPILE_SECRET_SEED),
       getStockpileIdBytes(stockpileId),
     ],
-    programId
+    programId,
   );
 }
 
 /** Fetches and decodes one stockpile-secret account. */
 export async function fetchStockpileSecretAccount(
   connection: Connection,
-  stockpileSecretAddress: PublicKey
+  stockpileSecretAddress: PublicKey,
 ): Promise<DecodedStockpileSecretAccount> {
   return fetchDecodedAccount(
     connection,
     stockpileSecretAddress,
     getStockpileSecretDecoder(),
-    "StockpileSecret"
+    "StockpileSecret",
   );
 }

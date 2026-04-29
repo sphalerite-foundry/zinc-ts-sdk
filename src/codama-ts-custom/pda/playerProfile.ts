@@ -14,23 +14,23 @@ export type DecodedPlayerProfileAccount = DecodedAccount<PlayerProfile>;
 /** Derives one player-profile PDA for the provided wallet. */
 export function getPlayerProfileAddress(
   player: PublicKey,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(PLAYER_PROFILE_SEED), player.toBytes()],
-    programId
+    programId,
   );
 }
 
 /** Fetches and decodes one player-profile account. */
 export async function fetchPlayerProfileAccount(
   connection: Connection,
-  playerProfileAddress: PublicKey
+  playerProfileAddress: PublicKey,
 ): Promise<DecodedPlayerProfileAccount> {
   return fetchDecodedAccount(
     connection,
     playerProfileAddress,
     getPlayerProfileDecoder(),
-    "PlayerProfile"
+    "PlayerProfile",
   );
 }

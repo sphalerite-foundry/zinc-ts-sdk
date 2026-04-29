@@ -42,7 +42,7 @@ export const STOCKPILE_SOL_VAULT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getStockpileSolVaultDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    STOCKPILE_SOL_VAULT_DISCRIMINATOR
+    STOCKPILE_SOL_VAULT_DISCRIMINATOR,
   );
 }
 
@@ -69,7 +69,7 @@ export function getStockpileSolVaultEncoder(): FixedSizeEncoder<StockpileSolVaul
       ["initialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STOCKPILE_SOL_VAULT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: STOCKPILE_SOL_VAULT_DISCRIMINATOR }),
   );
 }
 
@@ -89,31 +89,31 @@ export function getStockpileSolVaultCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getStockpileSolVaultEncoder(),
-    getStockpileSolVaultDecoder()
+    getStockpileSolVaultDecoder(),
   );
 }
 
 export function decodeStockpileSolVault<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<StockpileSolVault, TAddress>;
 export function decodeStockpileSolVault<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<StockpileSolVault, TAddress>;
 export function decodeStockpileSolVault<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<StockpileSolVault, TAddress>
   | MaybeAccount<StockpileSolVault, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getStockpileSolVaultDecoder()
+    getStockpileSolVaultDecoder(),
   );
 }
 
 export async function fetchStockpileSolVault<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<StockpileSolVault, TAddress>> {
   const maybeAccount = await fetchMaybeStockpileSolVault(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -121,11 +121,11 @@ export async function fetchStockpileSolVault<TAddress extends string = string>(
 }
 
 export async function fetchMaybeStockpileSolVault<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<StockpileSolVault, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeStockpileSolVault(maybeAccount);
@@ -134,12 +134,12 @@ export async function fetchMaybeStockpileSolVault<
 export async function fetchAllStockpileSolVault(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<StockpileSolVault>[]> {
   const maybeAccounts = await fetchAllMaybeStockpileSolVault(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -148,11 +148,11 @@ export async function fetchAllStockpileSolVault(
 export async function fetchAllMaybeStockpileSolVault(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<StockpileSolVault>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeStockpileSolVault(maybeAccount)
+    decodeStockpileSolVault(maybeAccount),
   );
 }
 

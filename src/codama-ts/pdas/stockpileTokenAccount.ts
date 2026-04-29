@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findStockpileTokenAccountPda(
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -23,13 +23,13 @@ export async function findStockpileTokenAccountPda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([116, 114, 101, 97, 115, 117, 114, 121])
+        new Uint8Array([116, 114, 101, 97, 115, 117, 114, 121]),
       ),
       getBytesEncoder().encode(
         new Uint8Array([
           115, 116, 111, 99, 107, 112, 105, 108, 101, 45, 116, 111, 107, 101,
           110, 45, 97, 99, 99, 111, 117, 110, 116,
-        ])
+        ]),
       ),
     ],
   });

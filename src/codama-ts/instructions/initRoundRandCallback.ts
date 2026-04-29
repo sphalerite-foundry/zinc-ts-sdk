@@ -46,25 +46,23 @@ export const INIT_ROUND_RAND_CALLBACK_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getInitRoundRandCallbackDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INIT_ROUND_RAND_CALLBACK_DISCRIMINATOR
+    INIT_ROUND_RAND_CALLBACK_DISCRIMINATOR,
   );
 }
 
 export type InitRoundRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountInstructionsSysvar extends
-    | string
-    | AccountMeta<string> = "Sysvar1nstructions1111111111111111111111111",
+  TAccountInstructionsSysvar extends string | AccountMeta<string> =
+    "Sysvar1nstructions1111111111111111111111111",
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountRoundSecret extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -93,7 +91,7 @@ export type InitRoundRandCallbackInstruction<
       TAccountRoundSecret extends string
         ? WritableAccount<TAccountRoundSecret>
         : TAccountRoundSecret,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -115,7 +113,7 @@ export function getInitRoundRandCallbackInstructionDataEncoder(): Encoder<InitRo
     (value) => ({
       ...value,
       discriminator: INIT_ROUND_RAND_CALLBACK_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -132,7 +130,7 @@ export function getInitRoundRandCallbackInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getInitRoundRandCallbackInstructionDataEncoder(),
-    getInitRoundRandCallbackInstructionDataDecoder()
+    getInitRoundRandCallbackInstructionDataDecoder(),
   );
 }
 
@@ -144,7 +142,7 @@ export type InitRoundRandCallbackInput<
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
-  TAccountRoundSecret extends string = string
+  TAccountRoundSecret extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -171,7 +169,7 @@ export function getInitRoundRandCallbackInstruction<
   TAccountInstructionsSysvar extends string,
   TAccountRound extends string,
   TAccountRoundSecret extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitRoundRandCallbackInput<
     TAccountArciumProgram,
@@ -183,7 +181,7 @@ export function getInitRoundRandCallbackInstruction<
     TAccountRound,
     TAccountRoundSecret
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitRoundRandCallbackInstruction<
   TProgramAddress,
   TAccountArciumProgram,
@@ -246,15 +244,25 @@ export function getInitRoundRandCallbackInstruction<
       getAccountMeta("roundSecret", accounts.roundSecret),
     ],
     data: getInitRoundRandCallbackInstructionDataEncoder().encode(
-      args as InitRoundRandCallbackInstructionDataArgs
+      args as InitRoundRandCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as InitRoundRandCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountRound, TAccountRoundSecret>);
+  } as InitRoundRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountRound,
+    TAccountRoundSecret
+  >);
 }
 
 export type ParsedInitRoundRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -277,11 +285,11 @@ export type ParsedInitRoundRandCallbackInstruction<
 
 export function parseInitRoundRandCallbackInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitRoundRandCallbackInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     throw new SolanaError(
@@ -289,7 +297,7 @@ export function parseInitRoundRandCallbackInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 8,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -311,7 +319,7 @@ export function parseInitRoundRandCallbackInstruction<
       roundSecret: getNextAccount(),
     },
     data: getInitRoundRandCallbackInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

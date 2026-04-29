@@ -67,6 +67,6 @@ export function getRoundWildcatEntryRangeCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getRoundWildcatEntryRangeEncoder(),
-    getRoundWildcatEntryRangeDecoder()
+    getRoundWildcatEntryRangeDecoder(),
   );
 }

@@ -128,7 +128,7 @@ export function getClusterEncoder(): Encoder<ClusterArgs> {
       ["blsPublicKey", getSetUnsetBN254G2BLSPublicKeyEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: CLUSTER_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLUSTER_DISCRIMINATOR }),
   );
 }
 
@@ -157,24 +157,24 @@ export function getClusterCodec(): Codec<ClusterArgs, Cluster> {
 }
 
 export function decodeCluster<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<Cluster, TAddress>;
 export function decodeCluster<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Cluster, TAddress>;
 export function decodeCluster<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Cluster, TAddress> | MaybeAccount<Cluster, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getClusterDecoder()
+    getClusterDecoder(),
   );
 }
 
 export async function fetchCluster<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<Cluster, TAddress>> {
   const maybeAccount = await fetchMaybeCluster(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -184,7 +184,7 @@ export async function fetchCluster<TAddress extends string = string>(
 export async function fetchMaybeCluster<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Cluster, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeCluster(maybeAccount);
@@ -193,7 +193,7 @@ export async function fetchMaybeCluster<TAddress extends string = string>(
 export async function fetchAllCluster(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<Cluster>[]> {
   const maybeAccounts = await fetchAllMaybeCluster(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -203,7 +203,7 @@ export async function fetchAllCluster(
 export async function fetchAllMaybeCluster(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Cluster>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeCluster(maybeAccount));

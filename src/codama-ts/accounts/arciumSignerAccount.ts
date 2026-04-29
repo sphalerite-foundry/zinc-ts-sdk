@@ -40,7 +40,7 @@ export const ARCIUM_SIGNER_ACCOUNT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getArciumSignerAccountDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    ARCIUM_SIGNER_ACCOUNT_DISCRIMINATOR
+    ARCIUM_SIGNER_ACCOUNT_DISCRIMINATOR,
   );
 }
 
@@ -61,7 +61,7 @@ export function getArciumSignerAccountEncoder(): FixedSizeEncoder<ArciumSignerAc
     (value) => ({
       ...value,
       discriminator: ARCIUM_SIGNER_ACCOUNT_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -80,49 +80,49 @@ export function getArciumSignerAccountCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getArciumSignerAccountEncoder(),
-    getArciumSignerAccountDecoder()
+    getArciumSignerAccountDecoder(),
   );
 }
 
 export function decodeArciumSignerAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<ArciumSignerAccount, TAddress>;
 export function decodeArciumSignerAccount<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<ArciumSignerAccount, TAddress>;
 export function decodeArciumSignerAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<ArciumSignerAccount, TAddress>
   | MaybeAccount<ArciumSignerAccount, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getArciumSignerAccountDecoder()
+    getArciumSignerAccountDecoder(),
   );
 }
 
 export async function fetchArciumSignerAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<ArciumSignerAccount, TAddress>> {
   const maybeAccount = await fetchMaybeArciumSignerAccount(
     rpc,
     address,
-    config
+    config,
   );
   assertAccountExists(maybeAccount);
   return maybeAccount;
 }
 
 export async function fetchMaybeArciumSignerAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<ArciumSignerAccount, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeArciumSignerAccount(maybeAccount);
@@ -131,12 +131,12 @@ export async function fetchMaybeArciumSignerAccount<
 export async function fetchAllArciumSignerAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<ArciumSignerAccount>[]> {
   const maybeAccounts = await fetchAllMaybeArciumSignerAccount(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -145,11 +145,11 @@ export async function fetchAllArciumSignerAccount(
 export async function fetchAllMaybeArciumSignerAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<ArciumSignerAccount>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeArciumSignerAccount(maybeAccount)
+    decodeArciumSignerAccount(maybeAccount),
   );
 }
 

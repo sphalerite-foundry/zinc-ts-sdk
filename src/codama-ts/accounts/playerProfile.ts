@@ -51,7 +51,7 @@ export const PLAYER_PROFILE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getPlayerProfileDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    PLAYER_PROFILE_DISCRIMINATOR
+    PLAYER_PROFILE_DISCRIMINATOR,
   );
 }
 
@@ -153,7 +153,7 @@ export function getPlayerProfileEncoder(): Encoder<PlayerProfileArgs> {
       ["lastJoinedStockpileId", getOptionEncoder(getU64Encoder())],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: PLAYER_PROFILE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: PLAYER_PROFILE_DISCRIMINATOR }),
   );
 }
 
@@ -190,24 +190,24 @@ export function getPlayerProfileCodec(): Codec<
 }
 
 export function decodePlayerProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<PlayerProfile, TAddress>;
 export function decodePlayerProfile<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<PlayerProfile, TAddress>;
 export function decodePlayerProfile<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<PlayerProfile, TAddress> | MaybeAccount<PlayerProfile, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getPlayerProfileDecoder()
+    getPlayerProfileDecoder(),
   );
 }
 
 export async function fetchPlayerProfile<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<PlayerProfile, TAddress>> {
   const maybeAccount = await fetchMaybePlayerProfile(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -217,7 +217,7 @@ export async function fetchPlayerProfile<TAddress extends string = string>(
 export async function fetchMaybePlayerProfile<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<PlayerProfile, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodePlayerProfile(maybeAccount);
@@ -226,12 +226,12 @@ export async function fetchMaybePlayerProfile<TAddress extends string = string>(
 export async function fetchAllPlayerProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<PlayerProfile>[]> {
   const maybeAccounts = await fetchAllMaybePlayerProfile(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -240,7 +240,7 @@ export async function fetchAllPlayerProfile(
 export async function fetchAllMaybePlayerProfile(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<PlayerProfile>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodePlayerProfile(maybeAccount));

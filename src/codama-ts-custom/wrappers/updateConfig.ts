@@ -81,7 +81,7 @@ export async function buildUpdateConfigInstruction({
     curveSaturationLamports: toNullable(curveSaturationLamports),
     curveHistoryMinted: toNullable(curveHistoryMinted),
     curveTargetSupportLamportsPerZinc: toNullable(
-      curveTargetSupportLamportsPerZinc
+      curveTargetSupportLamportsPerZinc,
     ),
     curveMaxSupply: toNullable(curveMaxSupply),
     wildcatRoundFrequency: toNullable(wildcatRoundFrequency),
@@ -91,6 +91,6 @@ export async function buildUpdateConfigInstruction({
   });
 
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

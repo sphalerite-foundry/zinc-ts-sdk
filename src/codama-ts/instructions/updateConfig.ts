@@ -54,7 +54,7 @@ export const UPDATE_CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getUpdateConfigDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    UPDATE_CONFIG_DISCRIMINATOR
+    UPDATE_CONFIG_DISCRIMINATOR,
   );
 }
 
@@ -63,7 +63,7 @@ export type UpdateConfigInstruction<
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -78,7 +78,7 @@ export type UpdateConfigInstruction<
       TAccountBoard extends string
         ? WritableAccount<TAccountBoard>
         : TAccountBoard,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -204,7 +204,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["wildcatWinnerZincSharePpm", getOptionEncoder(getU64Encoder())],
       ["bonanzaHitDivisor", getOptionEncoder(getU64Encoder())],
     ]),
-    (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
 }
 
@@ -242,14 +242,14 @@ export function getUpdateConfigInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getUpdateConfigInstructionDataEncoder(),
-    getUpdateConfigInstructionDataDecoder()
+    getUpdateConfigInstructionDataDecoder(),
   );
 }
 
 export type UpdateConfigAsyncInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountBoard extends string = string
+  TAccountBoard extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config?: Address<TAccountConfig>;
@@ -283,10 +283,10 @@ export async function getUpdateConfigInstructionAsync<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountBoard extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateConfigAsyncInput<TAccountAdmin, TAccountConfig, TAccountBoard>,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   UpdateConfigInstruction<
     TProgramAddress,
@@ -328,16 +328,21 @@ export async function getUpdateConfigInstructionAsync<
       getAccountMeta("board", accounts.board),
     ],
     data: getUpdateConfigInstructionDataEncoder().encode(
-      args as UpdateConfigInstructionDataArgs
+      args as UpdateConfigInstructionDataArgs,
     ),
     programAddress,
-  } as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountBoard>);
+  } as UpdateConfigInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountBoard
+  >);
 }
 
 export type UpdateConfigInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountBoard extends string = string
+  TAccountBoard extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
@@ -371,10 +376,10 @@ export function getUpdateConfigInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountBoard extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateConfigInput<TAccountAdmin, TAccountConfig, TAccountBoard>,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): UpdateConfigInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -406,15 +411,20 @@ export function getUpdateConfigInstruction<
       getAccountMeta("board", accounts.board),
     ],
     data: getUpdateConfigInstructionDataEncoder().encode(
-      args as UpdateConfigInstructionDataArgs
+      args as UpdateConfigInstructionDataArgs,
     ),
     programAddress,
-  } as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountBoard>);
+  } as UpdateConfigInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountBoard
+  >);
 }
 
 export type ParsedUpdateConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -428,11 +438,11 @@ export type ParsedUpdateConfigInstruction<
 
 export function parseUpdateConfigInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUpdateConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     throw new SolanaError(
@@ -440,7 +450,7 @@ export function parseUpdateConfigInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 3,
-      }
+      },
     );
   }
   let accountIndex = 0;

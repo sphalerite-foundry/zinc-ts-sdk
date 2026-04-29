@@ -55,7 +55,7 @@ export const CREATE_BUYBACK_POOL_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getCreateBuybackPoolDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CREATE_BUYBACK_POOL_DISCRIMINATOR
+    CREATE_BUYBACK_POOL_DISCRIMINATOR,
   );
 }
 
@@ -65,16 +65,14 @@ export type CreateBuybackPoolInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountBuybackPool extends string | AccountMeta<string> = string,
-  TAccountWsolMint extends
-    | string
-    | AccountMeta<string> = "So11111111111111111111111111111111111111112",
+  TAccountWsolMint extends string | AccountMeta<string> =
+    "So11111111111111111111111111111111111111112",
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountAdminWsolTokenAccount extends string | AccountMeta<string> = string,
   TAccountAdminZincTokenAccount extends string | AccountMeta<string> = string,
   TAccountDammConfig extends string | AccountMeta<string> = string,
-  TAccountMeteoraProgram extends
-    | string
-    | AccountMeta<string> = "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
+  TAccountMeteoraProgram extends string | AccountMeta<string> =
+    "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
   TAccountPoolAuthority extends string | AccountMeta<string> = string,
   TAccountPool extends string | AccountMeta<string> = string,
   TAccountPositionNftMint extends string | AccountMeta<string> = string,
@@ -83,19 +81,15 @@ export type CreateBuybackPoolInstruction<
   TAccountTokenAVault extends string | AccountMeta<string> = string,
   TAccountTokenBVault extends string | AccountMeta<string> = string,
   TAccountEventAuthority extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountToken2022Program extends
-    | string
-    | AccountMeta<string> = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountToken2022Program extends string | AccountMeta<string> =
+    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -168,7 +162,7 @@ export type CreateBuybackPoolInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -209,7 +203,7 @@ export function getCreateBuybackPoolInstructionDataEncoder(): Encoder<CreateBuyb
       ["sqrtPrice", getU128Encoder()],
       ["activationPoint", getOptionEncoder(getU64Encoder())],
     ]),
-    (value) => ({ ...value, discriminator: CREATE_BUYBACK_POOL_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CREATE_BUYBACK_POOL_DISCRIMINATOR }),
   );
 }
 
@@ -230,7 +224,7 @@ export function getCreateBuybackPoolInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getCreateBuybackPoolInstructionDataEncoder(),
-    getCreateBuybackPoolInstructionDataDecoder()
+    getCreateBuybackPoolInstructionDataDecoder(),
   );
 }
 
@@ -256,7 +250,7 @@ export type CreateBuybackPoolAsyncInput<
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountToken2022Program extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin authorized to register the protocol buyback pool. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -322,7 +316,7 @@ export async function getCreateBuybackPoolInstructionAsync<
   TAccountTokenProgram extends string,
   TAccountToken2022Program extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CreateBuybackPoolAsyncInput<
     TAccountAdmin,
@@ -348,7 +342,7 @@ export async function getCreateBuybackPoolInstructionAsync<
     TAccountToken2022Program,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CreateBuybackPoolInstruction<
     TProgramAddress,
@@ -453,20 +447,20 @@ export async function getCreateBuybackPoolInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "admin",
-            accounts.admin.value
-          )
+            accounts.admin.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "wsolMint",
-            accounts.wsolMint.value
-          )
+            accounts.wsolMint.value,
+          ),
         ),
       ],
     });
@@ -479,20 +473,20 @@ export async function getCreateBuybackPoolInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "admin",
-            accounts.admin.value
-          )
+            accounts.admin.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -541,10 +535,34 @@ export async function getCreateBuybackPoolInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getCreateBuybackPoolInstructionDataEncoder().encode(
-      args as CreateBuybackPoolInstructionDataArgs
+      args as CreateBuybackPoolInstructionDataArgs,
     ),
     programAddress,
-  } as CreateBuybackPoolInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountBuybackPool, TAccountWsolMint, TAccountZincMint, TAccountAdminWsolTokenAccount, TAccountAdminZincTokenAccount, TAccountDammConfig, TAccountMeteoraProgram, TAccountPoolAuthority, TAccountPool, TAccountPositionNftMint, TAccountPositionNftAccount, TAccountPosition, TAccountTokenAVault, TAccountTokenBVault, TAccountEventAuthority, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountToken2022Program, TAccountSystemProgram>);
+  } as CreateBuybackPoolInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountBuybackPool,
+    TAccountWsolMint,
+    TAccountZincMint,
+    TAccountAdminWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountDammConfig,
+    TAccountMeteoraProgram,
+    TAccountPoolAuthority,
+    TAccountPool,
+    TAccountPositionNftMint,
+    TAccountPositionNftAccount,
+    TAccountPosition,
+    TAccountTokenAVault,
+    TAccountTokenBVault,
+    TAccountEventAuthority,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountToken2022Program,
+    TAccountSystemProgram
+  >);
 }
 
 export type CreateBuybackPoolInput<
@@ -569,7 +587,7 @@ export type CreateBuybackPoolInput<
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountToken2022Program extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin authorized to register the protocol buyback pool. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -635,7 +653,7 @@ export function getCreateBuybackPoolInstruction<
   TAccountTokenProgram extends string,
   TAccountToken2022Program extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CreateBuybackPoolInput<
     TAccountAdmin,
@@ -661,7 +679,7 @@ export function getCreateBuybackPoolInstruction<
     TAccountToken2022Program,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CreateBuybackPoolInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -791,15 +809,39 @@ export function getCreateBuybackPoolInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getCreateBuybackPoolInstructionDataEncoder().encode(
-      args as CreateBuybackPoolInstructionDataArgs
+      args as CreateBuybackPoolInstructionDataArgs,
     ),
     programAddress,
-  } as CreateBuybackPoolInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountBuybackPool, TAccountWsolMint, TAccountZincMint, TAccountAdminWsolTokenAccount, TAccountAdminZincTokenAccount, TAccountDammConfig, TAccountMeteoraProgram, TAccountPoolAuthority, TAccountPool, TAccountPositionNftMint, TAccountPositionNftAccount, TAccountPosition, TAccountTokenAVault, TAccountTokenBVault, TAccountEventAuthority, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountToken2022Program, TAccountSystemProgram>);
+  } as CreateBuybackPoolInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountBuybackPool,
+    TAccountWsolMint,
+    TAccountZincMint,
+    TAccountAdminWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountDammConfig,
+    TAccountMeteoraProgram,
+    TAccountPoolAuthority,
+    TAccountPool,
+    TAccountPositionNftMint,
+    TAccountPositionNftAccount,
+    TAccountPosition,
+    TAccountTokenAVault,
+    TAccountTokenBVault,
+    TAccountEventAuthority,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountToken2022Program,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedCreateBuybackPoolInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -843,11 +885,11 @@ export type ParsedCreateBuybackPoolInstruction<
 
 export function parseCreateBuybackPoolInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCreateBuybackPoolInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 22) {
     throw new SolanaError(
@@ -855,7 +897,7 @@ export function parseCreateBuybackPoolInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 22,
-      }
+      },
     );
   }
   let accountIndex = 0;

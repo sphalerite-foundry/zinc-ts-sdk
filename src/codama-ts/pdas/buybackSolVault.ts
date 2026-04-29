@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findBuybackSolVaultPda(
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -26,7 +26,7 @@ export async function findBuybackSolVaultPda(
         new Uint8Array([
           98, 117, 121, 98, 97, 99, 107, 45, 115, 111, 108, 45, 118, 97, 117,
           108, 116,
-        ])
+        ]),
       ),
     ],
   });

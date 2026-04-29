@@ -12,22 +12,22 @@ export type StockpileSolVault = CanonicalStockpileSolVault;
 export type DecodedStockpileSolVaultAccount = DecodedAccount<StockpileSolVault>;
 
 export function getStockpileSolVaultAddress(
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(STOCKPILE_SOL_VAULT_SEED)],
-    programId
+    programId,
   );
 }
 
 export async function fetchStockpileSolVaultAccount(
   connection: Connection,
-  stockpileSolVaultAddress: PublicKey
+  stockpileSolVaultAddress: PublicKey,
 ): Promise<DecodedStockpileSolVaultAccount> {
   return fetchDecodedAccount(
     connection,
     stockpileSolVaultAddress,
     getStockpileSolVaultDecoder(),
-    "StockpileSolVault"
+    "StockpileSolVault",
   );
 }

@@ -99,7 +99,7 @@ export function getSetUnsetBN254G2BLSPublicKeyCodec(): Codec<
 > {
   return combineCodec(
     getSetUnsetBN254G2BLSPublicKeyEncoder(),
-    getSetUnsetBN254G2BLSPublicKeyDecoder()
+    getSetUnsetBN254G2BLSPublicKeyDecoder(),
   );
 }
 
@@ -110,7 +110,7 @@ export function setUnsetBN254G2BLSPublicKey(
     SetUnsetBN254G2BLSPublicKeyArgs,
     "__kind",
     "Set"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SetUnsetBN254G2BLSPublicKeyArgs,
   "__kind",
@@ -122,7 +122,7 @@ export function setUnsetBN254G2BLSPublicKey(
     SetUnsetBN254G2BLSPublicKeyArgs,
     "__kind",
     "Unset"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SetUnsetBN254G2BLSPublicKeyArgs,
   "__kind",
@@ -130,7 +130,7 @@ export function setUnsetBN254G2BLSPublicKey(
 >;
 export function setUnsetBN254G2BLSPublicKey<
   K extends SetUnsetBN254G2BLSPublicKeyArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -138,10 +138,10 @@ export function setUnsetBN254G2BLSPublicKey<
 }
 
 export function isSetUnsetBN254G2BLSPublicKey<
-  K extends SetUnsetBN254G2BLSPublicKey["__kind"]
+  K extends SetUnsetBN254G2BLSPublicKey["__kind"],
 >(
   kind: K,
-  value: SetUnsetBN254G2BLSPublicKey
+  value: SetUnsetBN254G2BLSPublicKey,
 ): value is SetUnsetBN254G2BLSPublicKey & { __kind: K } {
   return value.__kind === kind;
 }

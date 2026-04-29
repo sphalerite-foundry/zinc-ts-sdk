@@ -28,7 +28,7 @@ import { resolveArciumClusterOffset, toAddress } from "./shared";
 
 function getInitRoundCompDefOffset(): number {
   return Buffer.from(getCompDefAccOffset(INIT_ROUND_RAND_CIRCUIT)).readUInt32LE(
-    0
+    0,
   );
 }
 
@@ -63,11 +63,11 @@ export async function buildInitRoundInstruction({
   const executingPool = getExecutingPoolAccAddress(clusterOffset);
   const computationAccount = getComputationAccAddress(
     clusterOffset,
-    computationOffsetBn
+    computationOffsetBn,
   );
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getInitRoundCompDefOffset()
+    getInitRoundCompDefOffset(),
   );
   const clusterAccount = getClusterAccAddress(clusterOffset);
   const instruction = await getInitRoundInstructionAsync({
@@ -87,6 +87,6 @@ export async function buildInitRoundInstruction({
     computationOffset,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }
