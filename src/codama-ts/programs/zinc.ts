@@ -339,16 +339,16 @@ export enum ZincAccount {
 }
 
 export function identifyZincAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): ZincAccount {
   const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([214, 157, 122, 114, 117, 44, 214, 74])
+        new Uint8Array([214, 157, 122, 114, 117, 44, 214, 74]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.ArciumSignerAccount;
@@ -357,9 +357,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([79, 48, 160, 63, 153, 132, 240, 56])
+        new Uint8Array([79, 48, 160, 63, 153, 132, 240, 56]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Board;
@@ -368,9 +368,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([30, 9, 48, 171, 48, 116, 22, 165])
+        new Uint8Array([30, 9, 48, 171, 48, 116, 22, 165]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.BuybackPool;
@@ -379,9 +379,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([186, 89, 216, 116, 119, 22, 131, 194])
+        new Uint8Array([186, 89, 216, 116, 119, 22, 131, 194]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.BuybackSolVault;
@@ -390,9 +390,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([152, 171, 158, 195, 75, 61, 51, 8])
+        new Uint8Array([152, 171, 158, 195, 75, 61, 51, 8]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.ClockAccount;
@@ -401,9 +401,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([236, 225, 118, 228, 173, 106, 18, 60])
+        new Uint8Array([236, 225, 118, 228, 173, 106, 18, 60]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Cluster;
@@ -412,9 +412,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([245, 176, 217, 221, 253, 104, 172, 200])
+        new Uint8Array([245, 176, 217, 221, 253, 104, 172, 200]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.ComputationDefinitionAccount;
@@ -423,9 +423,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([155, 12, 170, 224, 30, 250, 204, 130])
+        new Uint8Array([155, 12, 170, 224, 30, 250, 204, 130]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Config;
@@ -434,9 +434,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([172, 38, 77, 146, 148, 5, 51, 242])
+        new Uint8Array([172, 38, 77, 146, 148, 5, 51, 242]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.FeePool;
@@ -445,9 +445,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([103, 26, 85, 250, 179, 159, 17, 117])
+        new Uint8Array([103, 26, 85, 250, 179, 159, 17, 117]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.MXEAccount;
@@ -456,9 +456,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([223, 113, 15, 54, 123, 122, 140, 100])
+        new Uint8Array([223, 113, 15, 54, 123, 122, 140, 100]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Miner;
@@ -467,9 +467,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([82, 226, 99, 87, 164, 130, 181, 80])
+        new Uint8Array([82, 226, 99, 87, 164, 130, 181, 80]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.PlayerProfile;
@@ -478,9 +478,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([87, 127, 165, 51, 73, 78, 116, 174])
+        new Uint8Array([87, 127, 165, 51, 73, 78, 116, 174]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Round;
@@ -489,9 +489,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([81, 230, 76, 166, 69, 99, 137, 216])
+        new Uint8Array([81, 230, 76, 166, 69, 99, 137, 216]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.RoundSecret;
@@ -500,9 +500,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([78, 165, 30, 111, 171, 125, 11, 220])
+        new Uint8Array([78, 165, 30, 111, 171, 125, 11, 220]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.StakePosition;
@@ -511,9 +511,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([218, 41, 100, 84, 84, 16, 69, 252])
+        new Uint8Array([218, 41, 100, 84, 84, 16, 69, 252]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Stockpile;
@@ -522,9 +522,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([134, 65, 169, 219, 213, 106, 88, 158])
+        new Uint8Array([134, 65, 169, 219, 213, 106, 88, 158]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.StockpileExtras;
@@ -533,9 +533,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([255, 124, 28, 6, 165, 72, 14, 187])
+        new Uint8Array([255, 124, 28, 6, 165, 72, 14, 187]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.StockpileSecret;
@@ -544,9 +544,9 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([116, 215, 19, 233, 185, 164, 92, 225])
+        new Uint8Array([116, 215, 19, 233, 185, 164, 92, 225]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.StockpileSolVault;
@@ -555,16 +555,16 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([238, 239, 123, 238, 89, 1, 168, 253])
+        new Uint8Array([238, 239, 123, 238, 89, 1, 168, 253]),
       ),
-      0
+      0,
     )
   ) {
     return ZincAccount.Treasury;
   }
   throw new SolanaError(
     SOLANA_ERROR__PROGRAM_CLIENTS__FAILED_TO_IDENTIFY_ACCOUNT,
-    { accountData: data, programName: "zinc" }
+    { accountData: data, programName: "zinc" },
   );
 }
 
@@ -620,16 +620,16 @@ export enum ZincInstruction {
 }
 
 export function identifyZincInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): ZincInstruction {
   const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([106, 117, 64, 30, 56, 69, 7, 45])
+        new Uint8Array([106, 117, 64, 30, 56, 69, 7, 45]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.Buyback;
@@ -638,9 +638,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([12, 79, 157, 146, 92, 197, 95, 18])
+        new Uint8Array([12, 79, 157, 146, 92, 197, 95, 18]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClaimAffiliate;
@@ -649,9 +649,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([124, 86, 221, 109, 203, 99, 227, 187])
+        new Uint8Array([124, 86, 221, 109, 203, 99, 227, 187]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClaimBuybackPoolFees;
@@ -660,9 +660,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([180, 73, 23, 99, 186, 205, 14, 200])
+        new Uint8Array([180, 73, 23, 99, 186, 205, 14, 200]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClaimRound;
@@ -671,9 +671,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([105, 22, 90, 204, 157, 145, 17, 231])
+        new Uint8Array([105, 22, 90, 204, 157, 145, 17, 231]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClaimStakingYield;
@@ -682,9 +682,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([181, 248, 215, 25, 160, 80, 48, 79])
+        new Uint8Array([181, 248, 215, 25, 160, 80, 48, 79]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClaimWildcat;
@@ -693,9 +693,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([145, 9, 72, 157, 95, 125, 61, 85])
+        new Uint8Array([145, 9, 72, 157, 95, 125, 61, 85]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseConfig;
@@ -704,9 +704,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([101, 10, 186, 29, 231, 198, 255, 67])
+        new Uint8Array([101, 10, 186, 29, 231, 198, 255, 67]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseMiner;
@@ -715,9 +715,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([42, 10, 115, 220, 35, 21, 218, 96])
+        new Uint8Array([42, 10, 115, 220, 35, 21, 218, 96]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.ClosePda;
@@ -726,9 +726,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([149, 14, 81, 88, 230, 226, 234, 37])
+        new Uint8Array([149, 14, 81, 88, 230, 226, 234, 37]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseRound;
@@ -737,9 +737,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([158, 92, 241, 90, 112, 189, 63, 133])
+        new Uint8Array([158, 92, 241, 90, 112, 189, 63, 133]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseRoundAccounts;
@@ -748,9 +748,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([101, 6, 219, 243, 219, 170, 245, 147])
+        new Uint8Array([101, 6, 219, 243, 219, 170, 245, 147]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseStockpile;
@@ -759,9 +759,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([27, 1, 160, 18, 86, 108, 220, 239])
+        new Uint8Array([27, 1, 160, 18, 86, 108, 220, 239]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseStockpileAccounts;
@@ -770,9 +770,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([39, 253, 164, 255, 181, 54, 22, 27])
+        new Uint8Array([39, 253, 164, 255, 181, 54, 22, 27]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CloseTreasuryTokenAccount;
@@ -781,9 +781,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([149, 112, 78, 105, 27, 160, 104, 167])
+        new Uint8Array([149, 112, 78, 105, 27, 160, 104, 167]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.CreateBuybackPool;
@@ -792,9 +792,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([30, 1, 160, 127, 39, 199, 134, 0])
+        new Uint8Array([30, 1, 160, 127, 39, 199, 134, 0]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.DeployRound;
@@ -803,9 +803,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([243, 122, 13, 200, 79, 143, 185, 145])
+        new Uint8Array([243, 122, 13, 200, 79, 143, 185, 145]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.DepositStockpileExtra;
@@ -814,9 +814,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([208, 203, 217, 27, 206, 70, 45, 36])
+        new Uint8Array([208, 203, 217, 27, 206, 70, 45, 36]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.FinalizeNoWinnerRound;
@@ -825,9 +825,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([99, 74, 129, 223, 26, 254, 94, 217])
+        new Uint8Array([99, 74, 129, 223, 26, 254, 94, 217]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitBoard;
@@ -836,9 +836,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([23, 235, 115, 232, 168, 96, 1, 231])
+        new Uint8Array([23, 235, 115, 232, 168, 96, 1, 231]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitConfig;
@@ -847,9 +847,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([237, 164, 229, 147, 106, 136, 149, 90])
+        new Uint8Array([237, 164, 229, 147, 106, 136, 149, 90]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitRevealRoundRandCompDef;
@@ -858,9 +858,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([28, 65, 227, 179, 127, 73, 208, 215])
+        new Uint8Array([28, 65, 227, 179, 127, 73, 208, 215]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitRevealStockpileRandCompDef;
@@ -869,9 +869,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([147, 244, 62, 18, 218, 248, 44, 234])
+        new Uint8Array([147, 244, 62, 18, 218, 248, 44, 234]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitRound;
@@ -880,9 +880,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([192, 158, 104, 209, 71, 9, 24, 97])
+        new Uint8Array([192, 158, 104, 209, 71, 9, 24, 97]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitRoundRandCallback;
@@ -891,9 +891,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([44, 30, 174, 213, 70, 194, 145, 158])
+        new Uint8Array([44, 30, 174, 213, 70, 194, 145, 158]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitRoundRandCompDef;
@@ -902,9 +902,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([253, 32, 24, 187, 188, 62, 150, 111])
+        new Uint8Array([253, 32, 24, 187, 188, 62, 150, 111]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitSettleWinningStakesBatchCompDef;
@@ -913,9 +913,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([45, 15, 113, 253, 68, 153, 218, 160])
+        new Uint8Array([45, 15, 113, 253, 68, 153, 218, 160]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitStockpile;
@@ -924,9 +924,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([198, 198, 8, 119, 229, 69, 211, 83])
+        new Uint8Array([198, 198, 8, 119, 229, 69, 211, 83]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitStockpileRandCallback;
@@ -935,9 +935,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([125, 176, 101, 247, 237, 176, 50, 211])
+        new Uint8Array([125, 176, 101, 247, 237, 176, 50, 211]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.InitStockpileRandCompDef;
@@ -946,9 +946,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([62, 217, 82, 43, 3, 79, 57, 242])
+        new Uint8Array([62, 217, 82, 43, 3, 79, 57, 242]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.JoinStockpile;
@@ -957,9 +957,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([42, 127, 85, 29, 150, 84, 21, 158])
+        new Uint8Array([42, 127, 85, 29, 150, 84, 21, 158]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.Melt;
@@ -968,9 +968,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([92, 131, 58, 105, 210, 154, 224, 193])
+        new Uint8Array([92, 131, 58, 105, 210, 154, 224, 193]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.MigrateConfig;
@@ -979,9 +979,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([150, 118, 163, 66, 221, 25, 36, 185])
+        new Uint8Array([150, 118, 163, 66, 221, 25, 36, 185]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.PayoutStockpile;
@@ -990,9 +990,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([183, 36, 21, 147, 186, 150, 224, 246])
+        new Uint8Array([183, 36, 21, 147, 186, 150, 224, 246]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.PayoutStockpileExtra;
@@ -1001,9 +1001,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([130, 5, 84, 63, 17, 129, 126, 223])
+        new Uint8Array([130, 5, 84, 63, 17, 129, 126, 223]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.QueueRoundSettlement;
@@ -1012,9 +1012,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([178, 202, 109, 130, 64, 239, 157, 214])
+        new Uint8Array([178, 202, 109, 130, 64, 239, 157, 214]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.QueueSettleWinningStakesBatch;
@@ -1023,9 +1023,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([87, 183, 83, 42, 149, 70, 233, 57])
+        new Uint8Array([87, 183, 83, 42, 149, 70, 233, 57]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.QueueStockpileReveal;
@@ -1034,9 +1034,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([49, 83, 220, 33, 54, 155, 235, 114])
+        new Uint8Array([49, 83, 220, 33, 54, 155, 235, 114]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.RevealRoundRandCallback;
@@ -1045,9 +1045,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([22, 173, 186, 204, 250, 186, 251, 62])
+        new Uint8Array([22, 173, 186, 204, 250, 186, 251, 62]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.RevealStockpileRandCallback;
@@ -1056,9 +1056,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([210, 209, 137, 205, 217, 146, 10, 237])
+        new Uint8Array([210, 209, 137, 205, 217, 146, 10, 237]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.SelectWildcatWinner;
@@ -1067,9 +1067,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([207, 13, 75, 112, 225, 218, 12, 200])
+        new Uint8Array([207, 13, 75, 112, 225, 218, 12, 200]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.SettleWinningStakesBatchCallback;
@@ -1078,9 +1078,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([206, 176, 202, 18, 200, 209, 179, 108])
+        new Uint8Array([206, 176, 202, 18, 200, 209, 179, 108]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.Stake;
@@ -1089,9 +1089,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([90, 95, 107, 42, 205, 124, 50, 225])
+        new Uint8Array([90, 95, 107, 42, 205, 124, 50, 225]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.Unstake;
@@ -1100,9 +1100,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([29, 158, 252, 191, 10, 83, 219, 99])
+        new Uint8Array([29, 158, 252, 191, 10, 83, 219, 99]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.UpdateConfig;
@@ -1111,9 +1111,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([129, 29, 107, 197, 70, 193, 189, 186])
+        new Uint8Array([129, 29, 107, 197, 70, 193, 189, 186]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.UpdateZincMintMetadata;
@@ -1122,9 +1122,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([119, 118, 139, 250, 239, 205, 246, 157])
+        new Uint8Array([119, 118, 139, 250, 239, 205, 246, 157]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.WaitForFirstDeploy;
@@ -1133,9 +1133,9 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([43, 110, 110, 113, 177, 16, 201, 250])
+        new Uint8Array([43, 110, 110, 113, 177, 16, 201, 250]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.WithdrawTreasuryFees;
@@ -1144,21 +1144,21 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([230, 81, 102, 81, 194, 180, 24, 22])
+        new Uint8Array([230, 81, 102, 81, 194, 180, 24, 22]),
       ),
-      0
+      0,
     )
   ) {
     return ZincInstruction.WrapBuybackSol;
   }
   throw new SolanaError(
     SOLANA_ERROR__PROGRAM_CLIENTS__FAILED_TO_IDENTIFY_INSTRUCTION,
-    { instructionData: data, programName: "zinc" }
+    { instructionData: data, programName: "zinc" },
   );
 }
 
 export type ParsedZincInstruction<
-  TProgram extends string = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y"
+  TProgram extends string = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y",
 > =
   | ({
       instructionType: ZincInstruction.Buyback;
@@ -1306,7 +1306,7 @@ export type ParsedZincInstruction<
     } & ParsedWrapBuybackSolInstruction<TProgram>);
 
 export function parseZincInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
 ): ParsedZincInstruction<TProgram> {
   const instructionType = identifyZincInstruction(instruction);
   switch (instructionType) {
@@ -1649,7 +1649,7 @@ export function parseZincInstruction<TProgram extends string>(
     default:
       throw new SolanaError(
         SOLANA_ERROR__PROGRAM_CLIENTS__UNRECOGNIZED_INSTRUCTION_TYPE,
-        { instructionType: instructionType as string, programName: "zinc" }
+        { instructionType: instructionType as string, programName: "zinc" },
       );
   }
 }
@@ -1710,193 +1710,193 @@ export type ZincPluginAccounts = {
 
 export type ZincPluginInstructions = {
   buyback: (
-    input: BuybackAsyncInput
+    input: BuybackAsyncInput,
   ) => ReturnType<typeof getBuybackInstructionAsync> & SelfPlanAndSendFunctions;
   claimAffiliate: (
-    input: ClaimAffiliateAsyncInput
+    input: ClaimAffiliateAsyncInput,
   ) => ReturnType<typeof getClaimAffiliateInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimBuybackPoolFees: (
-    input: ClaimBuybackPoolFeesAsyncInput
+    input: ClaimBuybackPoolFeesAsyncInput,
   ) => ReturnType<typeof getClaimBuybackPoolFeesInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimRound: (
-    input: ClaimRoundAsyncInput
+    input: ClaimRoundAsyncInput,
   ) => ReturnType<typeof getClaimRoundInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimStakingYield: (
-    input: ClaimStakingYieldAsyncInput
+    input: ClaimStakingYieldAsyncInput,
   ) => ReturnType<typeof getClaimStakingYieldInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimWildcat: (
-    input: ClaimWildcatAsyncInput
+    input: ClaimWildcatAsyncInput,
   ) => ReturnType<typeof getClaimWildcatInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeConfig: (
-    input: CloseConfigAsyncInput
+    input: CloseConfigAsyncInput,
   ) => ReturnType<typeof getCloseConfigInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeMiner: (
-    input: CloseMinerAsyncInput
+    input: CloseMinerAsyncInput,
   ) => ReturnType<typeof getCloseMinerInstructionAsync> &
     SelfPlanAndSendFunctions;
   closePda: (
-    input: ClosePdaAsyncInput
+    input: ClosePdaAsyncInput,
   ) => ReturnType<typeof getClosePdaInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeRound: (
-    input: CloseRoundAsyncInput
+    input: CloseRoundAsyncInput,
   ) => ReturnType<typeof getCloseRoundInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeRoundAccounts: (
-    input: CloseRoundAccountsAsyncInput
+    input: CloseRoundAccountsAsyncInput,
   ) => ReturnType<typeof getCloseRoundAccountsInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeStockpile: (
-    input: CloseStockpileAsyncInput
+    input: CloseStockpileAsyncInput,
   ) => ReturnType<typeof getCloseStockpileInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeStockpileAccounts: (
-    input: CloseStockpileAccountsAsyncInput
+    input: CloseStockpileAccountsAsyncInput,
   ) => ReturnType<typeof getCloseStockpileAccountsInstructionAsync> &
     SelfPlanAndSendFunctions;
   closeTreasuryTokenAccount: (
-    input: CloseTreasuryTokenAccountAsyncInput
+    input: CloseTreasuryTokenAccountAsyncInput,
   ) => ReturnType<typeof getCloseTreasuryTokenAccountInstructionAsync> &
     SelfPlanAndSendFunctions;
   createBuybackPool: (
-    input: CreateBuybackPoolAsyncInput
+    input: CreateBuybackPoolAsyncInput,
   ) => ReturnType<typeof getCreateBuybackPoolInstructionAsync> &
     SelfPlanAndSendFunctions;
   deployRound: (
-    input: DeployRoundAsyncInput
+    input: DeployRoundAsyncInput,
   ) => ReturnType<typeof getDeployRoundInstructionAsync> &
     SelfPlanAndSendFunctions;
   depositStockpileExtra: (
-    input: DepositStockpileExtraAsyncInput
+    input: DepositStockpileExtraAsyncInput,
   ) => ReturnType<typeof getDepositStockpileExtraInstructionAsync> &
     SelfPlanAndSendFunctions;
   finalizeNoWinnerRound: (
-    input: FinalizeNoWinnerRoundAsyncInput
+    input: FinalizeNoWinnerRoundAsyncInput,
   ) => ReturnType<typeof getFinalizeNoWinnerRoundInstructionAsync> &
     SelfPlanAndSendFunctions;
   initBoard: (
-    input: InitBoardAsyncInput
+    input: InitBoardAsyncInput,
   ) => ReturnType<typeof getInitBoardInstructionAsync> &
     SelfPlanAndSendFunctions;
   initConfig: (
-    input: InitConfigAsyncInput
+    input: InitConfigAsyncInput,
   ) => ReturnType<typeof getInitConfigInstructionAsync> &
     SelfPlanAndSendFunctions;
   initRevealRoundRandCompDef: (
-    input: MakeOptional<InitRevealRoundRandCompDefAsyncInput, "payer">
+    input: MakeOptional<InitRevealRoundRandCompDefAsyncInput, "payer">,
   ) => ReturnType<typeof getInitRevealRoundRandCompDefInstructionAsync> &
     SelfPlanAndSendFunctions;
   initRevealStockpileRandCompDef: (
-    input: MakeOptional<InitRevealStockpileRandCompDefAsyncInput, "payer">
+    input: MakeOptional<InitRevealStockpileRandCompDefAsyncInput, "payer">,
   ) => ReturnType<typeof getInitRevealStockpileRandCompDefInstructionAsync> &
     SelfPlanAndSendFunctions;
   initRound: (
-    input: MakeOptional<InitRoundAsyncInput, "payer">
+    input: MakeOptional<InitRoundAsyncInput, "payer">,
   ) => ReturnType<typeof getInitRoundInstructionAsync> &
     SelfPlanAndSendFunctions;
   initRoundRandCallback: (
-    input: InitRoundRandCallbackInput
+    input: InitRoundRandCallbackInput,
   ) => ReturnType<typeof getInitRoundRandCallbackInstruction> &
     SelfPlanAndSendFunctions;
   initRoundRandCompDef: (
-    input: MakeOptional<InitRoundRandCompDefAsyncInput, "payer">
+    input: MakeOptional<InitRoundRandCompDefAsyncInput, "payer">,
   ) => ReturnType<typeof getInitRoundRandCompDefInstructionAsync> &
     SelfPlanAndSendFunctions;
   initSettleWinningStakesBatchCompDef: (
-    input: MakeOptional<InitSettleWinningStakesBatchCompDefAsyncInput, "payer">
+    input: MakeOptional<InitSettleWinningStakesBatchCompDefAsyncInput, "payer">,
   ) => ReturnType<
     typeof getInitSettleWinningStakesBatchCompDefInstructionAsync
   > &
     SelfPlanAndSendFunctions;
   initStockpile: (
-    input: MakeOptional<InitStockpileAsyncInput, "payer">
+    input: MakeOptional<InitStockpileAsyncInput, "payer">,
   ) => ReturnType<typeof getInitStockpileInstructionAsync> &
     SelfPlanAndSendFunctions;
   initStockpileRandCallback: (
-    input: InitStockpileRandCallbackAsyncInput
+    input: InitStockpileRandCallbackAsyncInput,
   ) => ReturnType<typeof getInitStockpileRandCallbackInstructionAsync> &
     SelfPlanAndSendFunctions;
   initStockpileRandCompDef: (
-    input: MakeOptional<InitStockpileRandCompDefAsyncInput, "payer">
+    input: MakeOptional<InitStockpileRandCompDefAsyncInput, "payer">,
   ) => ReturnType<typeof getInitStockpileRandCompDefInstructionAsync> &
     SelfPlanAndSendFunctions;
   joinStockpile: (
-    input: JoinStockpileAsyncInput
+    input: JoinStockpileAsyncInput,
   ) => ReturnType<typeof getJoinStockpileInstructionAsync> &
     SelfPlanAndSendFunctions;
   melt: (
-    input: MeltAsyncInput
+    input: MeltAsyncInput,
   ) => ReturnType<typeof getMeltInstructionAsync> & SelfPlanAndSendFunctions;
   migrateConfig: (
-    input: MigrateConfigInput
+    input: MigrateConfigInput,
   ) => ReturnType<typeof getMigrateConfigInstruction> &
     SelfPlanAndSendFunctions;
   payoutStockpile: (
-    input: PayoutStockpileAsyncInput
+    input: PayoutStockpileAsyncInput,
   ) => ReturnType<typeof getPayoutStockpileInstructionAsync> &
     SelfPlanAndSendFunctions;
   payoutStockpileExtra: (
-    input: PayoutStockpileExtraAsyncInput
+    input: PayoutStockpileExtraAsyncInput,
   ) => ReturnType<typeof getPayoutStockpileExtraInstructionAsync> &
     SelfPlanAndSendFunctions;
   queueRoundSettlement: (
-    input: QueueRoundSettlementAsyncInput
+    input: QueueRoundSettlementAsyncInput,
   ) => ReturnType<typeof getQueueRoundSettlementInstructionAsync> &
     SelfPlanAndSendFunctions;
   queueSettleWinningStakesBatch: (
-    input: QueueSettleWinningStakesBatchAsyncInput
+    input: QueueSettleWinningStakesBatchAsyncInput,
   ) => ReturnType<typeof getQueueSettleWinningStakesBatchInstructionAsync> &
     SelfPlanAndSendFunctions;
   queueStockpileReveal: (
-    input: QueueStockpileRevealAsyncInput
+    input: QueueStockpileRevealAsyncInput,
   ) => ReturnType<typeof getQueueStockpileRevealInstructionAsync> &
     SelfPlanAndSendFunctions;
   revealRoundRandCallback: (
-    input: RevealRoundRandCallbackAsyncInput
+    input: RevealRoundRandCallbackAsyncInput,
   ) => ReturnType<typeof getRevealRoundRandCallbackInstructionAsync> &
     SelfPlanAndSendFunctions;
   revealStockpileRandCallback: (
-    input: RevealStockpileRandCallbackInput
+    input: RevealStockpileRandCallbackInput,
   ) => ReturnType<typeof getRevealStockpileRandCallbackInstruction> &
     SelfPlanAndSendFunctions;
   selectWildcatWinner: (
-    input: SelectWildcatWinnerAsyncInput
+    input: SelectWildcatWinnerAsyncInput,
   ) => ReturnType<typeof getSelectWildcatWinnerInstructionAsync> &
     SelfPlanAndSendFunctions;
   settleWinningStakesBatchCallback: (
-    input: SettleWinningStakesBatchCallbackAsyncInput
+    input: SettleWinningStakesBatchCallbackAsyncInput,
   ) => ReturnType<typeof getSettleWinningStakesBatchCallbackInstructionAsync> &
     SelfPlanAndSendFunctions;
   stake: (
-    input: StakeAsyncInput
+    input: StakeAsyncInput,
   ) => ReturnType<typeof getStakeInstructionAsync> & SelfPlanAndSendFunctions;
   unstake: (
-    input: UnstakeAsyncInput
+    input: UnstakeAsyncInput,
   ) => ReturnType<typeof getUnstakeInstructionAsync> & SelfPlanAndSendFunctions;
   updateConfig: (
-    input: UpdateConfigAsyncInput
+    input: UpdateConfigAsyncInput,
   ) => ReturnType<typeof getUpdateConfigInstructionAsync> &
     SelfPlanAndSendFunctions;
   updateZincMintMetadata: (
-    input: UpdateZincMintMetadataAsyncInput
+    input: UpdateZincMintMetadataAsyncInput,
   ) => ReturnType<typeof getUpdateZincMintMetadataInstructionAsync> &
     SelfPlanAndSendFunctions;
   waitForFirstDeploy: (
-    input: WaitForFirstDeployAsyncInput
+    input: WaitForFirstDeployAsyncInput,
   ) => ReturnType<typeof getWaitForFirstDeployInstructionAsync> &
     SelfPlanAndSendFunctions;
   withdrawTreasuryFees: (
-    input: WithdrawTreasuryFeesAsyncInput
+    input: WithdrawTreasuryFeesAsyncInput,
   ) => ReturnType<typeof getWithdrawTreasuryFeesInstructionAsync> &
     SelfPlanAndSendFunctions;
   wrapBuybackSol: (
-    input: WrapBuybackSolAsyncInput
+    input: WrapBuybackSolAsyncInput,
   ) => ReturnType<typeof getWrapBuybackSolInstructionAsync> &
     SelfPlanAndSendFunctions;
 };
@@ -1933,26 +1933,26 @@ export type ZincPluginRequirements = ClientWithRpc<
 
 export function zincProgram() {
   return <T extends ZincPluginRequirements>(
-    client: T
+    client: T,
   ): Omit<T, "zinc"> & { zinc: ZincPlugin } => {
     return extendClient(client, {
       zinc: <ZincPlugin>{
         accounts: {
           arciumSignerAccount: addSelfFetchFunctions(
             client,
-            getArciumSignerAccountCodec()
+            getArciumSignerAccountCodec(),
           ),
           board: addSelfFetchFunctions(client, getBoardCodec()),
           buybackPool: addSelfFetchFunctions(client, getBuybackPoolCodec()),
           buybackSolVault: addSelfFetchFunctions(
             client,
-            getBuybackSolVaultCodec()
+            getBuybackSolVaultCodec(),
           ),
           clockAccount: addSelfFetchFunctions(client, getClockAccountCodec()),
           cluster: addSelfFetchFunctions(client, getClusterCodec()),
           computationDefinitionAccount: addSelfFetchFunctions(
             client,
-            getComputationDefinitionAccountCodec()
+            getComputationDefinitionAccountCodec(),
           ),
           config: addSelfFetchFunctions(client, getConfigCodec()),
           feePool: addSelfFetchFunctions(client, getFeePoolCodec()),
@@ -1965,15 +1965,15 @@ export function zincProgram() {
           stockpile: addSelfFetchFunctions(client, getStockpileCodec()),
           stockpileExtras: addSelfFetchFunctions(
             client,
-            getStockpileExtrasCodec()
+            getStockpileExtrasCodec(),
           ),
           stockpileSecret: addSelfFetchFunctions(
             client,
-            getStockpileSecretCodec()
+            getStockpileSecretCodec(),
           ),
           stockpileSolVault: addSelfFetchFunctions(
             client,
-            getStockpileSolVaultCodec()
+            getStockpileSolVaultCodec(),
           ),
           treasury: addSelfFetchFunctions(client, getTreasuryCodec()),
         },
@@ -1981,102 +1981,102 @@ export function zincProgram() {
           buyback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getBuybackInstructionAsync(input)
+              getBuybackInstructionAsync(input),
             ),
           claimAffiliate: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimAffiliateInstructionAsync(input)
+              getClaimAffiliateInstructionAsync(input),
             ),
           claimBuybackPoolFees: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimBuybackPoolFeesInstructionAsync(input)
+              getClaimBuybackPoolFeesInstructionAsync(input),
             ),
           claimRound: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimRoundInstructionAsync(input)
+              getClaimRoundInstructionAsync(input),
             ),
           claimStakingYield: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimStakingYieldInstructionAsync(input)
+              getClaimStakingYieldInstructionAsync(input),
             ),
           claimWildcat: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimWildcatInstructionAsync(input)
+              getClaimWildcatInstructionAsync(input),
             ),
           closeConfig: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseConfigInstructionAsync(input)
+              getCloseConfigInstructionAsync(input),
             ),
           closeMiner: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseMinerInstructionAsync(input)
+              getCloseMinerInstructionAsync(input),
             ),
           closePda: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClosePdaInstructionAsync(input)
+              getClosePdaInstructionAsync(input),
             ),
           closeRound: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseRoundInstructionAsync(input)
+              getCloseRoundInstructionAsync(input),
             ),
           closeRoundAccounts: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseRoundAccountsInstructionAsync(input)
+              getCloseRoundAccountsInstructionAsync(input),
             ),
           closeStockpile: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseStockpileInstructionAsync(input)
+              getCloseStockpileInstructionAsync(input),
             ),
           closeStockpileAccounts: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseStockpileAccountsInstructionAsync(input)
+              getCloseStockpileAccountsInstructionAsync(input),
             ),
           closeTreasuryTokenAccount: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCloseTreasuryTokenAccountInstructionAsync(input)
+              getCloseTreasuryTokenAccountInstructionAsync(input),
             ),
           createBuybackPool: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCreateBuybackPoolInstructionAsync(input)
+              getCreateBuybackPoolInstructionAsync(input),
             ),
           deployRound: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getDeployRoundInstructionAsync(input)
+              getDeployRoundInstructionAsync(input),
             ),
           depositStockpileExtra: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getDepositStockpileExtraInstructionAsync(input)
+              getDepositStockpileExtraInstructionAsync(input),
             ),
           finalizeNoWinnerRound: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getFinalizeNoWinnerRoundInstructionAsync(input)
+              getFinalizeNoWinnerRoundInstructionAsync(input),
             ),
           initBoard: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getInitBoardInstructionAsync(input)
+              getInitBoardInstructionAsync(input),
             ),
           initConfig: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getInitConfigInstructionAsync(input)
+              getInitConfigInstructionAsync(input),
             ),
           initRevealRoundRandCompDef: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2084,7 +2084,7 @@ export function zincProgram() {
               getInitRevealRoundRandCompDefInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initRevealStockpileRandCompDef: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2092,7 +2092,7 @@ export function zincProgram() {
               getInitRevealStockpileRandCompDefInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initRound: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2100,12 +2100,12 @@ export function zincProgram() {
               getInitRoundInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initRoundRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getInitRoundRandCallbackInstruction(input)
+              getInitRoundRandCallbackInstruction(input),
             ),
           initRoundRandCompDef: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2113,7 +2113,7 @@ export function zincProgram() {
               getInitRoundRandCompDefInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initSettleWinningStakesBatchCompDef: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2121,7 +2121,7 @@ export function zincProgram() {
               getInitSettleWinningStakesBatchCompDefInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initStockpile: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2129,12 +2129,12 @@ export function zincProgram() {
               getInitStockpileInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           initStockpileRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getInitStockpileRandCallbackInstructionAsync(input)
+              getInitStockpileRandCallbackInstructionAsync(input),
             ),
           initStockpileRandCompDef: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2142,99 +2142,99 @@ export function zincProgram() {
               getInitStockpileRandCompDefInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
-              })
+              }),
             ),
           joinStockpile: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getJoinStockpileInstructionAsync(input)
+              getJoinStockpileInstructionAsync(input),
             ),
           melt: (input) =>
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),
           migrateConfig: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getMigrateConfigInstruction(input)
+              getMigrateConfigInstruction(input),
             ),
           payoutStockpile: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getPayoutStockpileInstructionAsync(input)
+              getPayoutStockpileInstructionAsync(input),
             ),
           payoutStockpileExtra: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getPayoutStockpileExtraInstructionAsync(input)
+              getPayoutStockpileExtraInstructionAsync(input),
             ),
           queueRoundSettlement: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getQueueRoundSettlementInstructionAsync(input)
+              getQueueRoundSettlementInstructionAsync(input),
             ),
           queueSettleWinningStakesBatch: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getQueueSettleWinningStakesBatchInstructionAsync(input)
+              getQueueSettleWinningStakesBatchInstructionAsync(input),
             ),
           queueStockpileReveal: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getQueueStockpileRevealInstructionAsync(input)
+              getQueueStockpileRevealInstructionAsync(input),
             ),
           revealRoundRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getRevealRoundRandCallbackInstructionAsync(input)
+              getRevealRoundRandCallbackInstructionAsync(input),
             ),
           revealStockpileRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getRevealStockpileRandCallbackInstruction(input)
+              getRevealStockpileRandCallbackInstruction(input),
             ),
           selectWildcatWinner: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getSelectWildcatWinnerInstructionAsync(input)
+              getSelectWildcatWinnerInstructionAsync(input),
             ),
           settleWinningStakesBatchCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getSettleWinningStakesBatchCallbackInstructionAsync(input)
+              getSettleWinningStakesBatchCallbackInstructionAsync(input),
             ),
           stake: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getStakeInstructionAsync(input)
+              getStakeInstructionAsync(input),
             ),
           unstake: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getUnstakeInstructionAsync(input)
+              getUnstakeInstructionAsync(input),
             ),
           updateConfig: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getUpdateConfigInstructionAsync(input)
+              getUpdateConfigInstructionAsync(input),
             ),
           updateZincMintMetadata: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getUpdateZincMintMetadataInstructionAsync(input)
+              getUpdateZincMintMetadataInstructionAsync(input),
             ),
           waitForFirstDeploy: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getWaitForFirstDeployInstructionAsync(input)
+              getWaitForFirstDeployInstructionAsync(input),
             ),
           withdrawTreasuryFees: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getWithdrawTreasuryFeesInstructionAsync(input)
+              getWithdrawTreasuryFeesInstructionAsync(input),
             ),
           wrapBuybackSol: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getWrapBuybackSolInstructionAsync(input)
+              getWrapBuybackSolInstructionAsync(input),
             ),
         },
         pdas: {

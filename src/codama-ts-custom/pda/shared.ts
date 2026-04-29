@@ -10,13 +10,13 @@ export async function fetchDecodedAccount<T>(
   connection: Connection,
   accountAddress: PublicKey,
   decoder: { decode(data: ReadonlyUint8Array): T },
-  accountName: string
+  accountName: string,
 ): Promise<DecodedAccount<T>> {
   const accountInfo = await connection.getAccountInfo(accountAddress);
 
   if (!accountInfo) {
     throw new Error(
-      `${accountName} account not found: ${accountAddress.toBase58()}`
+      `${accountName} account not found: ${accountAddress.toBase58()}`,
     );
   }
 

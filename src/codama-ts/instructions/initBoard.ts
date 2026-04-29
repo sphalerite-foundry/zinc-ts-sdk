@@ -52,10 +52,9 @@ export type InitBoardInstruction<
   TAccountAuthority extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -73,7 +72,7 @@ export type InitBoardInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -84,7 +83,7 @@ export type InitBoardInstructionDataArgs = {};
 export function getInitBoardInstructionDataEncoder(): FixedSizeEncoder<InitBoardInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: INIT_BOARD_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: INIT_BOARD_DISCRIMINATOR }),
   );
 }
 
@@ -100,7 +99,7 @@ export function getInitBoardInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitBoardInstructionDataEncoder(),
-    getInitBoardInstructionDataDecoder()
+    getInitBoardInstructionDataDecoder(),
   );
 }
 
@@ -108,7 +107,7 @@ export type InitBoardAsyncInput<
   TAccountAuthority extends string = string,
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the board account initialization. */
   authority: TransactionSigner<TAccountAuthority>;
@@ -124,7 +123,7 @@ export async function getInitBoardInstructionAsync<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitBoardAsyncInput<
     TAccountAuthority,
@@ -132,7 +131,7 @@ export async function getInitBoardInstructionAsync<
     TAccountBoard,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitBoardInstruction<
     TProgramAddress,
@@ -179,14 +178,20 @@ export async function getInitBoardInstructionAsync<
     ],
     data: getInitBoardInstructionDataEncoder().encode({}),
     programAddress,
-  } as InitBoardInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountBoard, TAccountSystemProgram>);
+  } as InitBoardInstruction<
+    TProgramAddress,
+    TAccountAuthority,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountSystemProgram
+  >);
 }
 
 export type InitBoardInput<
   TAccountAuthority extends string = string,
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the board account initialization. */
   authority: TransactionSigner<TAccountAuthority>;
@@ -202,7 +207,7 @@ export function getInitBoardInstruction<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitBoardInput<
     TAccountAuthority,
@@ -210,7 +215,7 @@ export function getInitBoardInstruction<
     TAccountBoard,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitBoardInstruction<
   TProgramAddress,
   TAccountAuthority,
@@ -249,12 +254,18 @@ export function getInitBoardInstruction<
     ],
     data: getInitBoardInstructionDataEncoder().encode({}),
     programAddress,
-  } as InitBoardInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountBoard, TAccountSystemProgram>);
+  } as InitBoardInstruction<
+    TProgramAddress,
+    TAccountAuthority,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedInitBoardInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -271,11 +282,11 @@ export type ParsedInitBoardInstruction<
 
 export function parseInitBoardInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitBoardInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     throw new SolanaError(
@@ -283,7 +294,7 @@ export function parseInitBoardInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 4,
-      }
+      },
     );
   }
   let accountIndex = 0;

@@ -53,7 +53,7 @@ export const ROUND_SECRET_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getRoundSecretDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    ROUND_SECRET_DISCRIMINATOR
+    ROUND_SECRET_DISCRIMINATOR,
   );
 }
 
@@ -95,12 +95,12 @@ export function getRoundSecretEncoder(): Encoder<RoundSecretArgs> {
       [
         "ciphertexts",
         getOptionEncoder(
-          getArrayEncoder(fixEncoderSize(getBytesEncoder(), 32), { size: 2 })
+          getArrayEncoder(fixEncoderSize(getBytesEncoder(), 32), { size: 2 }),
         ),
       ],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: ROUND_SECRET_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: ROUND_SECRET_DISCRIMINATOR }),
   );
 }
 
@@ -114,7 +114,7 @@ export function getRoundSecretDecoder(): Decoder<RoundSecret> {
     [
       "ciphertexts",
       getOptionDecoder(
-        getArrayDecoder(fixDecoderSize(getBytesDecoder(), 32), { size: 2 })
+        getArrayDecoder(fixDecoderSize(getBytesDecoder(), 32), { size: 2 }),
       ),
     ],
     ["bump", getU8Decoder()],
@@ -127,24 +127,24 @@ export function getRoundSecretCodec(): Codec<RoundSecretArgs, RoundSecret> {
 }
 
 export function decodeRoundSecret<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<RoundSecret, TAddress>;
 export function decodeRoundSecret<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<RoundSecret, TAddress>;
 export function decodeRoundSecret<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<RoundSecret, TAddress> | MaybeAccount<RoundSecret, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getRoundSecretDecoder()
+    getRoundSecretDecoder(),
   );
 }
 
 export async function fetchRoundSecret<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<RoundSecret, TAddress>> {
   const maybeAccount = await fetchMaybeRoundSecret(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -154,7 +154,7 @@ export async function fetchRoundSecret<TAddress extends string = string>(
 export async function fetchMaybeRoundSecret<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<RoundSecret, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeRoundSecret(maybeAccount);
@@ -163,7 +163,7 @@ export async function fetchMaybeRoundSecret<TAddress extends string = string>(
 export async function fetchAllRoundSecret(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<RoundSecret>[]> {
   const maybeAccounts = await fetchAllMaybeRoundSecret(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -173,7 +173,7 @@ export async function fetchAllRoundSecret(
 export async function fetchAllMaybeRoundSecret(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<RoundSecret>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeRoundSecret(maybeAccount));

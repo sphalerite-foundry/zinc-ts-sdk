@@ -44,7 +44,7 @@ export const WAIT_FOR_FIRST_DEPLOY_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getWaitForFirstDeployDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    WAIT_FOR_FIRST_DEPLOY_DISCRIMINATOR
+    WAIT_FOR_FIRST_DEPLOY_DISCRIMINATOR,
   );
 }
 
@@ -55,7 +55,7 @@ export type WaitForFirstDeployInstruction<
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountRoundSecret extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -76,7 +76,7 @@ export type WaitForFirstDeployInstruction<
       TAccountRoundSecret extends string
         ? ReadonlyAccount<TAccountRoundSecret>
         : TAccountRoundSecret,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -92,7 +92,7 @@ export function getWaitForFirstDeployInstructionDataEncoder(): FixedSizeEncoder<
     (value) => ({
       ...value,
       discriminator: WAIT_FOR_FIRST_DEPLOY_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -108,7 +108,7 @@ export function getWaitForFirstDeployInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getWaitForFirstDeployInstructionDataEncoder(),
-    getWaitForFirstDeployInstructionDataDecoder()
+    getWaitForFirstDeployInstructionDataDecoder(),
   );
 }
 
@@ -117,7 +117,7 @@ export type WaitForFirstDeployAsyncInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
-  TAccountRoundSecret extends string = string
+  TAccountRoundSecret extends string = string,
 > = {
   /** Crank authorized to promote prepared rounds into the waiting state. */
   signer: TransactionSigner<TAccountSigner>;
@@ -137,7 +137,7 @@ export async function getWaitForFirstDeployInstructionAsync<
   TAccountBoard extends string,
   TAccountRound extends string,
   TAccountRoundSecret extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WaitForFirstDeployAsyncInput<
     TAccountSigner,
@@ -146,7 +146,7 @@ export async function getWaitForFirstDeployInstructionAsync<
     TAccountRound,
     TAccountRoundSecret
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   WaitForFirstDeployInstruction<
     TProgramAddress,
@@ -192,7 +192,14 @@ export async function getWaitForFirstDeployInstructionAsync<
     ],
     data: getWaitForFirstDeployInstructionDataEncoder().encode({}),
     programAddress,
-  } as WaitForFirstDeployInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret>);
+  } as WaitForFirstDeployInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret
+  >);
 }
 
 export type WaitForFirstDeployInput<
@@ -200,7 +207,7 @@ export type WaitForFirstDeployInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
-  TAccountRoundSecret extends string = string
+  TAccountRoundSecret extends string = string,
 > = {
   /** Crank authorized to promote prepared rounds into the waiting state. */
   signer: TransactionSigner<TAccountSigner>;
@@ -220,7 +227,7 @@ export function getWaitForFirstDeployInstruction<
   TAccountBoard extends string,
   TAccountRound extends string,
   TAccountRoundSecret extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WaitForFirstDeployInput<
     TAccountSigner,
@@ -229,7 +236,7 @@ export function getWaitForFirstDeployInstruction<
     TAccountRound,
     TAccountRoundSecret
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): WaitForFirstDeployInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -265,12 +272,19 @@ export function getWaitForFirstDeployInstruction<
     ],
     data: getWaitForFirstDeployInstructionDataEncoder().encode({}),
     programAddress,
-  } as WaitForFirstDeployInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret>);
+  } as WaitForFirstDeployInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret
+  >);
 }
 
 export type ParsedWaitForFirstDeployInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -290,11 +304,11 @@ export type ParsedWaitForFirstDeployInstruction<
 
 export function parseWaitForFirstDeployInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedWaitForFirstDeployInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     throw new SolanaError(
@@ -302,7 +316,7 @@ export function parseWaitForFirstDeployInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 5,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -321,7 +335,7 @@ export function parseWaitForFirstDeployInstruction<
       roundSecret: getNextAccount(),
     },
     data: getWaitForFirstDeployInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

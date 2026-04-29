@@ -58,13 +58,11 @@ export type MeltInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountStakingRewardTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
+    string,
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -88,7 +86,7 @@ export type MeltInstruction<
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -109,7 +107,7 @@ export function getMeltInstructionDataEncoder(): FixedSizeEncoder<MeltInstructio
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: MELT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: MELT_DISCRIMINATOR }),
   );
 }
 
@@ -126,7 +124,7 @@ export function getMeltInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getMeltInstructionDataEncoder(),
-    getMeltInstructionDataDecoder()
+    getMeltInstructionDataDecoder(),
   );
 }
 
@@ -136,7 +134,7 @@ export type MeltAsyncInput<
   TAccountZincMint extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Wallet that contributes ZINC into the shared melt sink. */
   signer: TransactionSigner<TAccountSigner>;
@@ -160,7 +158,7 @@ export async function getMeltInstructionAsync<
   TAccountSignerZincTokenAccount extends string,
   TAccountStakingRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: MeltAsyncInput<
     TAccountSigner,
@@ -170,7 +168,7 @@ export async function getMeltInstructionAsync<
     TAccountStakingRewardTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   MeltInstruction<
     TProgramAddress,
@@ -224,20 +222,20 @@ export async function getMeltInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "signer",
-            accounts.signer.value
-          )
+            accounts.signer.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -256,15 +254,23 @@ export async function getMeltInstructionAsync<
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
     data: getMeltInstructionDataEncoder().encode(
-      args as MeltInstructionDataArgs
+      args as MeltInstructionDataArgs,
     ),
     programAddress,
-  } as MeltInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountSignerZincTokenAccount, TAccountStakingRewardTokenAccount, TAccountTokenProgram>);
+  } as MeltInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type MeltInput<
@@ -273,7 +279,7 @@ export type MeltInput<
   TAccountZincMint extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Wallet that contributes ZINC into the shared melt sink. */
   signer: TransactionSigner<TAccountSigner>;
@@ -297,7 +303,7 @@ export function getMeltInstruction<
   TAccountSignerZincTokenAccount extends string,
   TAccountStakingRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: MeltInput<
     TAccountSigner,
@@ -307,7 +313,7 @@ export function getMeltInstruction<
     TAccountStakingRewardTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): MeltInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -358,20 +364,28 @@ export function getMeltInstruction<
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
     data: getMeltInstructionDataEncoder().encode(
-      args as MeltInstructionDataArgs
+      args as MeltInstructionDataArgs,
     ),
     programAddress,
-  } as MeltInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountSignerZincTokenAccount, TAccountStakingRewardTokenAccount, TAccountTokenProgram>);
+  } as MeltInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type ParsedMeltInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -393,11 +407,11 @@ export type ParsedMeltInstruction<
 
 export function parseMeltInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedMeltInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     throw new SolanaError(
@@ -405,7 +419,7 @@ export function parseMeltInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 6,
-      }
+      },
     );
   }
   let accountIndex = 0;

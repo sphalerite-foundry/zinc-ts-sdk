@@ -33,10 +33,10 @@ export function buildCloseStockpileAccountsInstruction({
     board: toAddress(getBoardAddress()[0]),
     stockpile: toAddress(getStockpileAddress(stockpileId)[0]),
     stockpileSecret: toAddress(
-      stockpileSecret ?? getStockpileSecretAddress(stockpileId)[0]
+      stockpileSecret ?? getStockpileSecretAddress(stockpileId)[0],
     ),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

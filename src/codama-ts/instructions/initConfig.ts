@@ -79,28 +79,22 @@ export type InitConfigInstruction<
   TAccountBonanzaTokenAccount extends string | AccountMeta<string> = string,
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
   TAccountStakingTokenAccount extends string | AccountMeta<string> = string,
-  TAccountStakingRewardTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountStockpileSolVault extends string | AccountMeta<string> = string,
   TAccountBuybackSolVault extends string | AccountMeta<string> = string,
   TAccountStockpileExtras extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountMetadataProgram extends
-    | string
-    | AccountMeta<string> = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-  TAccountRent extends
-    | string
-    | AccountMeta<string> = "SysvarRent111111111111111111111111111111111",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountMetadataProgram extends string | AccountMeta<string> =
+    "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+  TAccountRent extends string | AccountMeta<string> =
+    "SysvarRent111111111111111111111111111111111",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -164,7 +158,7 @@ export type InitConfigInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -181,7 +175,7 @@ export function getInitConfigInstructionDataEncoder(): Encoder<InitConfigInstruc
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["args", getZincMintMetadataArgsEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: INIT_CONFIG_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: INIT_CONFIG_DISCRIMINATOR }),
   );
 }
 
@@ -198,7 +192,7 @@ export function getInitConfigInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getInitConfigInstructionDataEncoder(),
-    getInitConfigInstructionDataDecoder()
+    getInitConfigInstructionDataDecoder(),
   );
 }
 
@@ -221,7 +215,7 @@ export type InitConfigAsyncInput<
   TAccountTokenProgram extends string = string,
   TAccountMetadataProgram extends string = string,
   TAccountRent extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   crank: Address<TAccountCrank>;
@@ -279,7 +273,7 @@ export async function getInitConfigInstructionAsync<
   TAccountMetadataProgram extends string,
   TAccountRent extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitConfigAsyncInput<
     TAccountAdmin,
@@ -302,7 +296,7 @@ export async function getInitConfigInstructionAsync<
     TAccountRent,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitConfigInstruction<
     TProgramAddress,
@@ -399,11 +393,11 @@ export async function getInitConfigInstructionAsync<
     accounts.zincMetadata.value = await findZincMetadataPda({
       metadataProgram: getAddressFromResolvedInstructionAccount(
         "metadataProgram",
-        accounts.metadataProgram.value
+        accounts.metadataProgram.value,
       ),
       zincMint: getAddressFromResolvedInstructionAccount(
         "zincMint",
-        accounts.zincMint.value
+        accounts.zincMint.value,
       ),
     });
   }
@@ -419,20 +413,20 @@ export async function getInitConfigInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "treasury",
-            accounts.treasury.value
-          )
+            accounts.treasury.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -487,7 +481,7 @@ export async function getInitConfigInstructionAsync<
       getAccountMeta("stakingTokenAccount", accounts.stakingTokenAccount),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("stockpileSolVault", accounts.stockpileSolVault),
       getAccountMeta("buybackSolVault", accounts.buybackSolVault),
@@ -499,10 +493,31 @@ export async function getInitConfigInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitConfigInstructionDataEncoder().encode(
-      args as InitConfigInstructionDataArgs
+      args as InitConfigInstructionDataArgs,
     ),
     programAddress,
-  } as InitConfigInstruction<TProgramAddress, TAccountAdmin, TAccountCrank, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountZincMetadata, TAccountCurveAdminTokenAccount, TAccountBonanzaTokenAccount, TAccountStockpileTokenAccount, TAccountStakingTokenAccount, TAccountStakingRewardTokenAccount, TAccountStockpileSolVault, TAccountBuybackSolVault, TAccountStockpileExtras, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountMetadataProgram, TAccountRent, TAccountSystemProgram>);
+  } as InitConfigInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountCrank,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountZincMetadata,
+    TAccountCurveAdminTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountStockpileTokenAccount,
+    TAccountStakingTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountStockpileSolVault,
+    TAccountBuybackSolVault,
+    TAccountStockpileExtras,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountMetadataProgram,
+    TAccountRent,
+    TAccountSystemProgram
+  >);
 }
 
 export type InitConfigInput<
@@ -524,7 +539,7 @@ export type InitConfigInput<
   TAccountTokenProgram extends string = string,
   TAccountMetadataProgram extends string = string,
   TAccountRent extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   crank: Address<TAccountCrank>;
@@ -582,7 +597,7 @@ export function getInitConfigInstruction<
   TAccountMetadataProgram extends string,
   TAccountRent extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitConfigInput<
     TAccountAdmin,
@@ -605,7 +620,7 @@ export function getInitConfigInstruction<
     TAccountRent,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitConfigInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -722,7 +737,7 @@ export function getInitConfigInstruction<
       getAccountMeta("stakingTokenAccount", accounts.stakingTokenAccount),
       getAccountMeta(
         "stakingRewardTokenAccount",
-        accounts.stakingRewardTokenAccount
+        accounts.stakingRewardTokenAccount,
       ),
       getAccountMeta("stockpileSolVault", accounts.stockpileSolVault),
       getAccountMeta("buybackSolVault", accounts.buybackSolVault),
@@ -734,15 +749,36 @@ export function getInitConfigInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitConfigInstructionDataEncoder().encode(
-      args as InitConfigInstructionDataArgs
+      args as InitConfigInstructionDataArgs,
     ),
     programAddress,
-  } as InitConfigInstruction<TProgramAddress, TAccountAdmin, TAccountCrank, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountZincMetadata, TAccountCurveAdminTokenAccount, TAccountBonanzaTokenAccount, TAccountStockpileTokenAccount, TAccountStakingTokenAccount, TAccountStakingRewardTokenAccount, TAccountStockpileSolVault, TAccountBuybackSolVault, TAccountStockpileExtras, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountMetadataProgram, TAccountRent, TAccountSystemProgram>);
+  } as InitConfigInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountCrank,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountZincMetadata,
+    TAccountCurveAdminTokenAccount,
+    TAccountBonanzaTokenAccount,
+    TAccountStockpileTokenAccount,
+    TAccountStakingTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountStockpileSolVault,
+    TAccountBuybackSolVault,
+    TAccountStockpileExtras,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountMetadataProgram,
+    TAccountRent,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedInitConfigInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -785,11 +821,11 @@ export type ParsedInitConfigInstruction<
 
 export function parseInitConfigInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 19) {
     throw new SolanaError(
@@ -797,7 +833,7 @@ export function parseInitConfigInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 19,
-      }
+      },
     );
   }
   let accountIndex = 0;

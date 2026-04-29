@@ -39,6 +39,6 @@ export function getRevealStockpileRandOutputCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getRevealStockpileRandOutputEncoder(),
-    getRevealStockpileRandOutputDecoder()
+    getRevealStockpileRandOutputDecoder(),
   );
 }

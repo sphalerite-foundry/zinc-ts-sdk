@@ -13,10 +13,10 @@ import { toAddress } from "./shared";
 import { getMinerAddress, getRoundAddress } from "../pda";
 
 const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
-  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
 );
 const TOKEN_PROGRAM_ID = new PublicKey(
-  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
 );
 
 export type BuildClaimRoundInstruction = {
@@ -30,11 +30,11 @@ export type BuildClaimRoundInstruction = {
 /** Derives the canonical player ATA that receives optional ZINC stockpile payouts. */
 function getPlayerZincTokenAccount(
   player: PublicKey,
-  zincMint: PublicKey
+  zincMint: PublicKey,
 ): PublicKey {
   return PublicKey.findProgramAddressSync(
     [player.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), zincMint.toBuffer()],
-    ASSOCIATED_TOKEN_PROGRAM_ID
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   )[0];
 }
 
@@ -52,10 +52,10 @@ export async function buildClaimRoundInstruction({
   const roundZincPayoutTokenAccount = getRoundZincPayoutTokenAccountAddress(
     roundId,
     treasury,
-    zincMint
+    zincMint,
   )[0];
   const bonanzaTokenAccount = new PublicKey(
-    treasuryAccount.data.bonanzaTokenAccount
+    treasuryAccount.data.bonanzaTokenAccount,
   );
   const playerZincTokenAccount = getPlayerZincTokenAccount(player, zincMint);
   const instruction = await getClaimRoundInstructionAsync({
@@ -70,6 +70,6 @@ export async function buildClaimRoundInstruction({
     playerZincTokenAccount: toAddress(playerZincTokenAccount),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

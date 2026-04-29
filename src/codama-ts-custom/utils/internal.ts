@@ -19,27 +19,27 @@ export type DecodedMxeAccount = {
 
 export async function fetchDecodedBoard(
   connection: Connection,
-  programId: PublicKey
+  programId: PublicKey,
 ): Promise<DecodedBoardAccount> {
   const [boardAddress] = getBoardAddress(programId);
   return fetchDecodedAccount(
     connection,
     boardAddress,
     getBoardDecoder(),
-    "Board"
+    "Board",
   );
 }
 
 export async function fetchDecodedRound(
   connection: Connection,
-  roundAddress: PublicKey
+  roundAddress: PublicKey,
 ): Promise<DecodedRoundAccount> {
   return fetchRoundAccount(connection, roundAddress);
 }
 
 export async function fetchDecodedMxeAccount(
   connection: Connection,
-  mxeAddress: PublicKey
+  mxeAddress: PublicKey,
 ): Promise<DecodedMxeAccount> {
   const accountInfo = await connection.getAccountInfo(mxeAddress);
 

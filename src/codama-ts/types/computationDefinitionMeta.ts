@@ -54,6 +54,6 @@ export function getComputationDefinitionMetaCodec(): Codec<
 > {
   return combineCodec(
     getComputationDefinitionMetaEncoder(),
-    getComputationDefinitionMetaDecoder()
+    getComputationDefinitionMetaDecoder(),
   );
 }

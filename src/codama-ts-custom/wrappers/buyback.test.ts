@@ -35,16 +35,16 @@ test("buildWrapBuybackSolInstruction derives treasury WSOL custody", async () =>
   assert.equal(instruction.keys[0]?.isSigner, true);
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
-    getConfigAddress()[0].toBase58()
+    getConfigAddress()[0].toBase58(),
   );
   assert.equal(instruction.keys[2]?.pubkey.toBase58(), treasury.toBase58());
   assert.equal(
     instruction.keys[4]?.pubkey.toBase58(),
-    WSOL_MINT_ADDRESS.toBase58()
+    WSOL_MINT_ADDRESS.toBase58(),
   );
   assert.equal(
     instruction.keys[5]?.pubkey.toBase58(),
-    getClassicAtaAddress(treasury, WSOL_MINT_ADDRESS).toBase58()
+    getClassicAtaAddress(treasury, WSOL_MINT_ADDRESS).toBase58(),
   );
 });
 
@@ -53,7 +53,7 @@ test("buildWrapBuybackSolInstructions appends native sync", async () => {
   const treasury = getTreasuryAddress()[0];
   const treasuryWsolTokenAccount = getClassicAtaAddress(
     treasury,
-    WSOL_MINT_ADDRESS
+    WSOL_MINT_ADDRESS,
   );
   const instructions = await buildWrapBuybackSolInstructions({
     signer,
@@ -64,7 +64,7 @@ test("buildWrapBuybackSolInstructions appends native sync", async () => {
   assert.equal(instructions[0]?.keys[0]?.pubkey.toBase58(), signer.toBase58());
   assert.equal(
     instructions[1]?.keys[0]?.pubkey.toBase58(),
-    treasuryWsolTokenAccount.toBase58()
+    treasuryWsolTokenAccount.toBase58(),
   );
   assert.equal(instructions[1]?.keys[0]?.isWritable, true);
 });
@@ -93,54 +93,54 @@ test("buildBuybackInstruction targets the stored Meteora pool accounts", async (
   assert.equal(instruction.keys[0]?.pubkey.toBase58(), signer.toBase58());
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
-    getConfigAddress()[0].toBase58()
+    getConfigAddress()[0].toBase58(),
   );
   assert.equal(instruction.keys[2]?.pubkey.toBase58(), treasury.toBase58());
   assert.equal(
     instruction.keys[3]?.pubkey.toBase58(),
-    getBuybackPoolAddress()[0].toBase58()
+    getBuybackPoolAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[4]?.pubkey.toBase58(),
-    WSOL_MINT_ADDRESS.toBase58()
+    WSOL_MINT_ADDRESS.toBase58(),
   );
   assert.equal(instruction.keys[5]?.pubkey.toBase58(), zincMint.toBase58());
   assert.equal(
     instruction.keys[6]?.pubkey.toBase58(),
-    getClassicAtaAddress(treasury, WSOL_MINT_ADDRESS).toBase58()
+    getClassicAtaAddress(treasury, WSOL_MINT_ADDRESS).toBase58(),
   );
   assert.equal(
     instruction.keys[7]?.pubkey.toBase58(),
-    getBuybackZincTokenAccountAddress()[0].toBase58()
+    getBuybackZincTokenAccountAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[8]?.pubkey.toBase58(),
-    getStakingRewardTokenAccountAddress()[0].toBase58()
+    getStakingRewardTokenAccountAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[9]?.pubkey.toBase58(),
-    buybackPoolAccounts.poolAuthority.toBase58()
+    buybackPoolAccounts.poolAuthority.toBase58(),
   );
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    buybackPoolAccounts.pool.toBase58()
+    buybackPoolAccounts.pool.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    buybackPoolAccounts.tokenAVault.toBase58()
+    buybackPoolAccounts.tokenAVault.toBase58(),
   );
   assert.equal(
     instruction.keys[12]?.pubkey.toBase58(),
-    buybackPoolAccounts.tokenBVault.toBase58()
+    buybackPoolAccounts.tokenBVault.toBase58(),
   );
   assert.equal(
     instruction.keys[13]?.pubkey.toBase58(),
-    buybackPoolAccounts.eventAuthority.toBase58()
+    buybackPoolAccounts.eventAuthority.toBase58(),
   );
   assert.equal(instruction.keys[13]?.isWritable, false);
   assert.deepEqual(
     [...instruction.data.subarray(0, 8)],
-    [106, 117, 64, 30, 56, 69, 7, 45]
+    [106, 117, 64, 30, 56, 69, 7, 45],
   );
 });
 
@@ -168,38 +168,38 @@ test("buildClaimBuybackPoolFeesInstruction targets dedicated fee custody", async
   assert.equal(instruction.keys[0]?.isSigner, true);
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
-    getConfigAddress()[0].toBase58()
+    getConfigAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[3]?.pubkey.toBase58(),
-    getBuybackPoolAddress()[0].toBase58()
+    getBuybackPoolAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[4]?.pubkey.toBase58(),
-    WSOL_MINT_ADDRESS.toBase58()
+    WSOL_MINT_ADDRESS.toBase58(),
   );
   assert.equal(instruction.keys[5]?.pubkey.toBase58(), zincMint.toBase58());
   assert.equal(
     instruction.keys[6]?.pubkey.toBase58(),
-    getBuybackFeeZincTokenAccountAddress()[0].toBase58()
+    getBuybackFeeZincTokenAccountAddress()[0].toBase58(),
   );
   assert.equal(instruction.keys[6]?.isWritable, true);
   assert.equal(
     instruction.keys[7]?.pubkey.toBase58(),
-    getBuybackFeeWsolTokenAccountAddress()[0].toBase58()
+    getBuybackFeeWsolTokenAccountAddress()[0].toBase58(),
   );
   assert.equal(instruction.keys[7]?.isWritable, true);
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    buybackPoolAccounts.position.toBase58()
+    buybackPoolAccounts.position.toBase58(),
   );
   assert.equal(instruction.keys[10]?.isWritable, true);
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    buybackPoolAccounts.positionNftAccount.toBase58()
+    buybackPoolAccounts.positionNftAccount.toBase58(),
   );
   assert.deepEqual(
     [...instruction.data.subarray(0, 8)],
-    [124, 86, 221, 109, 203, 99, 227, 187]
+    [124, 86, 221, 109, 203, 99, 227, 187],
   );
 });

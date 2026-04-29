@@ -53,7 +53,7 @@ export const WRAP_BUYBACK_SOL_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getWrapBuybackSolDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    WRAP_BUYBACK_SOL_DISCRIMINATOR
+    WRAP_BUYBACK_SOL_DISCRIMINATOR,
   );
 }
 
@@ -63,22 +63,17 @@ export type WrapBuybackSolInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountBuybackSolVault extends string | AccountMeta<string> = string,
-  TAccountWsolMint extends
-    | string
-    | AccountMeta<string> = "So11111111111111111111111111111111111111112",
-  TAccountTreasuryWsolTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountWsolMint extends string | AccountMeta<string> =
+    "So11111111111111111111111111111111111111112",
+  TAccountTreasuryWsolTokenAccount extends string | AccountMeta<string> =
+    string,
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -111,7 +106,7 @@ export type WrapBuybackSolInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -132,7 +127,7 @@ export function getWrapBuybackSolInstructionDataEncoder(): FixedSizeEncoder<Wrap
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: WRAP_BUYBACK_SOL_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: WRAP_BUYBACK_SOL_DISCRIMINATOR }),
   );
 }
 
@@ -149,7 +144,7 @@ export function getWrapBuybackSolInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getWrapBuybackSolInstructionDataEncoder(),
-    getWrapBuybackSolInstructionDataDecoder()
+    getWrapBuybackSolInstructionDataDecoder(),
   );
 }
 
@@ -162,7 +157,7 @@ export type WrapBuybackSolAsyncInput<
   TAccountTreasuryWsolTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank authority that pays ATA rent when needed and requests the wrap. */
   signer: TransactionSigner<TAccountSigner>;
@@ -195,7 +190,7 @@ export async function getWrapBuybackSolInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WrapBuybackSolAsyncInput<
     TAccountSigner,
@@ -208,7 +203,7 @@ export async function getWrapBuybackSolInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   WrapBuybackSolInstruction<
     TProgramAddress,
@@ -278,20 +273,20 @@ export async function getWrapBuybackSolInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "treasury",
-            accounts.treasury.value
-          )
+            accounts.treasury.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "wsolMint",
-            accounts.wsolMint.value
-          )
+            accounts.wsolMint.value,
+          ),
         ),
       ],
     });
@@ -315,17 +310,28 @@ export async function getWrapBuybackSolInstructionAsync<
       getAccountMeta("wsolMint", accounts.wsolMint),
       getAccountMeta(
         "treasuryWsolTokenAccount",
-        accounts.treasuryWsolTokenAccount
+        accounts.treasuryWsolTokenAccount,
       ),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getWrapBuybackSolInstructionDataEncoder().encode(
-      args as WrapBuybackSolInstructionDataArgs
+      args as WrapBuybackSolInstructionDataArgs,
     ),
     programAddress,
-  } as WrapBuybackSolInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountTreasury, TAccountBuybackSolVault, TAccountWsolMint, TAccountTreasuryWsolTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as WrapBuybackSolInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountBuybackSolVault,
+    TAccountWsolMint,
+    TAccountTreasuryWsolTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type WrapBuybackSolInput<
@@ -337,7 +343,7 @@ export type WrapBuybackSolInput<
   TAccountTreasuryWsolTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank authority that pays ATA rent when needed and requests the wrap. */
   signer: TransactionSigner<TAccountSigner>;
@@ -370,7 +376,7 @@ export function getWrapBuybackSolInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WrapBuybackSolInput<
     TAccountSigner,
@@ -383,7 +389,7 @@ export function getWrapBuybackSolInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): WrapBuybackSolInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -453,22 +459,33 @@ export function getWrapBuybackSolInstruction<
       getAccountMeta("wsolMint", accounts.wsolMint),
       getAccountMeta(
         "treasuryWsolTokenAccount",
-        accounts.treasuryWsolTokenAccount
+        accounts.treasuryWsolTokenAccount,
       ),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getWrapBuybackSolInstructionDataEncoder().encode(
-      args as WrapBuybackSolInstructionDataArgs
+      args as WrapBuybackSolInstructionDataArgs,
     ),
     programAddress,
-  } as WrapBuybackSolInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountTreasury, TAccountBuybackSolVault, TAccountWsolMint, TAccountTreasuryWsolTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as WrapBuybackSolInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountBuybackSolVault,
+    TAccountWsolMint,
+    TAccountTreasuryWsolTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedWrapBuybackSolInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -496,11 +513,11 @@ export type ParsedWrapBuybackSolInstruction<
 
 export function parseWrapBuybackSolInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedWrapBuybackSolInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -508,7 +525,7 @@ export function parseWrapBuybackSolInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;

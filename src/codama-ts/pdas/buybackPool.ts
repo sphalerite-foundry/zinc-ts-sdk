@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findBuybackPoolPda(
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -23,7 +23,7 @@ export async function findBuybackPoolPda(
     programAddress,
     seeds: [
       getBytesEncoder().encode(
-        new Uint8Array([98, 117, 121, 98, 97, 99, 107, 45, 112, 111, 111, 108])
+        new Uint8Array([98, 117, 121, 98, 97, 99, 107, 45, 112, 111, 111, 108]),
       ),
     ],
   });

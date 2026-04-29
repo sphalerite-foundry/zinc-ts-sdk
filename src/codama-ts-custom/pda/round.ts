@@ -19,11 +19,11 @@ function getRoundIdBytes(roundId: number | bigint): Uint8Array {
 
 export function getRoundAddress(
   roundId: number | bigint,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(ROUND_SEED), getRoundIdBytes(roundId)],
-    programId
+    programId,
   );
 }
 
@@ -32,7 +32,7 @@ export function getRoundZincPayoutTokenAccountAddress(
   roundId: number | bigint,
   treasury: PublicKey,
   zincMint: PublicKey,
-  programId: PublicKey = ZINC_PROGRAM_ID
+  programId: PublicKey = ZINC_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [
@@ -41,18 +41,18 @@ export function getRoundZincPayoutTokenAccountAddress(
       treasury.toBuffer(),
       zincMint.toBuffer(),
     ],
-    programId
+    programId,
   );
 }
 
 export async function fetchRoundAccount(
   connection: Connection,
-  roundAddress: PublicKey
+  roundAddress: PublicKey,
 ): Promise<DecodedRoundAccount> {
   return fetchDecodedAccount(
     connection,
     roundAddress,
     getRoundDecoder(),
-    "Round"
+    "Round",
   );
 }

@@ -48,7 +48,7 @@ export const JOIN_STOCKPILE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getJoinStockpileDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    JOIN_STOCKPILE_DISCRIMINATOR
+    JOIN_STOCKPILE_DISCRIMINATOR,
   );
 }
 
@@ -59,10 +59,9 @@ export type JoinStockpileInstruction<
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -86,7 +85,7 @@ export type JoinStockpileInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -107,7 +106,7 @@ export function getJoinStockpileInstructionDataEncoder(): FixedSizeEncoder<JoinS
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["bricksX10k", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: JOIN_STOCKPILE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: JOIN_STOCKPILE_DISCRIMINATOR }),
   );
 }
 
@@ -124,7 +123,7 @@ export function getJoinStockpileInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getJoinStockpileInstructionDataEncoder(),
-    getJoinStockpileInstructionDataDecoder()
+    getJoinStockpileInstructionDataDecoder(),
   );
 }
 
@@ -134,7 +133,7 @@ export type JoinStockpileAsyncInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountPlayerProfile extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Player joining the currently open stockpile. */
   signer: TransactionSigner<TAccountSigner>;
@@ -157,7 +156,7 @@ export async function getJoinStockpileInstructionAsync<
   TAccountStockpile extends string,
   TAccountPlayerProfile extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: JoinStockpileAsyncInput<
     TAccountSigner,
@@ -167,7 +166,7 @@ export async function getJoinStockpileInstructionAsync<
     TAccountPlayerProfile,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   JoinStockpileInstruction<
     TProgramAddress,
@@ -210,7 +209,7 @@ export async function getJoinStockpileInstructionAsync<
     accounts.playerProfile.value = await findPlayerProfilePda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -230,10 +229,18 @@ export async function getJoinStockpileInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getJoinStockpileInstructionDataEncoder().encode(
-      args as JoinStockpileInstructionDataArgs
+      args as JoinStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as JoinStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountPlayerProfile, TAccountSystemProgram>);
+  } as JoinStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountPlayerProfile,
+    TAccountSystemProgram
+  >);
 }
 
 export type JoinStockpileInput<
@@ -242,7 +249,7 @@ export type JoinStockpileInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountPlayerProfile extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Player joining the currently open stockpile. */
   signer: TransactionSigner<TAccountSigner>;
@@ -265,7 +272,7 @@ export function getJoinStockpileInstruction<
   TAccountStockpile extends string,
   TAccountPlayerProfile extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: JoinStockpileInput<
     TAccountSigner,
@@ -275,7 +282,7 @@ export function getJoinStockpileInstruction<
     TAccountPlayerProfile,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): JoinStockpileInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -322,15 +329,23 @@ export function getJoinStockpileInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getJoinStockpileInstructionDataEncoder().encode(
-      args as JoinStockpileInstructionDataArgs
+      args as JoinStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as JoinStockpileInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountPlayerProfile, TAccountSystemProgram>);
+  } as JoinStockpileInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountPlayerProfile,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedJoinStockpileInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -351,11 +366,11 @@ export type ParsedJoinStockpileInstruction<
 
 export function parseJoinStockpileInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedJoinStockpileInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     throw new SolanaError(
@@ -363,7 +378,7 @@ export function parseJoinStockpileInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 6,
-      }
+      },
     );
   }
   let accountIndex = 0;

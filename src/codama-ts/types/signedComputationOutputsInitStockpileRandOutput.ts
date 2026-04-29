@@ -110,7 +110,7 @@ export function getSignedComputationOutputsInitStockpileRandOutputCodec(): Codec
 > {
   return combineCodec(
     getSignedComputationOutputsInitStockpileRandOutputEncoder(),
-    getSignedComputationOutputsInitStockpileRandOutputDecoder()
+    getSignedComputationOutputsInitStockpileRandOutputDecoder(),
   );
 }
 
@@ -121,14 +121,14 @@ export function signedComputationOutputsInitStockpileRandOutput(
     SignedComputationOutputsInitStockpileRandOutputArgs,
     "__kind",
     "Success"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitStockpileRandOutputArgs,
   "__kind",
   "Success"
 >;
 export function signedComputationOutputsInitStockpileRandOutput(
-  kind: "Failure"
+  kind: "Failure",
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitStockpileRandOutputArgs,
   "__kind",
@@ -140,7 +140,7 @@ export function signedComputationOutputsInitStockpileRandOutput(
     SignedComputationOutputsInitStockpileRandOutputArgs,
     "__kind",
     "MarkerForIdlBuildDoNotUseThis"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitStockpileRandOutputArgs,
   "__kind",
@@ -148,7 +148,7 @@ export function signedComputationOutputsInitStockpileRandOutput(
 >;
 export function signedComputationOutputsInitStockpileRandOutput<
   K extends SignedComputationOutputsInitStockpileRandOutputArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -156,10 +156,10 @@ export function signedComputationOutputsInitStockpileRandOutput<
 }
 
 export function isSignedComputationOutputsInitStockpileRandOutput<
-  K extends SignedComputationOutputsInitStockpileRandOutput["__kind"]
+  K extends SignedComputationOutputsInitStockpileRandOutput["__kind"],
 >(
   kind: K,
-  value: SignedComputationOutputsInitStockpileRandOutput
+  value: SignedComputationOutputsInitStockpileRandOutput,
 ): value is SignedComputationOutputsInitStockpileRandOutput & { __kind: K } {
   return value.__kind === kind;
 }

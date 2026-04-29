@@ -20,7 +20,7 @@ export type RoundSecretSeeds = {
 
 export async function findRoundSecretPda(
   seeds: RoundSecretSeeds,
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -31,7 +31,7 @@ export async function findRoundSecretPda(
       getBytesEncoder().encode(
         new Uint8Array([
           114, 111, 117, 110, 100, 45, 115, 101, 99, 114, 101, 116,
-        ])
+        ]),
       ),
       getU64Encoder().encode(seeds.roundId),
     ],

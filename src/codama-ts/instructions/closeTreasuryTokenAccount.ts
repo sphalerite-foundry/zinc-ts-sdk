@@ -47,7 +47,7 @@ export const CLOSE_TREASURY_TOKEN_ACCOUNT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getCloseTreasuryTokenAccountDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_TREASURY_TOKEN_ACCOUNT_DISCRIMINATOR
+    CLOSE_TREASURY_TOKEN_ACCOUNT_DISCRIMINATOR,
   );
 }
 
@@ -59,16 +59,13 @@ export type CloseTreasuryTokenAccountInstruction<
   TAccountMint extends string | AccountMeta<string> = string,
   TAccountSourceTokenAccount extends string | AccountMeta<string> = string,
   TAccountAdminTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -101,7 +98,7 @@ export type CloseTreasuryTokenAccountInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -117,7 +114,7 @@ export function getCloseTreasuryTokenAccountInstructionDataEncoder(): FixedSizeE
     (value) => ({
       ...value,
       discriminator: CLOSE_TREASURY_TOKEN_ACCOUNT_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -133,7 +130,7 @@ export function getCloseTreasuryTokenAccountInstructionDataCodec(): FixedSizeCod
 > {
   return combineCodec(
     getCloseTreasuryTokenAccountInstructionDataEncoder(),
-    getCloseTreasuryTokenAccountInstructionDataDecoder()
+    getCloseTreasuryTokenAccountInstructionDataDecoder(),
   );
 }
 
@@ -146,7 +143,7 @@ export type CloseTreasuryTokenAccountAsyncInput<
   TAccountAdminTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that receives drained tokens and closed-account rent. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -178,7 +175,7 @@ export async function getCloseTreasuryTokenAccountInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseTreasuryTokenAccountAsyncInput<
     TAccountAdmin,
@@ -191,7 +188,7 @@ export async function getCloseTreasuryTokenAccountInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CloseTreasuryTokenAccountInstruction<
     TProgramAddress,
@@ -254,17 +251,17 @@ export async function getCloseTreasuryTokenAccountInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "admin",
-            accounts.admin.value
-          )
+            accounts.admin.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
-          getAddressFromResolvedInstructionAccount("mint", accounts.mint.value)
+          getAddressFromResolvedInstructionAccount("mint", accounts.mint.value),
         ),
       ],
     });
@@ -293,7 +290,18 @@ export async function getCloseTreasuryTokenAccountInstructionAsync<
     ],
     data: getCloseTreasuryTokenAccountInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseTreasuryTokenAccountInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountMint, TAccountSourceTokenAccount, TAccountAdminTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as CloseTreasuryTokenAccountInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountMint,
+    TAccountSourceTokenAccount,
+    TAccountAdminTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type CloseTreasuryTokenAccountInput<
@@ -305,7 +313,7 @@ export type CloseTreasuryTokenAccountInput<
   TAccountAdminTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that receives drained tokens and closed-account rent. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -337,7 +345,7 @@ export function getCloseTreasuryTokenAccountInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseTreasuryTokenAccountInput<
     TAccountAdmin,
@@ -350,7 +358,7 @@ export function getCloseTreasuryTokenAccountInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CloseTreasuryTokenAccountInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -421,12 +429,23 @@ export function getCloseTreasuryTokenAccountInstruction<
     ],
     data: getCloseTreasuryTokenAccountInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseTreasuryTokenAccountInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountMint, TAccountSourceTokenAccount, TAccountAdminTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as CloseTreasuryTokenAccountInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountMint,
+    TAccountSourceTokenAccount,
+    TAccountAdminTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedCloseTreasuryTokenAccountInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -454,11 +473,11 @@ export type ParsedCloseTreasuryTokenAccountInstruction<
 
 export function parseCloseTreasuryTokenAccountInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseTreasuryTokenAccountInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -466,7 +485,7 @@ export function parseCloseTreasuryTokenAccountInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -489,7 +508,7 @@ export function parseCloseTreasuryTokenAccountInstruction<
       systemProgram: getNextAccount(),
     },
     data: getCloseTreasuryTokenAccountInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

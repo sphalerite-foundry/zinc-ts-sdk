@@ -20,7 +20,7 @@ import { toAddress } from "./shared";
 
 function getInitRevealRoundRandCompDefOffset(): number {
   return Buffer.from(
-    getCompDefAccOffset(REVEAL_ROUND_RAND_CIRCUIT)
+    getCompDefAccOffset(REVEAL_ROUND_RAND_CIRCUIT),
   ).readUInt32LE(0);
 }
 
@@ -39,12 +39,12 @@ export async function buildInitRevealRoundRandCompDefInstruction({
   const mxeAccount = getMXEAccAddress(ZINC_PROGRAM_ID);
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getInitRevealRoundRandCompDefOffset()
+    getInitRevealRoundRandCompDefOffset(),
   );
   const mxe = await fetchDecodedMxeAccount(connection, mxeAccount);
   const addressLookupTable = getLookupTableAddress(
     ZINC_PROGRAM_ID,
-    new BN(mxe.data.lutOffsetSlot.toString())
+    new BN(mxe.data.lutOffsetSlot.toString()),
   );
   const instruction = getInitRevealRoundRandCompDefInstruction({
     payer: toTransactionSigner(payer),
@@ -57,6 +57,6 @@ export async function buildInitRevealRoundRandCompDefInstruction({
     },
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

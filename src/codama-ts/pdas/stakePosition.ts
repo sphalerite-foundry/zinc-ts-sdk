@@ -20,7 +20,7 @@ export type StakePositionSeeds = {
 
 export async function findStakePositionPda(
   seeds: StakePositionSeeds,
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -31,7 +31,7 @@ export async function findStakePositionPda(
       getBytesEncoder().encode(
         new Uint8Array([
           115, 116, 97, 107, 101, 45, 112, 111, 115, 105, 116, 105, 111, 110,
-        ])
+        ]),
       ),
       getAddressEncoder().encode(seeds.signer),
     ],

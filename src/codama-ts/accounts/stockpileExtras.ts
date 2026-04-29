@@ -56,7 +56,7 @@ export const STOCKPILE_EXTRAS_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getStockpileExtrasDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    STOCKPILE_EXTRAS_DISCRIMINATOR
+    STOCKPILE_EXTRAS_DISCRIMINATOR,
   );
 }
 
@@ -93,7 +93,7 @@ export function getStockpileExtrasEncoder(): Encoder<StockpileExtrasArgs> {
       ["extras", getArrayEncoder(getStockpileExtraEncoder())],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STOCKPILE_EXTRAS_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: STOCKPILE_EXTRAS_DISCRIMINATOR }),
   );
 }
 
@@ -117,26 +117,26 @@ export function getStockpileExtrasCodec(): Codec<
 }
 
 export function decodeStockpileExtras<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<StockpileExtras, TAddress>;
 export function decodeStockpileExtras<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<StockpileExtras, TAddress>;
 export function decodeStockpileExtras<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<StockpileExtras, TAddress>
   | MaybeAccount<StockpileExtras, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getStockpileExtrasDecoder()
+    getStockpileExtrasDecoder(),
   );
 }
 
 export async function fetchStockpileExtras<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<StockpileExtras, TAddress>> {
   const maybeAccount = await fetchMaybeStockpileExtras(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -144,11 +144,11 @@ export async function fetchStockpileExtras<TAddress extends string = string>(
 }
 
 export async function fetchMaybeStockpileExtras<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<StockpileExtras, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeStockpileExtras(maybeAccount);
@@ -157,12 +157,12 @@ export async function fetchMaybeStockpileExtras<
 export async function fetchAllStockpileExtras(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<StockpileExtras>[]> {
   const maybeAccounts = await fetchAllMaybeStockpileExtras(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -171,10 +171,10 @@ export async function fetchAllStockpileExtras(
 export async function fetchAllMaybeStockpileExtras(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<StockpileExtras>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeStockpileExtras(maybeAccount)
+    decodeStockpileExtras(maybeAccount),
   );
 }

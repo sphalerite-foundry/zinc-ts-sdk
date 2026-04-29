@@ -50,7 +50,7 @@ export const INIT_SETTLE_WINNING_STAKES_BATCH_COMP_DEF_DISCRIMINATOR: ReadonlyUi
 
 export function getInitSettleWinningStakesBatchCompDefDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INIT_SETTLE_WINNING_STAKES_BATCH_COMP_DEF_DISCRIMINATOR
+    INIT_SETTLE_WINNING_STAKES_BATCH_COMP_DEF_DISCRIMINATOR,
   );
 }
 
@@ -61,16 +61,13 @@ export type InitSettleWinningStakesBatchCompDefInstruction<
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountAddressLookupTable extends string | AccountMeta<string> = string,
-  TAccountLutProgram extends
-    | string
-    | AccountMeta<string> = "AddressLookupTab1e1111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountLutProgram extends string | AccountMeta<string> =
+    "AddressLookupTab1e1111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -100,7 +97,7 @@ export type InitSettleWinningStakesBatchCompDefInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -122,7 +119,7 @@ export function getInitSettleWinningStakesBatchCompDefInstructionDataEncoder(): 
     (value) => ({
       ...value,
       discriminator: INIT_SETTLE_WINNING_STAKES_BATCH_COMP_DEF_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -139,7 +136,7 @@ export function getInitSettleWinningStakesBatchCompDefInstructionDataCodec(): Co
 > {
   return combineCodec(
     getInitSettleWinningStakesBatchCompDefInstructionDataEncoder(),
-    getInitSettleWinningStakesBatchCompDefInstructionDataDecoder()
+    getInitSettleWinningStakesBatchCompDefInstructionDataDecoder(),
   );
 }
 
@@ -151,7 +148,7 @@ export type InitSettleWinningStakesBatchCompDefAsyncInput<
   TAccountAddressLookupTable extends string = string,
   TAccountLutProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the computation-definition account initialization. */
   payer: TransactionSigner<TAccountPayer>;
@@ -176,7 +173,7 @@ export async function getInitSettleWinningStakesBatchCompDefInstructionAsync<
   TAccountLutProgram extends string,
   TAccountArciumProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitSettleWinningStakesBatchCompDefAsyncInput<
     TAccountPayer,
@@ -188,7 +185,7 @@ export async function getInitSettleWinningStakesBatchCompDefInstructionAsync<
     TAccountArciumProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitSettleWinningStakesBatchCompDefInstruction<
     TProgramAddress,
@@ -257,10 +254,20 @@ export async function getInitSettleWinningStakesBatchCompDefInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitSettleWinningStakesBatchCompDefInstructionDataEncoder().encode(
-      args as InitSettleWinningStakesBatchCompDefInstructionDataArgs
+      args as InitSettleWinningStakesBatchCompDefInstructionDataArgs,
     ),
     programAddress,
-  } as InitSettleWinningStakesBatchCompDefInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountMxeAccount, TAccountCompDefAccount, TAccountAddressLookupTable, TAccountLutProgram, TAccountArciumProgram, TAccountSystemProgram>);
+  } as InitSettleWinningStakesBatchCompDefInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountMxeAccount,
+    TAccountCompDefAccount,
+    TAccountAddressLookupTable,
+    TAccountLutProgram,
+    TAccountArciumProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type InitSettleWinningStakesBatchCompDefInput<
@@ -271,7 +278,7 @@ export type InitSettleWinningStakesBatchCompDefInput<
   TAccountAddressLookupTable extends string = string,
   TAccountLutProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the computation-definition account initialization. */
   payer: TransactionSigner<TAccountPayer>;
@@ -296,7 +303,7 @@ export function getInitSettleWinningStakesBatchCompDefInstruction<
   TAccountLutProgram extends string,
   TAccountArciumProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitSettleWinningStakesBatchCompDefInput<
     TAccountPayer,
@@ -308,7 +315,7 @@ export function getInitSettleWinningStakesBatchCompDefInstruction<
     TAccountArciumProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitSettleWinningStakesBatchCompDefInstruction<
   TProgramAddress,
   TAccountPayer,
@@ -372,15 +379,25 @@ export function getInitSettleWinningStakesBatchCompDefInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitSettleWinningStakesBatchCompDefInstructionDataEncoder().encode(
-      args as InitSettleWinningStakesBatchCompDefInstructionDataArgs
+      args as InitSettleWinningStakesBatchCompDefInstructionDataArgs,
     ),
     programAddress,
-  } as InitSettleWinningStakesBatchCompDefInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountMxeAccount, TAccountCompDefAccount, TAccountAddressLookupTable, TAccountLutProgram, TAccountArciumProgram, TAccountSystemProgram>);
+  } as InitSettleWinningStakesBatchCompDefInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountMxeAccount,
+    TAccountCompDefAccount,
+    TAccountAddressLookupTable,
+    TAccountLutProgram,
+    TAccountArciumProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedInitSettleWinningStakesBatchCompDefInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -401,11 +418,11 @@ export type ParsedInitSettleWinningStakesBatchCompDefInstruction<
 
 export function parseInitSettleWinningStakesBatchCompDefInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitSettleWinningStakesBatchCompDefInstruction<
   TProgram,
   TAccountMetas
@@ -416,7 +433,7 @@ export function parseInitSettleWinningStakesBatchCompDefInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 8,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -438,7 +455,7 @@ export function parseInitSettleWinningStakesBatchCompDefInstruction<
       systemProgram: getNextAccount(),
     },
     data: getInitSettleWinningStakesBatchCompDefInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

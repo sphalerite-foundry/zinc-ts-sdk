@@ -47,7 +47,7 @@ export const CLOSE_ROUND_ACCOUNTS_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getCloseRoundAccountsDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_ROUND_ACCOUNTS_DISCRIMINATOR
+    CLOSE_ROUND_ACCOUNTS_DISCRIMINATOR,
   );
 }
 
@@ -60,14 +60,12 @@ export type CloseRoundAccountsInstruction<
   TAccountRoundSecret extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
-  TAccountRoundZincPayoutTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountRoundZincPayoutTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountCurveAdminTokenAccount extends string | AccountMeta<string> = string,
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -103,7 +101,7 @@ export type CloseRoundAccountsInstruction<
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -119,7 +117,7 @@ export function getCloseRoundAccountsInstructionDataEncoder(): FixedSizeEncoder<
     (value) => ({
       ...value,
       discriminator: CLOSE_ROUND_ACCOUNTS_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -135,7 +133,7 @@ export function getCloseRoundAccountsInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseRoundAccountsInstructionDataEncoder(),
-    getCloseRoundAccountsInstructionDataDecoder()
+    getCloseRoundAccountsInstructionDataDecoder(),
   );
 }
 
@@ -149,7 +147,7 @@ export type CloseRoundAccountsAsyncInput<
   TAccountZincMint extends string = string,
   TAccountRoundZincPayoutTokenAccount extends string = string,
   TAccountCurveAdminTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Crank signer authorized to submit cleanup transactions. */
   signer: TransactionSigner<TAccountSigner>;
@@ -184,7 +182,7 @@ export async function getCloseRoundAccountsInstructionAsync<
   TAccountRoundZincPayoutTokenAccount extends string,
   TAccountCurveAdminTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseRoundAccountsAsyncInput<
     TAccountSigner,
@@ -198,7 +196,7 @@ export async function getCloseRoundAccountsInstructionAsync<
     TAccountCurveAdminTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   CloseRoundAccountsInstruction<
     TProgramAddress,
@@ -263,20 +261,20 @@ export async function getCloseRoundAccountsInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "treasury",
-            accounts.treasury.value
-          )
+            accounts.treasury.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -294,14 +292,26 @@ export async function getCloseRoundAccountsInstructionAsync<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("curveAdminTokenAccount", accounts.curveAdminTokenAccount),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
     data: getCloseRoundAccountsInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseRoundAccountsInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountCurveAdminTokenAccount, TAccountTokenProgram>);
+  } as CloseRoundAccountsInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountCurveAdminTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type CloseRoundAccountsInput<
@@ -314,7 +324,7 @@ export type CloseRoundAccountsInput<
   TAccountZincMint extends string = string,
   TAccountRoundZincPayoutTokenAccount extends string = string,
   TAccountCurveAdminTokenAccount extends string = string,
-  TAccountTokenProgram extends string = string
+  TAccountTokenProgram extends string = string,
 > = {
   /** Crank signer authorized to submit cleanup transactions. */
   signer: TransactionSigner<TAccountSigner>;
@@ -349,7 +359,7 @@ export function getCloseRoundAccountsInstruction<
   TAccountRoundZincPayoutTokenAccount extends string,
   TAccountCurveAdminTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CloseRoundAccountsInput<
     TAccountSigner,
@@ -363,7 +373,7 @@ export function getCloseRoundAccountsInstruction<
     TAccountCurveAdminTokenAccount,
     TAccountTokenProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): CloseRoundAccountsInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -422,19 +432,31 @@ export function getCloseRoundAccountsInstruction<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("curveAdminTokenAccount", accounts.curveAdminTokenAccount),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
     data: getCloseRoundAccountsInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseRoundAccountsInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountCurveAdminTokenAccount, TAccountTokenProgram>);
+  } as CloseRoundAccountsInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountCurveAdminTokenAccount,
+    TAccountTokenProgram
+  >);
 }
 
 export type ParsedCloseRoundAccountsInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -464,11 +486,11 @@ export type ParsedCloseRoundAccountsInstruction<
 
 export function parseCloseRoundAccountsInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseRoundAccountsInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 10) {
     throw new SolanaError(
@@ -476,7 +498,7 @@ export function parseCloseRoundAccountsInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 10,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -500,7 +522,7 @@ export function parseCloseRoundAccountsInstruction<
       tokenProgram: getNextAccount(),
     },
     data: getCloseRoundAccountsInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

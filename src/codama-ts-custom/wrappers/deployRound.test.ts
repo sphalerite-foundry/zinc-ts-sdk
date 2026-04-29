@@ -50,7 +50,7 @@ function encodeBoardAccount({
       nextStockpileId,
       crankAuthority: address(crankAuthority.toBase58()),
       bump: getBoardAddress()[1],
-    })
+    }),
   );
 }
 
@@ -77,7 +77,7 @@ function encodePlayerProfileAccount({
       availableStockpileBricksX10k: 0n,
       lastJoinedStockpileId: null,
       bump: getPlayerProfileAddress(signer)[1],
-    })
+    }),
   );
 }
 
@@ -147,11 +147,11 @@ test("buildDeployRoundInstruction uses a referral for an existing unbound profil
 
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    requestedAffiliate.toBase58()
+    requestedAffiliate.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    getPlayerProfileAddress(requestedAffiliate)[0].toBase58()
+    getPlayerProfileAddress(requestedAffiliate)[0].toBase58(),
   );
 });
 
@@ -165,11 +165,11 @@ test("buildDeployRoundInstruction omits a requested self-referral", async () => 
 
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    ZINC_PROGRAM_ID.toBase58()
+    ZINC_PROGRAM_ID.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    ZINC_PROGRAM_ID.toBase58()
+    ZINC_PROGRAM_ID.toBase58(),
   );
 });
 
@@ -184,11 +184,11 @@ test("buildDeployRoundInstruction reuses a stored affiliate when none is request
 
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    storedAffiliate.toBase58()
+    storedAffiliate.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    getPlayerProfileAddress(storedAffiliate)[0].toBase58()
+    getPlayerProfileAddress(storedAffiliate)[0].toBase58(),
   );
 });
 
@@ -202,11 +202,11 @@ test("buildDeployRoundInstruction omits a stored self-referral", async () => {
 
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    ZINC_PROGRAM_ID.toBase58()
+    ZINC_PROGRAM_ID.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    ZINC_PROGRAM_ID.toBase58()
+    ZINC_PROGRAM_ID.toBase58(),
   );
 });
 
@@ -222,11 +222,11 @@ test("buildDeployRoundInstruction passes a different referral through for progra
 
   assert.equal(
     instruction.keys[10]?.pubkey.toBase58(),
-    requestedAffiliate.toBase58()
+    requestedAffiliate.toBase58(),
   );
   assert.equal(
     instruction.keys[11]?.pubkey.toBase58(),
-    getPlayerProfileAddress(requestedAffiliate)[0].toBase58()
+    getPlayerProfileAddress(requestedAffiliate)[0].toBase58(),
   );
 });
 
@@ -240,11 +240,11 @@ test("buildDeployRoundInstruction derives the requested round account", async ()
 
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
-    getRoundAddress(ROUND_ID)[0].toBase58()
+    getRoundAddress(ROUND_ID)[0].toBase58(),
   );
   assert.equal(
     instruction.keys[4]?.pubkey.toBase58(),
-    getPlayerProfileAddress(signer)[0].toBase58()
+    getPlayerProfileAddress(signer)[0].toBase58(),
   );
 });
 
@@ -261,7 +261,7 @@ test("buildDeployRoundInstruction falls back to the latest initialized stockpile
 
   assert.equal(
     instruction.keys[9]?.pubkey.toBase58(),
-    getStockpileAddress(3n)[0].toBase58()
+    getStockpileAddress(3n)[0].toBase58(),
   );
 });
 
@@ -277,6 +277,6 @@ test("buildDeployRoundInstruction rejects deploy before any stockpile exists", a
       unresolvedStockpileId: null,
       nextStockpileId: 0n,
     }),
-    /no initialized stockpile account/
+    /no initialized stockpile account/,
   );
 });

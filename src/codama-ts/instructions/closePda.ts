@@ -54,10 +54,9 @@ export type ClosePdaInstruction<
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountAccount extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -75,7 +74,7 @@ export type ClosePdaInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -92,7 +91,7 @@ export function getClosePdaInstructionDataEncoder(): FixedSizeEncoder<ClosePdaIn
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["allowProtectedClose", getBooleanEncoder()],
     ]),
-    (value) => ({ ...value, discriminator: CLOSE_PDA_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLOSE_PDA_DISCRIMINATOR }),
   );
 }
 
@@ -109,7 +108,7 @@ export function getClosePdaInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClosePdaInstructionDataEncoder(),
-    getClosePdaInstructionDataDecoder()
+    getClosePdaInstructionDataDecoder(),
   );
 }
 
@@ -117,7 +116,7 @@ export type ClosePdaAsyncInput<
   TAccountAdmin extends string = string,
   TAccountAccount extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   account: Address<TAccountAccount>;
@@ -131,7 +130,7 @@ export async function getClosePdaInstructionAsync<
   TAccountAccount extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClosePdaAsyncInput<
     TAccountAdmin,
@@ -139,7 +138,7 @@ export async function getClosePdaInstructionAsync<
     TAccountConfig,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   ClosePdaInstruction<
     TProgramAddress,
@@ -185,17 +184,23 @@ export async function getClosePdaInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getClosePdaInstructionDataEncoder().encode(
-      args as ClosePdaInstructionDataArgs
+      args as ClosePdaInstructionDataArgs,
     ),
     programAddress,
-  } as ClosePdaInstruction<TProgramAddress, TAccountAdmin, TAccountAccount, TAccountConfig, TAccountSystemProgram>);
+  } as ClosePdaInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountAccount,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type ClosePdaInput<
   TAccountAdmin extends string = string,
   TAccountAccount extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   account: Address<TAccountAccount>;
@@ -209,7 +214,7 @@ export function getClosePdaInstruction<
   TAccountAccount extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClosePdaInput<
     TAccountAdmin,
@@ -217,7 +222,7 @@ export function getClosePdaInstruction<
     TAccountConfig,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): ClosePdaInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -258,15 +263,21 @@ export function getClosePdaInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getClosePdaInstructionDataEncoder().encode(
-      args as ClosePdaInstructionDataArgs
+      args as ClosePdaInstructionDataArgs,
     ),
     programAddress,
-  } as ClosePdaInstruction<TProgramAddress, TAccountAdmin, TAccountAccount, TAccountConfig, TAccountSystemProgram>);
+  } as ClosePdaInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountAccount,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedClosePdaInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -280,11 +291,11 @@ export type ParsedClosePdaInstruction<
 
 export function parseClosePdaInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClosePdaInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     throw new SolanaError(
@@ -292,7 +303,7 @@ export function parseClosePdaInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 4,
-      }
+      },
     );
   }
   let accountIndex = 0;

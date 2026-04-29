@@ -51,7 +51,7 @@ export const CLOCK_ACCOUNT_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getClockAccountDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOCK_ACCOUNT_DISCRIMINATOR
+    CLOCK_ACCOUNT_DISCRIMINATOR,
   );
 }
 
@@ -80,7 +80,7 @@ export function getClockAccountEncoder(): FixedSizeEncoder<ClockAccountArgs> {
       ["startEpochTimestamp", getTimestampEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: CLOCK_ACCOUNT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLOCK_ACCOUNT_DISCRIMINATOR }),
   );
 }
 
@@ -104,24 +104,24 @@ export function getClockAccountCodec(): FixedSizeCodec<
 }
 
 export function decodeClockAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<ClockAccount, TAddress>;
 export function decodeClockAccount<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<ClockAccount, TAddress>;
 export function decodeClockAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<ClockAccount, TAddress> | MaybeAccount<ClockAccount, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getClockAccountDecoder()
+    getClockAccountDecoder(),
   );
 }
 
 export async function fetchClockAccount<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<ClockAccount, TAddress>> {
   const maybeAccount = await fetchMaybeClockAccount(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -131,7 +131,7 @@ export async function fetchClockAccount<TAddress extends string = string>(
 export async function fetchMaybeClockAccount<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<ClockAccount, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeClockAccount(maybeAccount);
@@ -140,7 +140,7 @@ export async function fetchMaybeClockAccount<TAddress extends string = string>(
 export async function fetchAllClockAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<ClockAccount>[]> {
   const maybeAccounts = await fetchAllMaybeClockAccount(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -150,7 +150,7 @@ export async function fetchAllClockAccount(
 export async function fetchAllMaybeClockAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<ClockAccount>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeClockAccount(maybeAccount));

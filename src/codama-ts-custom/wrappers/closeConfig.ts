@@ -22,6 +22,6 @@ export async function buildCloseConfigInstruction({
   });
 
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

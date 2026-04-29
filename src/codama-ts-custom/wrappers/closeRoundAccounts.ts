@@ -39,7 +39,7 @@ export async function buildCloseRoundAccountsInstruction({
   const roundZincPayoutTokenAccount = getRoundZincPayoutTokenAccountAddress(
     roundId,
     treasury,
-    zincMint
+    zincMint,
   )[0];
   const instruction = getCloseRoundAccountsInstruction({
     signer: toTransactionSigner(signer),
@@ -53,6 +53,6 @@ export async function buildCloseRoundAccountsInstruction({
     curveAdminTokenAccount: treasuryAccount.data.curveAdminTokenAccount,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

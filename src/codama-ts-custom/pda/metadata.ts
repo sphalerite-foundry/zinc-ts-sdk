@@ -6,7 +6,7 @@ const TEXT_ENCODER = new TextEncoder();
 /** Derives the Metaplex metadata PDA attached to one mint. */
 export function getMintMetadataAddress(
   mint: PublicKey,
-  metadataProgramId: PublicKey = METADATA_PROGRAM_ID
+  metadataProgramId: PublicKey = METADATA_PROGRAM_ID,
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [
@@ -14,6 +14,6 @@ export function getMintMetadataAddress(
       metadataProgramId.toBuffer(),
       mint.toBuffer(),
     ],
-    metadataProgramId
+    metadataProgramId,
   );
 }

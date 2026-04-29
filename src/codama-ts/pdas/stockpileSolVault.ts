@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findStockpileSolVaultPda(
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -26,7 +26,7 @@ export async function findStockpileSolVaultPda(
         new Uint8Array([
           115, 116, 111, 99, 107, 112, 105, 108, 101, 45, 115, 111, 108, 45,
           118, 97, 117, 108, 116,
-        ])
+        ]),
       ),
     ],
   });

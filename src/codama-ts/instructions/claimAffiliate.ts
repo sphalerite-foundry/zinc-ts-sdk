@@ -41,12 +41,12 @@ import { findConfigPda, findPlayerProfilePda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const CLAIM_AFFILIATE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array(
-  [12, 79, 157, 146, 92, 197, 95, 18]
+  [12, 79, 157, 146, 92, 197, 95, 18],
 );
 
 export function getClaimAffiliateDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLAIM_AFFILIATE_DISCRIMINATOR
+    CLAIM_AFFILIATE_DISCRIMINATOR,
   );
 }
 
@@ -55,7 +55,7 @@ export type ClaimAffiliateInstruction<
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -70,7 +70,7 @@ export type ClaimAffiliateInstruction<
       TAccountPlayerProfile extends string
         ? WritableAccount<TAccountPlayerProfile>
         : TAccountPlayerProfile,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -83,7 +83,7 @@ export type ClaimAffiliateInstructionDataArgs = {};
 export function getClaimAffiliateInstructionDataEncoder(): FixedSizeEncoder<ClaimAffiliateInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLAIM_AFFILIATE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLAIM_AFFILIATE_DISCRIMINATOR }),
   );
 }
 
@@ -99,14 +99,14 @@ export function getClaimAffiliateInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClaimAffiliateInstructionDataEncoder(),
-    getClaimAffiliateInstructionDataDecoder()
+    getClaimAffiliateInstructionDataDecoder(),
   );
 }
 
 export type ClaimAffiliateAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
-  TAccountPlayerProfile extends string = string
+  TAccountPlayerProfile extends string = string,
 > = {
   /** Affiliate wallet claiming its accrued SOL balance. */
   signer: TransactionSigner<TAccountSigner>;
@@ -120,14 +120,14 @@ export async function getClaimAffiliateInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountPlayerProfile extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimAffiliateAsyncInput<
     TAccountSigner,
     TAccountConfig,
     TAccountPlayerProfile
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   ClaimAffiliateInstruction<
     TProgramAddress,
@@ -158,7 +158,7 @@ export async function getClaimAffiliateInstructionAsync<
     accounts.playerProfile.value = await findPlayerProfilePda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -172,13 +172,18 @@ export async function getClaimAffiliateInstructionAsync<
     ],
     data: getClaimAffiliateInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimAffiliateInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountPlayerProfile>);
+  } as ClaimAffiliateInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountPlayerProfile
+  >);
 }
 
 export type ClaimAffiliateInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
-  TAccountPlayerProfile extends string = string
+  TAccountPlayerProfile extends string = string,
 > = {
   /** Affiliate wallet claiming its accrued SOL balance. */
   signer: TransactionSigner<TAccountSigner>;
@@ -192,14 +197,14 @@ export function getClaimAffiliateInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountPlayerProfile extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimAffiliateInput<
     TAccountSigner,
     TAccountConfig,
     TAccountPlayerProfile
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): ClaimAffiliateInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -229,12 +234,17 @@ export function getClaimAffiliateInstruction<
     ],
     data: getClaimAffiliateInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimAffiliateInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountPlayerProfile>);
+  } as ClaimAffiliateInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountPlayerProfile
+  >);
 }
 
 export type ParsedClaimAffiliateInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -250,11 +260,11 @@ export type ParsedClaimAffiliateInstruction<
 
 export function parseClaimAffiliateInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimAffiliateInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     throw new SolanaError(
@@ -262,7 +272,7 @@ export function parseClaimAffiliateInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 3,
-      }
+      },
     );
   }
   let accountIndex = 0;

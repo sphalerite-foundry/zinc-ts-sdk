@@ -55,6 +55,6 @@ export function getZincMintMetadataArgsCodec(): Codec<
 > {
   return combineCodec(
     getZincMintMetadataArgsEncoder(),
-    getZincMintMetadataArgsDecoder()
+    getZincMintMetadataArgsDecoder(),
   );
 }

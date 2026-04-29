@@ -110,7 +110,7 @@ export function getSignedComputationOutputsInitRoundRandOutputCodec(): Codec<
 > {
   return combineCodec(
     getSignedComputationOutputsInitRoundRandOutputEncoder(),
-    getSignedComputationOutputsInitRoundRandOutputDecoder()
+    getSignedComputationOutputsInitRoundRandOutputDecoder(),
   );
 }
 
@@ -121,14 +121,14 @@ export function signedComputationOutputsInitRoundRandOutput(
     SignedComputationOutputsInitRoundRandOutputArgs,
     "__kind",
     "Success"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitRoundRandOutputArgs,
   "__kind",
   "Success"
 >;
 export function signedComputationOutputsInitRoundRandOutput(
-  kind: "Failure"
+  kind: "Failure",
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitRoundRandOutputArgs,
   "__kind",
@@ -140,7 +140,7 @@ export function signedComputationOutputsInitRoundRandOutput(
     SignedComputationOutputsInitRoundRandOutputArgs,
     "__kind",
     "MarkerForIdlBuildDoNotUseThis"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsInitRoundRandOutputArgs,
   "__kind",
@@ -148,7 +148,7 @@ export function signedComputationOutputsInitRoundRandOutput(
 >;
 export function signedComputationOutputsInitRoundRandOutput<
   K extends SignedComputationOutputsInitRoundRandOutputArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -156,10 +156,10 @@ export function signedComputationOutputsInitRoundRandOutput<
 }
 
 export function isSignedComputationOutputsInitRoundRandOutput<
-  K extends SignedComputationOutputsInitRoundRandOutput["__kind"]
+  K extends SignedComputationOutputsInitRoundRandOutput["__kind"],
 >(
   kind: K,
-  value: SignedComputationOutputsInitRoundRandOutput
+  value: SignedComputationOutputsInitRoundRandOutput,
 ): value is SignedComputationOutputsInitRoundRandOutput & { __kind: K } {
   return value.__kind === kind;
 }

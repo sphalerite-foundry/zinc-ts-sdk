@@ -46,24 +46,22 @@ export const REVEAL_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getRevealStockpileRandCallbackDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    REVEAL_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR
+    REVEAL_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR,
   );
 }
 
 export type RevealStockpileRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountInstructionsSysvar extends
-    | string
-    | AccountMeta<string> = "Sysvar1nstructions1111111111111111111111111",
+  TAccountInstructionsSysvar extends string | AccountMeta<string> =
+    "Sysvar1nstructions1111111111111111111111111",
   TAccountStockpile extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -89,7 +87,7 @@ export type RevealStockpileRandCallbackInstruction<
       TAccountStockpile extends string
         ? WritableAccount<TAccountStockpile>
         : TAccountStockpile,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -111,7 +109,7 @@ export function getRevealStockpileRandCallbackInstructionDataEncoder(): Encoder<
     (value) => ({
       ...value,
       discriminator: REVEAL_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -128,7 +126,7 @@ export function getRevealStockpileRandCallbackInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getRevealStockpileRandCallbackInstructionDataEncoder(),
-    getRevealStockpileRandCallbackInstructionDataDecoder()
+    getRevealStockpileRandCallbackInstructionDataDecoder(),
   );
 }
 
@@ -139,7 +137,7 @@ export type RevealStockpileRandCallbackInput<
   TAccountComputationAccount extends string = string,
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
-  TAccountStockpile extends string = string
+  TAccountStockpile extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -163,7 +161,7 @@ export function getRevealStockpileRandCallbackInstruction<
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
   TAccountStockpile extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: RevealStockpileRandCallbackInput<
     TAccountArciumProgram,
@@ -174,7 +172,7 @@ export function getRevealStockpileRandCallbackInstruction<
     TAccountInstructionsSysvar,
     TAccountStockpile
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): RevealStockpileRandCallbackInstruction<
   TProgramAddress,
   TAccountArciumProgram,
@@ -234,15 +232,24 @@ export function getRevealStockpileRandCallbackInstruction<
       getAccountMeta("stockpile", accounts.stockpile),
     ],
     data: getRevealStockpileRandCallbackInstructionDataEncoder().encode(
-      args as RevealStockpileRandCallbackInstructionDataArgs
+      args as RevealStockpileRandCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as RevealStockpileRandCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountStockpile>);
+  } as RevealStockpileRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountStockpile
+  >);
 }
 
 export type ParsedRevealStockpileRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -263,11 +270,11 @@ export type ParsedRevealStockpileRandCallbackInstruction<
 
 export function parseRevealStockpileRandCallbackInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedRevealStockpileRandCallbackInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 7) {
     throw new SolanaError(
@@ -275,7 +282,7 @@ export function parseRevealStockpileRandCallbackInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 7,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -296,7 +303,7 @@ export function parseRevealStockpileRandCallbackInstruction<
       stockpile: getNextAccount(),
     },
     data: getRevealStockpileRandCallbackInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

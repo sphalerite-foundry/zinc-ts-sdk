@@ -47,7 +47,7 @@ export const WITHDRAW_TREASURY_FEES_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getWithdrawTreasuryFeesDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    WITHDRAW_TREASURY_FEES_DISCRIMINATOR
+    WITHDRAW_TREASURY_FEES_DISCRIMINATOR,
   );
 }
 
@@ -59,16 +59,13 @@ export type WithdrawTreasuryFeesInstruction<
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountCurveAdminTokenAccount extends string | AccountMeta<string> = string,
   TAccountAdminTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -101,7 +98,7 @@ export type WithdrawTreasuryFeesInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -117,7 +114,7 @@ export function getWithdrawTreasuryFeesInstructionDataEncoder(): FixedSizeEncode
     (value) => ({
       ...value,
       discriminator: WITHDRAW_TREASURY_FEES_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -133,7 +130,7 @@ export function getWithdrawTreasuryFeesInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getWithdrawTreasuryFeesInstructionDataEncoder(),
-    getWithdrawTreasuryFeesInstructionDataDecoder()
+    getWithdrawTreasuryFeesInstructionDataDecoder(),
   );
 }
 
@@ -146,7 +143,7 @@ export type WithdrawTreasuryFeesAsyncInput<
   TAccountAdminTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that receives the swept SOL and ZINC. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -178,7 +175,7 @@ export async function getWithdrawTreasuryFeesInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WithdrawTreasuryFeesAsyncInput<
     TAccountAdmin,
@@ -191,7 +188,7 @@ export async function getWithdrawTreasuryFeesInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   WithdrawTreasuryFeesInstruction<
     TProgramAddress,
@@ -254,20 +251,20 @@ export async function getWithdrawTreasuryFeesInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "treasury",
-            accounts.treasury.value
-          )
+            accounts.treasury.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -280,20 +277,20 @@ export async function getWithdrawTreasuryFeesInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "admin",
-            accounts.admin.value
-          )
+            accounts.admin.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -322,7 +319,18 @@ export async function getWithdrawTreasuryFeesInstructionAsync<
     ],
     data: getWithdrawTreasuryFeesInstructionDataEncoder().encode({}),
     programAddress,
-  } as WithdrawTreasuryFeesInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountCurveAdminTokenAccount, TAccountAdminTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as WithdrawTreasuryFeesInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountCurveAdminTokenAccount,
+    TAccountAdminTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type WithdrawTreasuryFeesInput<
@@ -334,7 +342,7 @@ export type WithdrawTreasuryFeesInput<
   TAccountAdminTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that receives the swept SOL and ZINC. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -366,7 +374,7 @@ export function getWithdrawTreasuryFeesInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: WithdrawTreasuryFeesInput<
     TAccountAdmin,
@@ -379,7 +387,7 @@ export function getWithdrawTreasuryFeesInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): WithdrawTreasuryFeesInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -450,12 +458,23 @@ export function getWithdrawTreasuryFeesInstruction<
     ],
     data: getWithdrawTreasuryFeesInstructionDataEncoder().encode({}),
     programAddress,
-  } as WithdrawTreasuryFeesInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountTreasury, TAccountZincMint, TAccountCurveAdminTokenAccount, TAccountAdminTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as WithdrawTreasuryFeesInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountCurveAdminTokenAccount,
+    TAccountAdminTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedWithdrawTreasuryFeesInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -483,11 +502,11 @@ export type ParsedWithdrawTreasuryFeesInstruction<
 
 export function parseWithdrawTreasuryFeesInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedWithdrawTreasuryFeesInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -495,7 +514,7 @@ export function parseWithdrawTreasuryFeesInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -518,7 +537,7 @@ export function parseWithdrawTreasuryFeesInstruction<
       systemProgram: getNextAccount(),
     },
     data: getWithdrawTreasuryFeesInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

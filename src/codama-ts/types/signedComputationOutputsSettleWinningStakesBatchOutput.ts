@@ -116,7 +116,7 @@ export function getSignedComputationOutputsSettleWinningStakesBatchOutputCodec()
 > {
   return combineCodec(
     getSignedComputationOutputsSettleWinningStakesBatchOutputEncoder(),
-    getSignedComputationOutputsSettleWinningStakesBatchOutputDecoder()
+    getSignedComputationOutputsSettleWinningStakesBatchOutputDecoder(),
   );
 }
 
@@ -127,14 +127,14 @@ export function signedComputationOutputsSettleWinningStakesBatchOutput(
     SignedComputationOutputsSettleWinningStakesBatchOutputArgs,
     "__kind",
     "Success"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsSettleWinningStakesBatchOutputArgs,
   "__kind",
   "Success"
 >;
 export function signedComputationOutputsSettleWinningStakesBatchOutput(
-  kind: "Failure"
+  kind: "Failure",
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsSettleWinningStakesBatchOutputArgs,
   "__kind",
@@ -146,15 +146,16 @@ export function signedComputationOutputsSettleWinningStakesBatchOutput(
     SignedComputationOutputsSettleWinningStakesBatchOutputArgs,
     "__kind",
     "MarkerForIdlBuildDoNotUseThis"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsSettleWinningStakesBatchOutputArgs,
   "__kind",
   "MarkerForIdlBuildDoNotUseThis"
 >;
 export function signedComputationOutputsSettleWinningStakesBatchOutput<
-  K extends SignedComputationOutputsSettleWinningStakesBatchOutputArgs["__kind"],
-  Data
+  K extends
+    SignedComputationOutputsSettleWinningStakesBatchOutputArgs["__kind"],
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -162,10 +163,10 @@ export function signedComputationOutputsSettleWinningStakesBatchOutput<
 }
 
 export function isSignedComputationOutputsSettleWinningStakesBatchOutput<
-  K extends SignedComputationOutputsSettleWinningStakesBatchOutput["__kind"]
+  K extends SignedComputationOutputsSettleWinningStakesBatchOutput["__kind"],
 >(
   kind: K,
-  value: SignedComputationOutputsSettleWinningStakesBatchOutput
+  value: SignedComputationOutputsSettleWinningStakesBatchOutput,
 ): value is SignedComputationOutputsSettleWinningStakesBatchOutput & {
   __kind: K;
 } {

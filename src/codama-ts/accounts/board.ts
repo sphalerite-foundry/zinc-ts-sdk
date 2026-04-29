@@ -104,7 +104,7 @@ export function getBoardEncoder(): Encoder<BoardArgs> {
       ["crankAuthority", getAddressEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: BOARD_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: BOARD_DISCRIMINATOR }),
   );
 }
 
@@ -129,24 +129,24 @@ export function getBoardCodec(): Codec<BoardArgs, Board> {
 }
 
 export function decodeBoard<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<Board, TAddress>;
 export function decodeBoard<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Board, TAddress>;
 export function decodeBoard<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Board, TAddress> | MaybeAccount<Board, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getBoardDecoder()
+    getBoardDecoder(),
   );
 }
 
 export async function fetchBoard<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<Board, TAddress>> {
   const maybeAccount = await fetchMaybeBoard(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -156,7 +156,7 @@ export async function fetchBoard<TAddress extends string = string>(
 export async function fetchMaybeBoard<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Board, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeBoard(maybeAccount);
@@ -165,7 +165,7 @@ export async function fetchMaybeBoard<TAddress extends string = string>(
 export async function fetchAllBoard(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<Board>[]> {
   const maybeAccounts = await fetchAllMaybeBoard(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -175,7 +175,7 @@ export async function fetchAllBoard(
 export async function fetchAllMaybeBoard(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Board>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeBoard(maybeAccount));

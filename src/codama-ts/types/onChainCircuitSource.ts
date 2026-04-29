@@ -47,6 +47,6 @@ export function getOnChainCircuitSourceCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getOnChainCircuitSourceEncoder(),
-    getOnChainCircuitSourceDecoder()
+    getOnChainCircuitSourceDecoder(),
   );
 }

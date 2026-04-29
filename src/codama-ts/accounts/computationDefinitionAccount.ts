@@ -58,7 +58,7 @@ export const COMPUTATION_DEFINITION_ACCOUNT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getComputationDefinitionAccountDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    COMPUTATION_DEFINITION_ACCOUNT_DISCRIMINATOR
+    COMPUTATION_DEFINITION_ACCOUNT_DISCRIMINATOR,
   );
 }
 
@@ -93,7 +93,7 @@ export function getComputationDefinitionAccountEncoder(): Encoder<ComputationDef
     (value) => ({
       ...value,
       discriminator: COMPUTATION_DEFINITION_ACCOUNT_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -116,55 +116,55 @@ export function getComputationDefinitionAccountCodec(): Codec<
 > {
   return combineCodec(
     getComputationDefinitionAccountEncoder(),
-    getComputationDefinitionAccountDecoder()
+    getComputationDefinitionAccountDecoder(),
   );
 }
 
 export function decodeComputationDefinitionAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<ComputationDefinitionAccount, TAddress>;
 export function decodeComputationDefinitionAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<ComputationDefinitionAccount, TAddress>;
 export function decodeComputationDefinitionAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<ComputationDefinitionAccount, TAddress>
   | MaybeAccount<ComputationDefinitionAccount, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getComputationDefinitionAccountDecoder()
+    getComputationDefinitionAccountDecoder(),
   );
 }
 
 export async function fetchComputationDefinitionAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<ComputationDefinitionAccount, TAddress>> {
   const maybeAccount = await fetchMaybeComputationDefinitionAccount(
     rpc,
     address,
-    config
+    config,
   );
   assertAccountExists(maybeAccount);
   return maybeAccount;
 }
 
 export async function fetchMaybeComputationDefinitionAccount<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<ComputationDefinitionAccount, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeComputationDefinitionAccount(maybeAccount);
@@ -173,12 +173,12 @@ export async function fetchMaybeComputationDefinitionAccount<
 export async function fetchAllComputationDefinitionAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<ComputationDefinitionAccount>[]> {
   const maybeAccounts = await fetchAllMaybeComputationDefinitionAccount(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -187,10 +187,10 @@ export async function fetchAllComputationDefinitionAccount(
 export async function fetchAllMaybeComputationDefinitionAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<ComputationDefinitionAccount>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeComputationDefinitionAccount(maybeAccount)
+    decodeComputationDefinitionAccount(maybeAccount),
   );
 }

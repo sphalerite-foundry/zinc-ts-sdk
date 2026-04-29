@@ -26,7 +26,7 @@ import { resolveArciumClusterOffset, toAddress } from "./shared";
 
 function getSettleWinningStakesBatchCompDefOffset(): number {
   return Buffer.from(
-    getCompDefAccOffset(SETTLE_WINNING_STAKES_BATCH_CIRCUIT)
+    getCompDefAccOffset(SETTLE_WINNING_STAKES_BATCH_CIRCUIT),
   ).readUInt32LE(0);
 }
 
@@ -50,7 +50,7 @@ export async function buildQueueSettleWinningStakesBatchInstruction({
   }
   if (miners.length > SETTLE_WINNING_STAKES_BATCH_SIZE) {
     throw new Error(
-      `queue settle batch supports at most ${SETTLE_WINNING_STAKES_BATCH_SIZE} miner accounts`
+      `queue settle batch supports at most ${SETTLE_WINNING_STAKES_BATCH_SIZE} miner accounts`,
     );
   }
 
@@ -63,11 +63,11 @@ export async function buildQueueSettleWinningStakesBatchInstruction({
   const executingPool = getExecutingPoolAccAddress(clusterOffset);
   const computationAccount = getComputationAccAddress(
     clusterOffset,
-    computationOffsetBn
+    computationOffsetBn,
   );
   const compDefAccount = getCompDefAccAddress(
     ZINC_PROGRAM_ID,
-    getSettleWinningStakesBatchCompDefOffset()
+    getSettleWinningStakesBatchCompDefOffset(),
   );
   const clusterAccount = getClusterAccAddress(clusterOffset);
   const instruction = await getQueueSettleWinningStakesBatchInstructionAsync({
@@ -83,10 +83,10 @@ export async function buildQueueSettleWinningStakesBatchInstruction({
     computationOffset,
   });
   const transactionInstruction = toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
   transactionInstruction.keys.push(
-    ...miners.map((miner) => toAccountMeta(miner, true))
+    ...miners.map((miner) => toAccountMeta(miner, true)),
   );
   return transactionInstruction;
 }

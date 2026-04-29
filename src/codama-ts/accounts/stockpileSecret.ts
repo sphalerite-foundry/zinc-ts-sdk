@@ -52,7 +52,7 @@ export const STOCKPILE_SECRET_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getStockpileSecretDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    STOCKPILE_SECRET_DISCRIMINATOR
+    STOCKPILE_SECRET_DISCRIMINATOR,
   );
 }
 
@@ -94,12 +94,12 @@ export function getStockpileSecretEncoder(): Encoder<StockpileSecretArgs> {
       [
         "ciphertexts",
         getOptionEncoder(
-          getArrayEncoder(fixEncoderSize(getBytesEncoder(), 32), { size: 1 })
+          getArrayEncoder(fixEncoderSize(getBytesEncoder(), 32), { size: 1 }),
         ),
       ],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: STOCKPILE_SECRET_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: STOCKPILE_SECRET_DISCRIMINATOR }),
   );
 }
 
@@ -113,7 +113,7 @@ export function getStockpileSecretDecoder(): Decoder<StockpileSecret> {
     [
       "ciphertexts",
       getOptionDecoder(
-        getArrayDecoder(fixDecoderSize(getBytesDecoder(), 32), { size: 1 })
+        getArrayDecoder(fixDecoderSize(getBytesDecoder(), 32), { size: 1 }),
       ),
     ],
     ["bump", getU8Decoder()],
@@ -129,26 +129,26 @@ export function getStockpileSecretCodec(): Codec<
 }
 
 export function decodeStockpileSecret<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<StockpileSecret, TAddress>;
 export function decodeStockpileSecret<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<StockpileSecret, TAddress>;
 export function decodeStockpileSecret<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<StockpileSecret, TAddress>
   | MaybeAccount<StockpileSecret, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getStockpileSecretDecoder()
+    getStockpileSecretDecoder(),
   );
 }
 
 export async function fetchStockpileSecret<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<StockpileSecret, TAddress>> {
   const maybeAccount = await fetchMaybeStockpileSecret(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -156,11 +156,11 @@ export async function fetchStockpileSecret<TAddress extends string = string>(
 }
 
 export async function fetchMaybeStockpileSecret<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<StockpileSecret, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeStockpileSecret(maybeAccount);
@@ -169,12 +169,12 @@ export async function fetchMaybeStockpileSecret<
 export async function fetchAllStockpileSecret(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<StockpileSecret>[]> {
   const maybeAccounts = await fetchAllMaybeStockpileSecret(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -183,10 +183,10 @@ export async function fetchAllStockpileSecret(
 export async function fetchAllMaybeStockpileSecret(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<StockpileSecret>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeStockpileSecret(maybeAccount)
+    decodeStockpileSecret(maybeAccount),
   );
 }

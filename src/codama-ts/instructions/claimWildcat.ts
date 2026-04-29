@@ -48,7 +48,7 @@ export const CLAIM_WILDCAT_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getClaimWildcatDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLAIM_WILDCAT_DISCRIMINATOR
+    CLAIM_WILDCAT_DISCRIMINATOR,
   );
 }
 
@@ -59,21 +59,17 @@ export type ClaimWildcatInstruction<
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
-  TAccountRoundZincPayoutTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
+  TAccountRoundZincPayoutTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountWinner extends string | AccountMeta<string> = string,
   TAccountWinnerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -112,7 +108,7 @@ export type ClaimWildcatInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -123,7 +119,7 @@ export type ClaimWildcatInstructionDataArgs = {};
 export function getClaimWildcatInstructionDataEncoder(): FixedSizeEncoder<ClaimWildcatInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CLAIM_WILDCAT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: CLAIM_WILDCAT_DISCRIMINATOR }),
   );
 }
 
@@ -139,7 +135,7 @@ export function getClaimWildcatInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getClaimWildcatInstructionDataEncoder(),
-    getClaimWildcatInstructionDataDecoder()
+    getClaimWildcatInstructionDataDecoder(),
   );
 }
 
@@ -154,7 +150,7 @@ export type ClaimWildcatAsyncInput<
   TAccountWinnerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer authorized to auto-claim the selected Wildcat payout. */
   signer: TransactionSigner<TAccountSigner>;
@@ -191,7 +187,7 @@ export async function getClaimWildcatInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimWildcatAsyncInput<
     TAccountSigner,
@@ -206,7 +202,7 @@ export async function getClaimWildcatInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   ClaimWildcatInstruction<
     TProgramAddress,
@@ -273,20 +269,20 @@ export async function getClaimWildcatInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "winner",
-            accounts.winner.value
-          )
+            accounts.winner.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -310,7 +306,7 @@ export async function getClaimWildcatInstructionAsync<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("winner", accounts.winner),
       getAccountMeta("winnerZincTokenAccount", accounts.winnerZincTokenAccount),
@@ -320,7 +316,20 @@ export async function getClaimWildcatInstructionAsync<
     ],
     data: getClaimWildcatInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimWildcatInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountWinner, TAccountWinnerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimWildcatInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountWinner,
+    TAccountWinnerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ClaimWildcatInput<
@@ -334,7 +343,7 @@ export type ClaimWildcatInput<
   TAccountWinnerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer authorized to auto-claim the selected Wildcat payout. */
   signer: TransactionSigner<TAccountSigner>;
@@ -371,7 +380,7 @@ export function getClaimWildcatInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimWildcatInput<
     TAccountSigner,
@@ -386,7 +395,7 @@ export function getClaimWildcatInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): ClaimWildcatInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -456,7 +465,7 @@ export function getClaimWildcatInstruction<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta(
         "roundZincPayoutTokenAccount",
-        accounts.roundZincPayoutTokenAccount
+        accounts.roundZincPayoutTokenAccount,
       ),
       getAccountMeta("winner", accounts.winner),
       getAccountMeta("winnerZincTokenAccount", accounts.winnerZincTokenAccount),
@@ -466,12 +475,25 @@ export function getClaimWildcatInstruction<
     ],
     data: getClaimWildcatInstructionDataEncoder().encode({}),
     programAddress,
-  } as ClaimWildcatInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountRound, TAccountTreasury, TAccountZincMint, TAccountRoundZincPayoutTokenAccount, TAccountWinner, TAccountWinnerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as ClaimWildcatInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountRoundZincPayoutTokenAccount,
+    TAccountWinner,
+    TAccountWinnerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedClaimWildcatInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -502,11 +524,11 @@ export type ParsedClaimWildcatInstruction<
 
 export function parseClaimWildcatInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimWildcatInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 11) {
     throw new SolanaError(
@@ -514,7 +536,7 @@ export function parseClaimWildcatInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 11,
-      }
+      },
     );
   }
   let accountIndex = 0;

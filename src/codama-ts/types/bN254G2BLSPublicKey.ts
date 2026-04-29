@@ -38,6 +38,6 @@ export function getBN254G2BLSPublicKeyCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getBN254G2BLSPublicKeyEncoder(),
-    getBN254G2BLSPublicKeyDecoder()
+    getBN254G2BLSPublicKeyDecoder(),
   );
 }

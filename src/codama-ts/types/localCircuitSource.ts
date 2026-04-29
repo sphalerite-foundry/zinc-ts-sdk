@@ -37,6 +37,6 @@ export function getLocalCircuitSourceCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getLocalCircuitSourceEncoder(),
-    getLocalCircuitSourceDecoder()
+    getLocalCircuitSourceDecoder(),
   );
 }

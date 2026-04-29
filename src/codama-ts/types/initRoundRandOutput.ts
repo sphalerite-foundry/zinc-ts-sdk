@@ -72,6 +72,6 @@ export function getInitRoundRandOutputCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getInitRoundRandOutputEncoder(),
-    getInitRoundRandOutputDecoder()
+    getInitRoundRandOutputDecoder(),
   );
 }

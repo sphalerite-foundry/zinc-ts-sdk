@@ -42,7 +42,7 @@ export const BUYBACK_SOL_VAULT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getBuybackSolVaultDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    BUYBACK_SOL_VAULT_DISCRIMINATOR
+    BUYBACK_SOL_VAULT_DISCRIMINATOR,
   );
 }
 
@@ -69,7 +69,7 @@ export function getBuybackSolVaultEncoder(): FixedSizeEncoder<BuybackSolVaultArg
       ["initialized", getBooleanEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: BUYBACK_SOL_VAULT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: BUYBACK_SOL_VAULT_DISCRIMINATOR }),
   );
 }
 
@@ -91,26 +91,26 @@ export function getBuybackSolVaultCodec(): FixedSizeCodec<
 }
 
 export function decodeBuybackSolVault<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<BuybackSolVault, TAddress>;
 export function decodeBuybackSolVault<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<BuybackSolVault, TAddress>;
 export function decodeBuybackSolVault<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ):
   | Account<BuybackSolVault, TAddress>
   | MaybeAccount<BuybackSolVault, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getBuybackSolVaultDecoder()
+    getBuybackSolVaultDecoder(),
   );
 }
 
 export async function fetchBuybackSolVault<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<BuybackSolVault, TAddress>> {
   const maybeAccount = await fetchMaybeBuybackSolVault(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -118,11 +118,11 @@ export async function fetchBuybackSolVault<TAddress extends string = string>(
 }
 
 export async function fetchMaybeBuybackSolVault<
-  TAddress extends string = string
+  TAddress extends string = string,
 >(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<BuybackSolVault, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeBuybackSolVault(maybeAccount);
@@ -131,12 +131,12 @@ export async function fetchMaybeBuybackSolVault<
 export async function fetchAllBuybackSolVault(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<BuybackSolVault>[]> {
   const maybeAccounts = await fetchAllMaybeBuybackSolVault(
     rpc,
     addresses,
-    config
+    config,
   );
   assertAccountsExist(maybeAccounts);
   return maybeAccounts;
@@ -145,11 +145,11 @@ export async function fetchAllBuybackSolVault(
 export async function fetchAllMaybeBuybackSolVault(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<BuybackSolVault>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) =>
-    decodeBuybackSolVault(maybeAccount)
+    decodeBuybackSolVault(maybeAccount),
   );
 }
 

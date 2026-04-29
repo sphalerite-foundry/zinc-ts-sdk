@@ -36,12 +36,12 @@ export async function buildPayoutStockpileInstruction({
     stockpileExtras: toAddress(getStockpileExtrasAddress()[0]),
     zincMint: toAddress(zincMint),
     stockpileTokenAccount: toAddress(
-      new PublicKey(treasuryAccount.data.stockpileTokenAccount)
+      new PublicKey(treasuryAccount.data.stockpileTokenAccount),
     ),
     winner: toAddress(winner),
     winnerZincTokenAccount: toAddress(winnerZincTokenAccount),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

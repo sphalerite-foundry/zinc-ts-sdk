@@ -51,7 +51,7 @@ export const DEPOSIT_STOCKPILE_EXTRA_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getDepositStockpileExtraDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    DEPOSIT_STOCKPILE_EXTRA_DISCRIMINATOR
+    DEPOSIT_STOCKPILE_EXTRA_DISCRIMINATOR,
   );
 }
 
@@ -65,19 +65,15 @@ export type DepositStockpileExtraInstruction<
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountExtraMint extends string | AccountMeta<string> = string,
   TAccountAdminSourceTokenAccount extends string | AccountMeta<string> = string,
-  TAccountStockpileExtraTokenAccount extends
-    | string
-    | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountStockpileExtraTokenAccount extends string | AccountMeta<string> =
+    string,
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -119,7 +115,7 @@ export type DepositStockpileExtraInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -143,7 +139,7 @@ export function getDepositStockpileExtraInstructionDataEncoder(): FixedSizeEncod
     (value) => ({
       ...value,
       discriminator: DEPOSIT_STOCKPILE_EXTRA_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -160,7 +156,7 @@ export function getDepositStockpileExtraInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getDepositStockpileExtraInstructionDataEncoder(),
-    getDepositStockpileExtraInstructionDataDecoder()
+    getDepositStockpileExtraInstructionDataDecoder(),
   );
 }
 
@@ -176,7 +172,7 @@ export type DepositStockpileExtraAsyncInput<
   TAccountStockpileExtraTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin that funds the extra-prize deposit. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -216,7 +212,7 @@ export async function getDepositStockpileExtraInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: DepositStockpileExtraAsyncInput<
     TAccountAdmin,
@@ -232,7 +228,7 @@ export async function getDepositStockpileExtraInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   DepositStockpileExtraInstruction<
     TProgramAddress,
@@ -323,21 +319,35 @@ export async function getDepositStockpileExtraInstructionAsync<
       getAccountMeta("extraMint", accounts.extraMint),
       getAccountMeta(
         "adminSourceTokenAccount",
-        accounts.adminSourceTokenAccount
+        accounts.adminSourceTokenAccount,
       ),
       getAccountMeta(
         "stockpileExtraTokenAccount",
-        accounts.stockpileExtraTokenAccount
+        accounts.stockpileExtraTokenAccount,
       ),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getDepositStockpileExtraInstructionDataEncoder().encode(
-      args as DepositStockpileExtraInstructionDataArgs
+      args as DepositStockpileExtraInstructionDataArgs,
     ),
     programAddress,
-  } as DepositStockpileExtraInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountStockpileExtras, TAccountTreasury, TAccountExtraMint, TAccountAdminSourceTokenAccount, TAccountStockpileExtraTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as DepositStockpileExtraInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileExtras,
+    TAccountTreasury,
+    TAccountExtraMint,
+    TAccountAdminSourceTokenAccount,
+    TAccountStockpileExtraTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type DepositStockpileExtraInput<
@@ -352,7 +362,7 @@ export type DepositStockpileExtraInput<
   TAccountStockpileExtraTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Admin that funds the extra-prize deposit. */
   admin: TransactionSigner<TAccountAdmin>;
@@ -392,7 +402,7 @@ export function getDepositStockpileExtraInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: DepositStockpileExtraInput<
     TAccountAdmin,
@@ -408,7 +418,7 @@ export function getDepositStockpileExtraInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): DepositStockpileExtraInstruction<
   TProgramAddress,
   TAccountAdmin,
@@ -485,26 +495,40 @@ export function getDepositStockpileExtraInstruction<
       getAccountMeta("extraMint", accounts.extraMint),
       getAccountMeta(
         "adminSourceTokenAccount",
-        accounts.adminSourceTokenAccount
+        accounts.adminSourceTokenAccount,
       ),
       getAccountMeta(
         "stockpileExtraTokenAccount",
-        accounts.stockpileExtraTokenAccount
+        accounts.stockpileExtraTokenAccount,
       ),
       getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getDepositStockpileExtraInstructionDataEncoder().encode(
-      args as DepositStockpileExtraInstructionDataArgs
+      args as DepositStockpileExtraInstructionDataArgs,
     ),
     programAddress,
-  } as DepositStockpileExtraInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountBoard, TAccountStockpile, TAccountStockpileExtras, TAccountTreasury, TAccountExtraMint, TAccountAdminSourceTokenAccount, TAccountStockpileExtraTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as DepositStockpileExtraInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileExtras,
+    TAccountTreasury,
+    TAccountExtraMint,
+    TAccountAdminSourceTokenAccount,
+    TAccountStockpileExtraTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedDepositStockpileExtraInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -536,11 +560,11 @@ export type ParsedDepositStockpileExtraInstruction<
 
 export function parseDepositStockpileExtraInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedDepositStockpileExtraInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 12) {
     throw new SolanaError(
@@ -548,7 +572,7 @@ export function parseDepositStockpileExtraInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 12,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -574,7 +598,7 @@ export function parseDepositStockpileExtraInstruction<
       systemProgram: getNextAccount(),
     },
     data: getDepositStockpileExtraInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

@@ -14,7 +14,7 @@ import {
 } from "@solana/kit";
 
 export async function findSignPdaAccountPda(
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
     programAddress = "4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y" as Address<"4eWZ5taja9UmM7qdyreDAAhLzRsNoKy87nDbGNiPda2Y">,
@@ -26,7 +26,7 @@ export async function findSignPdaAccountPda(
         new Uint8Array([
           65, 114, 99, 105, 117, 109, 83, 105, 103, 110, 101, 114, 65, 99, 99,
           111, 117, 110, 116,
-        ])
+        ]),
       ),
     ],
   });

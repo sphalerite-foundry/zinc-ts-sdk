@@ -64,16 +64,13 @@ export type UnstakeInstruction<
   TAccountStakePosition extends string | AccountMeta<string> = string,
   TAccountStakingTokenAccount extends string | AccountMeta<string> = string,
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends
-    | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TAccountTokenProgram extends
-    | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -106,7 +103,7 @@ export type UnstakeInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -127,7 +124,7 @@ export function getUnstakeInstructionDataEncoder(): FixedSizeEncoder<UnstakeInst
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["amount", getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: UNSTAKE_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: UNSTAKE_DISCRIMINATOR }),
   );
 }
 
@@ -144,7 +141,7 @@ export function getUnstakeInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getUnstakeInstructionDataEncoder(),
-    getUnstakeInstructionDataDecoder()
+    getUnstakeInstructionDataDecoder(),
   );
 }
 
@@ -157,7 +154,7 @@ export type UnstakeAsyncInput<
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns the stake position and receives the unstaked ZINC. */
   signer: TransactionSigner<TAccountSigner>;
@@ -188,7 +185,7 @@ export async function getUnstakeInstructionAsync<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UnstakeAsyncInput<
     TAccountSigner,
@@ -201,7 +198,7 @@ export async function getUnstakeInstructionAsync<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   UnstakeInstruction<
     TProgramAddress,
@@ -256,7 +253,7 @@ export async function getUnstakeInstructionAsync<
     accounts.stakePosition.value = await findStakePositionPda({
       signer: getAddressFromResolvedInstructionAccount(
         "signer",
-        accounts.signer.value
+        accounts.signer.value,
       ),
     });
   }
@@ -275,20 +272,20 @@ export async function getUnstakeInstructionAsync<
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "signer",
-            accounts.signer.value
-          )
+            accounts.signer.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "tokenProgram",
-            accounts.tokenProgram.value
-          )
+            accounts.tokenProgram.value,
+          ),
         ),
         getAddressEncoder().encode(
           getAddressFromResolvedInstructionAccount(
             "zincMint",
-            accounts.zincMint.value
-          )
+            accounts.zincMint.value,
+          ),
         ),
       ],
     });
@@ -316,10 +313,21 @@ export async function getUnstakeInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getUnstakeInstructionDataEncoder().encode(
-      args as UnstakeInstructionDataArgs
+      args as UnstakeInstructionDataArgs,
     ),
     programAddress,
-  } as UnstakeInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountStakePosition, TAccountStakingTokenAccount, TAccountSignerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as UnstakeInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStakePosition,
+    TAccountStakingTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type UnstakeInput<
@@ -331,7 +339,7 @@ export type UnstakeInput<
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns the stake position and receives the unstaked ZINC. */
   signer: TransactionSigner<TAccountSigner>;
@@ -362,7 +370,7 @@ export function getUnstakeInstruction<
   TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UnstakeInput<
     TAccountSigner,
@@ -375,7 +383,7 @@ export function getUnstakeInstruction<
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): UnstakeInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -448,15 +456,26 @@ export function getUnstakeInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getUnstakeInstructionDataEncoder().encode(
-      args as UnstakeInstructionDataArgs
+      args as UnstakeInstructionDataArgs,
     ),
     programAddress,
-  } as UnstakeInstruction<TProgramAddress, TAccountSigner, TAccountTreasury, TAccountZincMint, TAccountStakePosition, TAccountStakingTokenAccount, TAccountSignerZincTokenAccount, TAccountAssociatedTokenProgram, TAccountTokenProgram, TAccountSystemProgram>);
+  } as UnstakeInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStakePosition,
+    TAccountStakingTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountAssociatedTokenProgram,
+    TAccountTokenProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedUnstakeInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -482,11 +501,11 @@ export type ParsedUnstakeInstruction<
 
 export function parseUnstakeInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUnstakeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -494,7 +513,7 @@ export function parseUnstakeInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;

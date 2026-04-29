@@ -9,7 +9,7 @@ test("resolveRoundStockpileId prefers the active stockpile", () => {
       unresolvedStockpileId: 8n,
       nextStockpileId: 9n,
     }),
-    7n
+    7n,
   );
 });
 
@@ -20,7 +20,7 @@ test("resolveRoundStockpileId uses unresolved stockpile without an active stockp
       unresolvedStockpileId: 8n,
       nextStockpileId: 9n,
     }),
-    8n
+    8n,
   );
 });
 
@@ -31,7 +31,7 @@ test("resolveRoundStockpileId falls back to latest initialized stockpile between
       unresolvedStockpileId: undefined,
       nextStockpileId: 9n,
     }),
-    8n
+    8n,
   );
 });
 
@@ -43,6 +43,6 @@ test("resolveRoundStockpileId rejects before any stockpile has been initialized"
         unresolvedStockpileId: undefined,
         nextStockpileId: 0n,
       }),
-    /no initialized stockpile account/
+    /no initialized stockpile account/,
   );
 });

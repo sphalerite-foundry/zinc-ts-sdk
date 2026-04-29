@@ -71,7 +71,7 @@ const CLAIM_BUYBACK_POOL_FEES_DISCRIMINATOR = Buffer.from([
 /** Loads the stored Meteora accounts when the caller does not provide them. */
 async function resolveBuybackPoolInstructionAccounts(
   connection: Connection,
-  buybackPoolAccounts?: BuybackPoolInstructionAccounts
+  buybackPoolAccounts?: BuybackPoolInstructionAccounts,
 ): Promise<BuybackPoolInstructionAccounts> {
   if (buybackPoolAccounts) {
     return buybackPoolAccounts;
@@ -79,7 +79,7 @@ async function resolveBuybackPoolInstructionAccounts(
 
   const buybackPool = await fetchBuybackPoolAccount(
     connection,
-    getBuybackPoolAddress()[0]
+    getBuybackPoolAddress()[0],
   );
   return {
     poolAuthority: new PublicKey(buybackPool.data.poolAuthority),
@@ -93,7 +93,7 @@ async function resolveBuybackPoolInstructionAccounts(
 /** Loads the stored Meteora fee-claim accounts when the caller does not provide them. */
 async function resolveClaimBuybackPoolFeesInstructionAccounts(
   connection: Connection,
-  buybackPoolAccounts?: ClaimBuybackPoolFeesInstructionAccounts
+  buybackPoolAccounts?: ClaimBuybackPoolFeesInstructionAccounts,
 ): Promise<ClaimBuybackPoolFeesInstructionAccounts> {
   if (buybackPoolAccounts) {
     return buybackPoolAccounts;
@@ -101,7 +101,7 @@ async function resolveClaimBuybackPoolFeesInstructionAccounts(
 
   const buybackPool = await fetchBuybackPoolAccount(
     connection,
-    getBuybackPoolAddress()[0]
+    getBuybackPoolAddress()[0],
   );
   return {
     poolAuthority: new PublicKey(buybackPool.data.poolAuthority),
@@ -132,7 +132,7 @@ export async function buildBuybackInstruction({
 
   const poolAccounts = await resolveBuybackPoolInstructionAccounts(
     connection,
-    buybackPoolAccounts
+    buybackPoolAccounts,
   );
   const instruction = await getBuybackInstructionAsync({
     signer: toTransactionSigner(signer),
@@ -147,7 +147,7 @@ export async function buildBuybackInstruction({
     minZincOut,
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }
 
@@ -168,7 +168,7 @@ export async function buildClaimBuybackPoolFeesInstruction({
 
   const poolAccounts = await resolveClaimBuybackPoolFeesInstructionAccounts(
     connection,
-    buybackPoolAccounts
+    buybackPoolAccounts,
   );
 
   return new TransactionInstruction({

@@ -29,10 +29,10 @@ const DEFAULT_MAX_COMPUTE_UNIT_LIMIT = 1_400_000;
 
 /** Prepends the max compute-unit limit unless the caller already supplied compute-budget instructions. */
 function withDefaultComputeUnitLimit(
-  instructions: readonly TransactionInstruction[]
+  instructions: readonly TransactionInstruction[],
 ): TransactionInstruction[] {
   const callerConfiguredComputeBudget = instructions.some((instruction) =>
-    instruction.programId.equals(ComputeBudgetProgram.programId)
+    instruction.programId.equals(ComputeBudgetProgram.programId),
   );
   if (callerConfiguredComputeBudget) {
     return [...instructions];
@@ -48,7 +48,7 @@ function withDefaultComputeUnitLimit(
 
 export function toAccountMeta(
   key: PublicKey,
-  isWritable: boolean
+  isWritable: boolean,
 ): AccountMeta {
   return {
     pubkey: key,
@@ -84,7 +84,7 @@ export async function processTransaction(
   instructions: TransactionInstruction[],
   connection: Connection,
   payer: Keypair,
-  lookupTableAccount?: AddressLookupTableAccount
+  lookupTableAccount?: AddressLookupTableAccount,
 ): Promise<TxnResult> {
   const blockhash = await connection.getLatestBlockhash();
   const instructionsWithComputeBudget =
@@ -107,7 +107,7 @@ export async function processTransaction(
     };
     const confirmation = await connection.confirmTransaction(
       strategy,
-      "confirmed"
+      "confirmed",
     );
 
     return {
@@ -118,7 +118,7 @@ export async function processTransaction(
 
   const transaction = new Transaction();
   instructionsWithComputeBudget.forEach((instruction) =>
-    transaction.add(instruction)
+    transaction.add(instruction),
   );
   transaction.recentBlockhash = blockhash.blockhash;
   transaction.feePayer = payer.publicKey;
@@ -130,7 +130,7 @@ export async function processTransaction(
       maxRetries: 3,
       preflightCommitment: "confirmed",
       skipPreflight: true,
-    }
+    },
   );
   const strategy: BlockheightBasedTransactionConfirmationStrategy = {
     signature,
@@ -139,7 +139,7 @@ export async function processTransaction(
   };
   const confirmation = await connection.confirmTransaction(
     strategy,
-    "confirmed"
+    "confirmed",
   );
 
   return {
@@ -152,13 +152,13 @@ export async function processAndValidateTransaction(
   instructions: TransactionInstruction[],
   connection: Connection,
   signer: Keypair,
-  lookupTableAccount?: AddressLookupTableAccount
+  lookupTableAccount?: AddressLookupTableAccount,
 ): Promise<TxnResult> {
   const result = await processTransaction(
     instructions,
     connection,
     signer,
-    lookupTableAccount
+    lookupTableAccount,
   );
 
   if (result.SignatureResult.err === null) {

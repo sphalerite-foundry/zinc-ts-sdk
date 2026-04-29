@@ -110,7 +110,7 @@ export function getSignedComputationOutputsRevealRoundRandOutputCodec(): Codec<
 > {
   return combineCodec(
     getSignedComputationOutputsRevealRoundRandOutputEncoder(),
-    getSignedComputationOutputsRevealRoundRandOutputDecoder()
+    getSignedComputationOutputsRevealRoundRandOutputDecoder(),
   );
 }
 
@@ -121,14 +121,14 @@ export function signedComputationOutputsRevealRoundRandOutput(
     SignedComputationOutputsRevealRoundRandOutputArgs,
     "__kind",
     "Success"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealRoundRandOutputArgs,
   "__kind",
   "Success"
 >;
 export function signedComputationOutputsRevealRoundRandOutput(
-  kind: "Failure"
+  kind: "Failure",
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealRoundRandOutputArgs,
   "__kind",
@@ -140,7 +140,7 @@ export function signedComputationOutputsRevealRoundRandOutput(
     SignedComputationOutputsRevealRoundRandOutputArgs,
     "__kind",
     "MarkerForIdlBuildDoNotUseThis"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealRoundRandOutputArgs,
   "__kind",
@@ -148,7 +148,7 @@ export function signedComputationOutputsRevealRoundRandOutput(
 >;
 export function signedComputationOutputsRevealRoundRandOutput<
   K extends SignedComputationOutputsRevealRoundRandOutputArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -156,10 +156,10 @@ export function signedComputationOutputsRevealRoundRandOutput<
 }
 
 export function isSignedComputationOutputsRevealRoundRandOutput<
-  K extends SignedComputationOutputsRevealRoundRandOutput["__kind"]
+  K extends SignedComputationOutputsRevealRoundRandOutput["__kind"],
 >(
   kind: K,
-  value: SignedComputationOutputsRevealRoundRandOutput
+  value: SignedComputationOutputsRevealRoundRandOutput,
 ): value is SignedComputationOutputsRevealRoundRandOutput & { __kind: K } {
   return value.__kind === kind;
 }

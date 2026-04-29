@@ -23,6 +23,6 @@ export async function buildInitBoardInstruction({
     board: toAddress(board),
   });
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }

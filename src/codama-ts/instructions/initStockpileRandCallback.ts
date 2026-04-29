@@ -47,26 +47,24 @@ export const INIT_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getInitStockpileRandCallbackDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INIT_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR
+    INIT_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR,
   );
 }
 
 export type InitStockpileRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountInstructionsSysvar extends
-    | string
-    | AccountMeta<string> = "Sysvar1nstructions1111111111111111111111111",
+  TAccountInstructionsSysvar extends string | AccountMeta<string> =
+    "Sysvar1nstructions1111111111111111111111111",
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountStockpileSecret extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -98,7 +96,7 @@ export type InitStockpileRandCallbackInstruction<
       TAccountStockpileSecret extends string
         ? WritableAccount<TAccountStockpileSecret>
         : TAccountStockpileSecret,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -120,7 +118,7 @@ export function getInitStockpileRandCallbackInstructionDataEncoder(): Encoder<In
     (value) => ({
       ...value,
       discriminator: INIT_STOCKPILE_RAND_CALLBACK_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -137,7 +135,7 @@ export function getInitStockpileRandCallbackInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getInitStockpileRandCallbackInstructionDataEncoder(),
-    getInitStockpileRandCallbackInstructionDataDecoder()
+    getInitStockpileRandCallbackInstructionDataDecoder(),
   );
 }
 
@@ -150,7 +148,7 @@ export type InitStockpileRandCallbackAsyncInput<
   TAccountInstructionsSysvar extends string = string,
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
-  TAccountStockpileSecret extends string = string
+  TAccountStockpileSecret extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -180,7 +178,7 @@ export async function getInitStockpileRandCallbackInstructionAsync<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileRandCallbackAsyncInput<
     TAccountArciumProgram,
@@ -193,7 +191,7 @@ export async function getInitStockpileRandCallbackInstructionAsync<
     TAccountStockpile,
     TAccountStockpileSecret
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitStockpileRandCallbackInstruction<
     TProgramAddress,
@@ -264,10 +262,21 @@ export async function getInitStockpileRandCallbackInstructionAsync<
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
     ],
     data: getInitStockpileRandCallbackInstructionDataEncoder().encode(
-      args as InitStockpileRandCallbackInstructionDataArgs
+      args as InitStockpileRandCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileRandCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountBoard, TAccountStockpile, TAccountStockpileSecret>);
+  } as InitStockpileRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileSecret
+  >);
 }
 
 export type InitStockpileRandCallbackInput<
@@ -279,7 +288,7 @@ export type InitStockpileRandCallbackInput<
   TAccountInstructionsSysvar extends string = string,
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
-  TAccountStockpileSecret extends string = string
+  TAccountStockpileSecret extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -309,7 +318,7 @@ export function getInitStockpileRandCallbackInstruction<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileRandCallbackInput<
     TAccountArciumProgram,
@@ -322,7 +331,7 @@ export function getInitStockpileRandCallbackInstruction<
     TAccountStockpile,
     TAccountStockpileSecret
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitStockpileRandCallbackInstruction<
   TProgramAddress,
   TAccountArciumProgram,
@@ -388,15 +397,26 @@ export function getInitStockpileRandCallbackInstruction<
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
     ],
     data: getInitStockpileRandCallbackInstructionDataEncoder().encode(
-      args as InitStockpileRandCallbackInstructionDataArgs
+      args as InitStockpileRandCallbackInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileRandCallbackInstruction<TProgramAddress, TAccountArciumProgram, TAccountCompDefAccount, TAccountMxeAccount, TAccountComputationAccount, TAccountClusterAccount, TAccountInstructionsSysvar, TAccountBoard, TAccountStockpile, TAccountStockpileSecret>);
+  } as InitStockpileRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountBoard,
+    TAccountStockpile,
+    TAccountStockpileSecret
+  >);
 }
 
 export type ParsedInitStockpileRandCallbackInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -421,11 +441,11 @@ export type ParsedInitStockpileRandCallbackInstruction<
 
 export function parseInitStockpileRandCallbackInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitStockpileRandCallbackInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     throw new SolanaError(
@@ -433,7 +453,7 @@ export function parseInitStockpileRandCallbackInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 9,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -456,7 +476,7 @@ export function parseInitStockpileRandCallbackInstruction<
       stockpileSecret: getNextAccount(),
     },
     data: getInitStockpileRandCallbackInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

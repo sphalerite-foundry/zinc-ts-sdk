@@ -110,7 +110,7 @@ export function getSignedComputationOutputsRevealStockpileRandOutputCodec(): Cod
 > {
   return combineCodec(
     getSignedComputationOutputsRevealStockpileRandOutputEncoder(),
-    getSignedComputationOutputsRevealStockpileRandOutputDecoder()
+    getSignedComputationOutputsRevealStockpileRandOutputDecoder(),
   );
 }
 
@@ -121,14 +121,14 @@ export function signedComputationOutputsRevealStockpileRandOutput(
     SignedComputationOutputsRevealStockpileRandOutputArgs,
     "__kind",
     "Success"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealStockpileRandOutputArgs,
   "__kind",
   "Success"
 >;
 export function signedComputationOutputsRevealStockpileRandOutput(
-  kind: "Failure"
+  kind: "Failure",
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealStockpileRandOutputArgs,
   "__kind",
@@ -140,7 +140,7 @@ export function signedComputationOutputsRevealStockpileRandOutput(
     SignedComputationOutputsRevealStockpileRandOutputArgs,
     "__kind",
     "MarkerForIdlBuildDoNotUseThis"
-  >["fields"]
+  >["fields"],
 ): GetDiscriminatedUnionVariant<
   SignedComputationOutputsRevealStockpileRandOutputArgs,
   "__kind",
@@ -148,7 +148,7 @@ export function signedComputationOutputsRevealStockpileRandOutput(
 >;
 export function signedComputationOutputsRevealStockpileRandOutput<
   K extends SignedComputationOutputsRevealStockpileRandOutputArgs["__kind"],
-  Data
+  Data,
 >(kind: K, data?: Data) {
   return Array.isArray(data)
     ? { __kind: kind, fields: data }
@@ -156,10 +156,10 @@ export function signedComputationOutputsRevealStockpileRandOutput<
 }
 
 export function isSignedComputationOutputsRevealStockpileRandOutput<
-  K extends SignedComputationOutputsRevealStockpileRandOutput["__kind"]
+  K extends SignedComputationOutputsRevealStockpileRandOutput["__kind"],
 >(
   kind: K,
-  value: SignedComputationOutputsRevealStockpileRandOutput
+  value: SignedComputationOutputsRevealStockpileRandOutput,
 ): value is SignedComputationOutputsRevealStockpileRandOutput & { __kind: K } {
   return value.__kind === kind;
 }

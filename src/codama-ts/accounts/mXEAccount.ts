@@ -63,7 +63,7 @@ export const M_X_E_ACCOUNT_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
 
 export function getMXEAccountDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    M_X_E_ACCOUNT_DISCRIMINATOR
+    M_X_E_ACCOUNT_DISCRIMINATOR,
   );
 }
 
@@ -110,7 +110,7 @@ export function getMXEAccountEncoder(): Encoder<MXEAccountArgs> {
       ["status", getMxeStatusEncoder()],
       ["bump", getU8Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: M_X_E_ACCOUNT_DISCRIMINATOR })
+    (value) => ({ ...value, discriminator: M_X_E_ACCOUNT_DISCRIMINATOR }),
   );
 }
 
@@ -137,24 +137,24 @@ export function getMXEAccountCodec(): Codec<MXEAccountArgs, MXEAccount> {
 }
 
 export function decodeMXEAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress>,
 ): Account<MXEAccount, TAddress>;
 export function decodeMXEAccount<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<MXEAccount, TAddress>;
 export function decodeMXEAccount<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<MXEAccount, TAddress> | MaybeAccount<MXEAccount, TAddress> {
   return decodeAccount(
     encodedAccount as MaybeEncodedAccount<TAddress>,
-    getMXEAccountDecoder()
+    getMXEAccountDecoder(),
   );
 }
 
 export async function fetchMXEAccount<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<MXEAccount, TAddress>> {
   const maybeAccount = await fetchMaybeMXEAccount(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -164,7 +164,7 @@ export async function fetchMXEAccount<TAddress extends string = string>(
 export async function fetchMaybeMXEAccount<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<MXEAccount, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeMXEAccount(maybeAccount);
@@ -173,7 +173,7 @@ export async function fetchMaybeMXEAccount<TAddress extends string = string>(
 export async function fetchAllMXEAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<MXEAccount>[]> {
   const maybeAccounts = await fetchAllMaybeMXEAccount(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -183,7 +183,7 @@ export async function fetchAllMXEAccount(
 export async function fetchAllMaybeMXEAccount(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<MXEAccount>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeMXEAccount(maybeAccount));

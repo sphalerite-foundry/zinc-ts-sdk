@@ -14,7 +14,7 @@ const FINALIZE_NO_WINNER_ROUND_DISCRIMINATOR = Buffer.from([
   208, 203, 217, 27, 206, 70, 45, 36,
 ]);
 const TOKEN_PROGRAM_ID = new PublicKey(
-  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
 );
 
 export type BuildFinalizeNoWinnerRoundInstruction = {
@@ -36,7 +36,7 @@ export async function buildFinalizeNoWinnerRoundInstruction({
   const roundZincPayoutTokenAccount = getRoundZincPayoutTokenAccountAddress(
     roundId,
     treasury,
-    zincMint
+    zincMint,
   )[0];
   return new TransactionInstruction({
     programId: ZINC_PROGRAM_ID,

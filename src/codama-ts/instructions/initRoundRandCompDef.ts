@@ -50,7 +50,7 @@ export const INIT_ROUND_RAND_COMP_DEF_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getInitRoundRandCompDefDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    INIT_ROUND_RAND_COMP_DEF_DISCRIMINATOR
+    INIT_ROUND_RAND_COMP_DEF_DISCRIMINATOR,
   );
 }
 
@@ -61,16 +61,13 @@ export type InitRoundRandCompDefInstruction<
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountAddressLookupTable extends string | AccountMeta<string> = string,
-  TAccountLutProgram extends
-    | string
-    | AccountMeta<string> = "AddressLookupTab1e1111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountLutProgram extends string | AccountMeta<string> =
+    "AddressLookupTab1e1111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -100,7 +97,7 @@ export type InitRoundRandCompDefInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -122,7 +119,7 @@ export function getInitRoundRandCompDefInstructionDataEncoder(): Encoder<InitRou
     (value) => ({
       ...value,
       discriminator: INIT_ROUND_RAND_COMP_DEF_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -139,7 +136,7 @@ export function getInitRoundRandCompDefInstructionDataCodec(): Codec<
 > {
   return combineCodec(
     getInitRoundRandCompDefInstructionDataEncoder(),
-    getInitRoundRandCompDefInstructionDataDecoder()
+    getInitRoundRandCompDefInstructionDataDecoder(),
   );
 }
 
@@ -151,7 +148,7 @@ export type InitRoundRandCompDefAsyncInput<
   TAccountAddressLookupTable extends string = string,
   TAccountLutProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the computation-definition account initialization. */
   payer: TransactionSigner<TAccountPayer>;
@@ -176,7 +173,7 @@ export async function getInitRoundRandCompDefInstructionAsync<
   TAccountLutProgram extends string,
   TAccountArciumProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitRoundRandCompDefAsyncInput<
     TAccountPayer,
@@ -188,7 +185,7 @@ export async function getInitRoundRandCompDefInstructionAsync<
     TAccountArciumProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   InitRoundRandCompDefInstruction<
     TProgramAddress,
@@ -257,10 +254,20 @@ export async function getInitRoundRandCompDefInstructionAsync<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitRoundRandCompDefInstructionDataEncoder().encode(
-      args as InitRoundRandCompDefInstructionDataArgs
+      args as InitRoundRandCompDefInstructionDataArgs,
     ),
     programAddress,
-  } as InitRoundRandCompDefInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountMxeAccount, TAccountCompDefAccount, TAccountAddressLookupTable, TAccountLutProgram, TAccountArciumProgram, TAccountSystemProgram>);
+  } as InitRoundRandCompDefInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountMxeAccount,
+    TAccountCompDefAccount,
+    TAccountAddressLookupTable,
+    TAccountLutProgram,
+    TAccountArciumProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type InitRoundRandCompDefInput<
@@ -271,7 +278,7 @@ export type InitRoundRandCompDefInput<
   TAccountAddressLookupTable extends string = string,
   TAccountLutProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   /** Pays for the computation-definition account initialization. */
   payer: TransactionSigner<TAccountPayer>;
@@ -296,7 +303,7 @@ export function getInitRoundRandCompDefInstruction<
   TAccountLutProgram extends string,
   TAccountArciumProgram extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitRoundRandCompDefInput<
     TAccountPayer,
@@ -308,7 +315,7 @@ export function getInitRoundRandCompDefInstruction<
     TAccountArciumProgram,
     TAccountSystemProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): InitRoundRandCompDefInstruction<
   TProgramAddress,
   TAccountPayer,
@@ -372,15 +379,25 @@ export function getInitRoundRandCompDefInstruction<
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getInitRoundRandCompDefInstructionDataEncoder().encode(
-      args as InitRoundRandCompDefInstructionDataArgs
+      args as InitRoundRandCompDefInstructionDataArgs,
     ),
     programAddress,
-  } as InitRoundRandCompDefInstruction<TProgramAddress, TAccountPayer, TAccountConfig, TAccountMxeAccount, TAccountCompDefAccount, TAccountAddressLookupTable, TAccountLutProgram, TAccountArciumProgram, TAccountSystemProgram>);
+  } as InitRoundRandCompDefInstruction<
+    TProgramAddress,
+    TAccountPayer,
+    TAccountConfig,
+    TAccountMxeAccount,
+    TAccountCompDefAccount,
+    TAccountAddressLookupTable,
+    TAccountLutProgram,
+    TAccountArciumProgram,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedInitRoundRandCompDefInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -401,11 +418,11 @@ export type ParsedInitRoundRandCompDefInstruction<
 
 export function parseInitRoundRandCompDefInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitRoundRandCompDefInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 8) {
     throw new SolanaError(
@@ -413,7 +430,7 @@ export function parseInitRoundRandCompDefInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 8,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -435,7 +452,7 @@ export function parseInitRoundRandCompDefInstruction<
       systemProgram: getNextAccount(),
     },
     data: getInitRoundRandCompDefInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

@@ -46,7 +46,7 @@ export const QUEUE_ROUND_SETTLEMENT_DISCRIMINATOR: ReadonlyUint8Array =
 
 export function getQueueRoundSettlementDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    QUEUE_ROUND_SETTLEMENT_DISCRIMINATOR
+    QUEUE_ROUND_SETTLEMENT_DISCRIMINATOR,
   );
 }
 
@@ -64,19 +64,15 @@ export type QueueRoundSettlementInstruction<
   TAccountComputationAccount extends string | AccountMeta<string> = string,
   TAccountCompDefAccount extends string | AccountMeta<string> = string,
   TAccountClusterAccount extends string | AccountMeta<string> = string,
-  TAccountPoolAccount extends
-    | string
-    | AccountMeta<string> = "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
-  TAccountClockAccount extends
-    | string
-    | AccountMeta<string> = "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
-  TAccountSystemProgram extends
-    | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TAccountArciumProgram extends
-    | string
-    | AccountMeta<string> = "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+  TAccountPoolAccount extends string | AccountMeta<string> =
+    "G2sRWJvi3xoyh5k2gY49eG9L8YhAEWQPtNb1zb1GXTtC",
+  TAccountClockAccount extends string | AccountMeta<string> =
+    "7EbMUTLo5DjdzbN7s8BXeZwXzEwNQb1hScfRvWg8a6ot",
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
+  TAccountArciumProgram extends string | AccountMeta<string> =
+    "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -130,7 +126,7 @@ export type QueueRoundSettlementInstruction<
       TAccountArciumProgram extends string
         ? ReadonlyAccount<TAccountArciumProgram>
         : TAccountArciumProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -152,7 +148,7 @@ export function getQueueRoundSettlementInstructionDataEncoder(): FixedSizeEncode
     (value) => ({
       ...value,
       discriminator: QUEUE_ROUND_SETTLEMENT_DISCRIMINATOR,
-    })
+    }),
   );
 }
 
@@ -169,7 +165,7 @@ export function getQueueRoundSettlementInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getQueueRoundSettlementInstructionDataEncoder(),
-    getQueueRoundSettlementInstructionDataDecoder()
+    getQueueRoundSettlementInstructionDataDecoder(),
   );
 }
 
@@ -189,7 +185,7 @@ export type QueueRoundSettlementAsyncInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Crank authorized to reveal settled round entropy. */
   signer: TransactionSigner<TAccountSigner>;
@@ -238,7 +234,7 @@ export async function getQueueRoundSettlementInstructionAsync<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueRoundSettlementAsyncInput<
     TAccountSigner,
@@ -258,7 +254,7 @@ export async function getQueueRoundSettlementInstructionAsync<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): Promise<
   QueueRoundSettlementInstruction<
     TProgramAddress,
@@ -361,10 +357,28 @@ export async function getQueueRoundSettlementInstructionAsync<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueRoundSettlementInstructionDataEncoder().encode(
-      args as QueueRoundSettlementInstructionDataArgs
+      args as QueueRoundSettlementInstructionDataArgs,
     ),
     programAddress,
-  } as QueueRoundSettlementInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueRoundSettlementInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type QueueRoundSettlementInput<
@@ -383,7 +397,7 @@ export type QueueRoundSettlementInput<
   TAccountPoolAccount extends string = string,
   TAccountClockAccount extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountArciumProgram extends string = string
+  TAccountArciumProgram extends string = string,
 > = {
   /** Crank authorized to reveal settled round entropy. */
   signer: TransactionSigner<TAccountSigner>;
@@ -432,7 +446,7 @@ export function getQueueRoundSettlementInstruction<
   TAccountClockAccount extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: QueueRoundSettlementInput<
     TAccountSigner,
@@ -452,7 +466,7 @@ export function getQueueRoundSettlementInstruction<
     TAccountSystemProgram,
     TAccountArciumProgram
   >,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): QueueRoundSettlementInstruction<
   TProgramAddress,
   TAccountSigner,
@@ -544,15 +558,33 @@ export function getQueueRoundSettlementInstruction<
       getAccountMeta("arciumProgram", accounts.arciumProgram),
     ],
     data: getQueueRoundSettlementInstructionDataEncoder().encode(
-      args as QueueRoundSettlementInstructionDataArgs
+      args as QueueRoundSettlementInstructionDataArgs,
     ),
     programAddress,
-  } as QueueRoundSettlementInstruction<TProgramAddress, TAccountSigner, TAccountConfig, TAccountBoard, TAccountRound, TAccountRoundSecret, TAccountSignPdaAccount, TAccountMxeAccount, TAccountMempoolAccount, TAccountExecutingPool, TAccountComputationAccount, TAccountCompDefAccount, TAccountClusterAccount, TAccountPoolAccount, TAccountClockAccount, TAccountSystemProgram, TAccountArciumProgram>);
+  } as QueueRoundSettlementInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountBoard,
+    TAccountRound,
+    TAccountRoundSecret,
+    TAccountSignPdaAccount,
+    TAccountMxeAccount,
+    TAccountMempoolAccount,
+    TAccountExecutingPool,
+    TAccountComputationAccount,
+    TAccountCompDefAccount,
+    TAccountClusterAccount,
+    TAccountPoolAccount,
+    TAccountClockAccount,
+    TAccountSystemProgram,
+    TAccountArciumProgram
+  >);
 }
 
 export type ParsedQueueRoundSettlementInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -589,11 +621,11 @@ export type ParsedQueueRoundSettlementInstruction<
 
 export function parseQueueRoundSettlementInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedQueueRoundSettlementInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 16) {
     throw new SolanaError(
@@ -601,7 +633,7 @@ export function parseQueueRoundSettlementInstruction<
       {
         actualAccountMetas: instruction.accounts.length,
         expectedAccountMetas: 16,
-      }
+      },
     );
   }
   let accountIndex = 0;
@@ -631,7 +663,7 @@ export function parseQueueRoundSettlementInstruction<
       arciumProgram: getNextAccount(),
     },
     data: getQueueRoundSettlementInstructionDataDecoder().decode(
-      instruction.data
+      instruction.data,
     ),
   };
 }

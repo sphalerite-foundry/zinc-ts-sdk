@@ -16,7 +16,7 @@ export type BuildClaimStakingYieldInstructionInput = {
 
 /** Builds one native staking-yield claim instruction for the active signer. */
 export async function buildClaimStakingYieldInstruction(
-  input: BuildClaimStakingYieldInstructionInput
+  input: BuildClaimStakingYieldInstructionInput,
 ): Promise<TransactionInstruction> {
   const { connection, signer } = input;
   const treasury = getTreasuryAddress()[0];
@@ -29,6 +29,6 @@ export async function buildClaimStakingYieldInstruction(
   });
 
   return toTransactionInstruction(
-    instruction as Parameters<typeof toTransactionInstruction>[0]
+    instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }
