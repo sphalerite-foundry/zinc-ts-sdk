@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { ZINC_PROGRAM_ID } from "../constants";
 import {
