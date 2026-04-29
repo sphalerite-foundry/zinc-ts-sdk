@@ -1,6 +1,6 @@
 {
   "name": "@sphalerite-foundry/zinc-ts-sdk",
-  "version": "0.1.75",
+  "version": "0.1.76",
   "private": false,
   "type": "module",
   "license": "UNLICENSED",
@@ -44,7 +44,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@arcium-hq/client": "0.9.2",
+    "@arcium-hq/client": "0.9.7",
     "@solana/kit": "^6.8.0",
     "@solana/program-client-core": "^6.8.0",
     "@solana/spl-token": "^0.4.14",
