@@ -23,7 +23,7 @@ export async function findRoundSecretPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "HqFuhkdvmkFA2PJDCE7s2869z5hMH8CCtTQEk5TTDpa" as Address<"HqFuhkdvmkFA2PJDCE7s2869z5hMH8CCtTQEk5TTDpa">,
+    programAddress = "FCQXYMHP2nrM8VQv7vjrYwrZJ4ZvYbfreXSDMuUAiaVo" as Address<"FCQXYMHP2nrM8VQv7vjrYwrZJ4ZvYbfreXSDMuUAiaVo">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
