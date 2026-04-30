@@ -26,6 +26,8 @@ export type RoundWildcatEntryRange = {
   miner: Address;
   /** Player wallet that owns the miner. */
   player: Address;
+  /** Net deploy amount used to keep the bounded Wildcat candidate set deterministic. */
+  deployAmount: bigint;
   /** First weighted ticket index owned by the winner, inclusive. */
   start: bigint;
   /** First weighted ticket index after the winner's range, exclusive. */
@@ -37,6 +39,8 @@ export type RoundWildcatEntryRangeArgs = {
   miner: Address;
   /** Player wallet that owns the miner. */
   player: Address;
+  /** Net deploy amount used to keep the bounded Wildcat candidate set deterministic. */
+  deployAmount: number | bigint;
   /** First weighted ticket index owned by the winner, inclusive. */
   start: number | bigint;
   /** First weighted ticket index after the winner's range, exclusive. */
@@ -47,6 +51,7 @@ export function getRoundWildcatEntryRangeEncoder(): FixedSizeEncoder<RoundWildca
   return getStructEncoder([
     ["miner", getAddressEncoder()],
     ["player", getAddressEncoder()],
+    ["deployAmount", getU64Encoder()],
     ["start", getU64Encoder()],
     ["end", getU64Encoder()],
   ]);
@@ -56,6 +61,7 @@ export function getRoundWildcatEntryRangeDecoder(): FixedSizeDecoder<RoundWildca
   return getStructDecoder([
     ["miner", getAddressDecoder()],
     ["player", getAddressDecoder()],
+    ["deployAmount", getU64Decoder()],
     ["start", getU64Decoder()],
     ["end", getU64Decoder()],
   ]);
