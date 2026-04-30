@@ -95,6 +95,8 @@ export type Round = {
   numberOfPlayers: bigint;
   /** Number of players already processed by batch settlement. */
   settledMinerCount: bigint;
+  /** Number of queued settlement batch callbacks that have not landed yet. */
+  pendingSettlementBatchCallbacks: bigint;
   /** Public random value revealed during settlement, absent beforehand. */
   rand: Option<bigint>;
   /** ZINC Bonanza payout reserved for this round's winners, if the stockpile resolved here. */
@@ -154,6 +156,8 @@ export type RoundArgs = {
   numberOfPlayers: number | bigint;
   /** Number of players already processed by batch settlement. */
   settledMinerCount: number | bigint;
+  /** Number of queued settlement batch callbacks that have not landed yet. */
+  pendingSettlementBatchCallbacks: number | bigint;
   /** Public random value revealed during settlement, absent beforehand. */
   rand: OptionOrNullable<number | bigint>;
   /** ZINC Bonanza payout reserved for this round's winners, if the stockpile resolved here. */
@@ -203,6 +207,7 @@ export function getRoundEncoder(): Encoder<RoundArgs> {
       ["remainingWinnerClaims", getU64Encoder()],
       ["numberOfPlayers", getU64Encoder()],
       ["settledMinerCount", getU64Encoder()],
+      ["pendingSettlementBatchCallbacks", getU64Encoder()],
       ["rand", getOptionEncoder(getU64Encoder())],
       ["bonanzaPayoutAmount", getU64Encoder()],
       ["bump", getU8Encoder()],
@@ -240,6 +245,7 @@ export function getRoundDecoder(): Decoder<Round> {
     ["remainingWinnerClaims", getU64Decoder()],
     ["numberOfPlayers", getU64Decoder()],
     ["settledMinerCount", getU64Decoder()],
+    ["pendingSettlementBatchCallbacks", getU64Decoder()],
     ["rand", getOptionDecoder(getU64Decoder())],
     ["bonanzaPayoutAmount", getU64Decoder()],
     ["bump", getU8Decoder()],
