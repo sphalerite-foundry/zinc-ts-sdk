@@ -21,6 +21,8 @@ export const STAKING_TOKEN_ACCOUNT_SEED = "staking-token-account";
 export const STAKING_REWARD_TOKEN_ACCOUNT_SEED = "staking-reward-token-account";
 export const BONANZA_TOKEN_ACCOUNT_SEED = "bonanza-token-account";
 export const STOCKPILE_TOKEN_ACCOUNT_SEED = "stockpile-token-account";
+export const ROUND_ZINC_REWARD_TOKEN_ACCOUNT_SEED =
+  "round-zinc-reward-token-account";
 export const ROUND_ZINC_PAYOUT_TOKEN_ACCOUNT_SEED = "zinc-payout-token-account";
 export const BUYBACK_TOKEN_ACCOUNT_SEED = "buyback-token-account";
 export const BUYBACK_FEE_ZINC_TOKEN_ACCOUNT_SEED =

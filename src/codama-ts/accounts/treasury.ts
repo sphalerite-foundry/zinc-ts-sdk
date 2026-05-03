@@ -61,6 +61,8 @@ export type Treasury = {
   bonanzaTokenAccount: Address;
   /** Stockpile token account created during `init_config`. */
   stockpileTokenAccount: Address;
+  /** Round ZINC reward token account created during `init_config`. */
+  roundZincRewardTokenAccount: Address;
   /** Stockpile SOL vault created during `init_config`. */
   stockpileSolVault: Address;
   /** Buyback SOL vault created during `init_config`. */
@@ -77,6 +79,14 @@ export type Treasury = {
   stakingRewardsFactor: bigint;
   /** Pool-level carry remainder used when converting one reward amount into the cumulative factor. */
   stakingRewardsRemainder: bigint;
+  /** Current base round ZINC rewards credited to player profiles but not claimed. */
+  totalRoundZincUnclaimed: bigint;
+  /** Current refined round ZINC fees owed through profile reward-factor accounting. */
+  totalRoundZincRefined: bigint;
+  /** Cumulative round ZINC claim-fee factor shared by player profiles with unclaimed rewards. */
+  roundZincRewardsFactor: bigint;
+  /** Pool-level carry remainder used when converting one claim fee into the cumulative factor. */
+  roundZincRewardsRemainder: bigint;
 };
 
 export type TreasuryArgs = {
@@ -90,6 +100,8 @@ export type TreasuryArgs = {
   bonanzaTokenAccount: Address;
   /** Stockpile token account created during `init_config`. */
   stockpileTokenAccount: Address;
+  /** Round ZINC reward token account created during `init_config`. */
+  roundZincRewardTokenAccount: Address;
   /** Stockpile SOL vault created during `init_config`. */
   stockpileSolVault: Address;
   /** Buyback SOL vault created during `init_config`. */
@@ -106,6 +118,14 @@ export type TreasuryArgs = {
   stakingRewardsFactor: number | bigint;
   /** Pool-level carry remainder used when converting one reward amount into the cumulative factor. */
   stakingRewardsRemainder: number | bigint;
+  /** Current base round ZINC rewards credited to player profiles but not claimed. */
+  totalRoundZincUnclaimed: number | bigint;
+  /** Current refined round ZINC fees owed through profile reward-factor accounting. */
+  totalRoundZincRefined: number | bigint;
+  /** Cumulative round ZINC claim-fee factor shared by player profiles with unclaimed rewards. */
+  roundZincRewardsFactor: number | bigint;
+  /** Pool-level carry remainder used when converting one claim fee into the cumulative factor. */
+  roundZincRewardsRemainder: number | bigint;
 };
 
 /** Gets the encoder for {@link TreasuryArgs} account data. */
@@ -118,6 +138,7 @@ export function getTreasuryEncoder(): FixedSizeEncoder<TreasuryArgs> {
       ["curveAdminTokenAccount", getAddressEncoder()],
       ["bonanzaTokenAccount", getAddressEncoder()],
       ["stockpileTokenAccount", getAddressEncoder()],
+      ["roundZincRewardTokenAccount", getAddressEncoder()],
       ["stockpileSolVault", getAddressEncoder()],
       ["buybackSolVault", getAddressEncoder()],
       ["totalZincMinted", getU64Encoder()],
@@ -126,6 +147,10 @@ export function getTreasuryEncoder(): FixedSizeEncoder<TreasuryArgs> {
       ["totalStaked", getU64Encoder()],
       ["stakingRewardsFactor", getU128Encoder()],
       ["stakingRewardsRemainder", getU64Encoder()],
+      ["totalRoundZincUnclaimed", getU64Encoder()],
+      ["totalRoundZincRefined", getU64Encoder()],
+      ["roundZincRewardsFactor", getU128Encoder()],
+      ["roundZincRewardsRemainder", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: TREASURY_DISCRIMINATOR }),
   );
@@ -140,6 +165,7 @@ export function getTreasuryDecoder(): FixedSizeDecoder<Treasury> {
     ["curveAdminTokenAccount", getAddressDecoder()],
     ["bonanzaTokenAccount", getAddressDecoder()],
     ["stockpileTokenAccount", getAddressDecoder()],
+    ["roundZincRewardTokenAccount", getAddressDecoder()],
     ["stockpileSolVault", getAddressDecoder()],
     ["buybackSolVault", getAddressDecoder()],
     ["totalZincMinted", getU64Decoder()],
@@ -148,6 +174,10 @@ export function getTreasuryDecoder(): FixedSizeDecoder<Treasury> {
     ["totalStaked", getU64Decoder()],
     ["stakingRewardsFactor", getU128Decoder()],
     ["stakingRewardsRemainder", getU64Decoder()],
+    ["totalRoundZincUnclaimed", getU64Decoder()],
+    ["totalRoundZincRefined", getU64Decoder()],
+    ["roundZincRewardsFactor", getU128Decoder()],
+    ["roundZincRewardsRemainder", getU64Decoder()],
   ]);
 }
 
@@ -210,5 +240,5 @@ export async function fetchAllMaybeTreasury(
 }
 
 export function getTreasurySize(): number {
-  return 257;
+  return 329;
 }

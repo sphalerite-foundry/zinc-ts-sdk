@@ -17,6 +17,7 @@ export * from "./config";
 export * from "./playerProfile";
 export * from "./round";
 export * from "./roundSecret";
+export * from "./roundZincRewardTokenAccount";
 export * from "./signPdaAccount";
 export * from "./stakePosition";
 export * from "./stakingRewardTokenAccount";

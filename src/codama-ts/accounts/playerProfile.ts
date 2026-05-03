@@ -25,6 +25,8 @@ import {
   getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
+  getU128Decoder,
+  getU128Encoder,
   getU64Decoder,
   getU64Encoder,
   getU8Decoder,
@@ -89,6 +91,14 @@ export type PlayerProfile = {
   lifetimeHiddenBonusStockpileBricksEarnedX10k: bigint;
   /** Spendable stockpile bricks in `x10k` units. */
   availableStockpileBricksX10k: bigint;
+  /** Base round ZINC rewards credited but not claimed. */
+  claimableRoundZincRewards: bigint;
+  /** Refined ZINC earned from other players' round reward claim fees. */
+  refinedRoundZincRewards: bigint;
+  /** Treasury round reward factor last checkpointed onto this profile. */
+  roundZincRewardsFactorCheckpoint: bigint;
+  /** Lifetime round ZINC rewards credited or refined onto this profile. */
+  lifetimeRoundZincRewards: bigint;
   /** Most recent stockpile cycle this player joined, if any. */
   lastJoinedStockpileId: Option<bigint>;
   /** PDA bump seed. */
@@ -128,6 +138,14 @@ export type PlayerProfileArgs = {
   lifetimeHiddenBonusStockpileBricksEarnedX10k: number | bigint;
   /** Spendable stockpile bricks in `x10k` units. */
   availableStockpileBricksX10k: number | bigint;
+  /** Base round ZINC rewards credited but not claimed. */
+  claimableRoundZincRewards: number | bigint;
+  /** Refined ZINC earned from other players' round reward claim fees. */
+  refinedRoundZincRewards: number | bigint;
+  /** Treasury round reward factor last checkpointed onto this profile. */
+  roundZincRewardsFactorCheckpoint: number | bigint;
+  /** Lifetime round ZINC rewards credited or refined onto this profile. */
+  lifetimeRoundZincRewards: number | bigint;
   /** Most recent stockpile cycle this player joined, if any. */
   lastJoinedStockpileId: OptionOrNullable<number | bigint>;
   /** PDA bump seed. */
@@ -155,6 +173,10 @@ export function getPlayerProfileEncoder(): Encoder<PlayerProfileArgs> {
       ["lifetimeStreakStockpileBricksEarnedX10k", getU64Encoder()],
       ["lifetimeHiddenBonusStockpileBricksEarnedX10k", getU64Encoder()],
       ["availableStockpileBricksX10k", getU64Encoder()],
+      ["claimableRoundZincRewards", getU64Encoder()],
+      ["refinedRoundZincRewards", getU64Encoder()],
+      ["roundZincRewardsFactorCheckpoint", getU128Encoder()],
+      ["lifetimeRoundZincRewards", getU64Encoder()],
       ["lastJoinedStockpileId", getOptionEncoder(getU64Encoder())],
       ["bump", getU8Encoder()],
     ]),
@@ -182,6 +204,10 @@ export function getPlayerProfileDecoder(): Decoder<PlayerProfile> {
     ["lifetimeStreakStockpileBricksEarnedX10k", getU64Decoder()],
     ["lifetimeHiddenBonusStockpileBricksEarnedX10k", getU64Decoder()],
     ["availableStockpileBricksX10k", getU64Decoder()],
+    ["claimableRoundZincRewards", getU64Decoder()],
+    ["refinedRoundZincRewards", getU64Decoder()],
+    ["roundZincRewardsFactorCheckpoint", getU128Decoder()],
+    ["lifetimeRoundZincRewards", getU64Decoder()],
     ["lastJoinedStockpileId", getOptionDecoder(getU64Decoder())],
     ["bump", getU8Decoder()],
   ]);
