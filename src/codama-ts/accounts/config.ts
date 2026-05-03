@@ -101,6 +101,16 @@ export type Config = {
   wildcatWinnerZincSharePpm: bigint;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: bigint;
+  /** ZINC fee skim for round winner claims, in basis points. */
+  roundClaimZincFeeBps: bigint;
+  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  stockpileEntryMinZincFee: bigint;
+  /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
+  stockpileEntryPotFeeBps: bigint;
+  /** Accepted-entry step multiplier for stockpile entry costs, in basis points. */
+  stockpileEntryStepBps: bigint;
+  /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
+  stakingBricksPerZincX10k: bigint;
 };
 
 export type ConfigArgs = {
@@ -154,6 +164,16 @@ export type ConfigArgs = {
   wildcatWinnerZincSharePpm: number | bigint;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: number | bigint;
+  /** ZINC fee skim for round winner claims, in basis points. */
+  roundClaimZincFeeBps: number | bigint;
+  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  stockpileEntryMinZincFee: number | bigint;
+  /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
+  stockpileEntryPotFeeBps: number | bigint;
+  /** Accepted-entry step multiplier for stockpile entry costs, in basis points. */
+  stockpileEntryStepBps: number | bigint;
+  /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
+  stakingBricksPerZincX10k: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -186,6 +206,11 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["wildcatRoundFrequency", getU64Encoder()],
       ["wildcatWinnerZincSharePpm", getU64Encoder()],
       ["bonanzaHitDivisor", getU64Encoder()],
+      ["roundClaimZincFeeBps", getU64Encoder()],
+      ["stockpileEntryMinZincFee", getU64Encoder()],
+      ["stockpileEntryPotFeeBps", getU64Encoder()],
+      ["stockpileEntryStepBps", getU64Encoder()],
+      ["stakingBricksPerZincX10k", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -220,6 +245,11 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["wildcatRoundFrequency", getU64Decoder()],
     ["wildcatWinnerZincSharePpm", getU64Decoder()],
     ["bonanzaHitDivisor", getU64Decoder()],
+    ["roundClaimZincFeeBps", getU64Decoder()],
+    ["stockpileEntryMinZincFee", getU64Decoder()],
+    ["stockpileEntryPotFeeBps", getU64Decoder()],
+    ["stockpileEntryStepBps", getU64Decoder()],
+    ["stakingBricksPerZincX10k", getU64Decoder()],
   ]);
 }
 
@@ -282,5 +312,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 266;
+  return 306;
 }

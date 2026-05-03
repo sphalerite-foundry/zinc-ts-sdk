@@ -99,7 +99,8 @@ import {
   getBuybackInstructionAsync,
   getClaimAffiliateInstructionAsync,
   getClaimBuybackPoolFeesInstructionAsync,
-  getClaimRoundInstructionAsync,
+  getClaimRoundSolInstruction,
+  getClaimRoundZincInstructionAsync,
   getClaimStakingYieldInstructionAsync,
   getClaimWildcatInstructionAsync,
   getCloseConfigInstructionAsync,
@@ -148,7 +149,8 @@ import {
   parseBuybackInstruction,
   parseClaimAffiliateInstruction,
   parseClaimBuybackPoolFeesInstruction,
-  parseClaimRoundInstruction,
+  parseClaimRoundSolInstruction,
+  parseClaimRoundZincInstruction,
   parseClaimStakingYieldInstruction,
   parseClaimWildcatInstruction,
   parseCloseConfigInstruction,
@@ -197,7 +199,8 @@ import {
   type BuybackAsyncInput,
   type ClaimAffiliateAsyncInput,
   type ClaimBuybackPoolFeesAsyncInput,
-  type ClaimRoundAsyncInput,
+  type ClaimRoundSolInput,
+  type ClaimRoundZincAsyncInput,
   type ClaimStakingYieldAsyncInput,
   type ClaimWildcatAsyncInput,
   type CloseConfigAsyncInput,
@@ -230,7 +233,8 @@ import {
   type ParsedBuybackInstruction,
   type ParsedClaimAffiliateInstruction,
   type ParsedClaimBuybackPoolFeesInstruction,
-  type ParsedClaimRoundInstruction,
+  type ParsedClaimRoundSolInstruction,
+  type ParsedClaimRoundZincInstruction,
   type ParsedClaimStakingYieldInstruction,
   type ParsedClaimWildcatInstruction,
   type ParsedCloseConfigInstruction,
@@ -576,7 +580,8 @@ export enum ZincInstruction {
   Buyback,
   ClaimAffiliate,
   ClaimBuybackPoolFees,
-  ClaimRound,
+  ClaimRoundSol,
+  ClaimRoundZinc,
   ClaimStakingYield,
   ClaimWildcat,
   CloseConfig,
@@ -665,12 +670,23 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([180, 73, 23, 99, 186, 205, 14, 200]),
+        new Uint8Array([245, 106, 176, 41, 4, 167, 225, 92]),
       ),
       0,
     )
   ) {
-    return ZincInstruction.ClaimRound;
+    return ZincInstruction.ClaimRoundSol;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([239, 212, 229, 179, 158, 191, 185, 253]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.ClaimRoundZinc;
   }
   if (
     containsBytes(
@@ -1186,8 +1202,11 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.ClaimBuybackPoolFees;
     } & ParsedClaimBuybackPoolFeesInstruction<TProgram>)
   | ({
-      instructionType: ZincInstruction.ClaimRound;
-    } & ParsedClaimRoundInstruction<TProgram>)
+      instructionType: ZincInstruction.ClaimRoundSol;
+    } & ParsedClaimRoundSolInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.ClaimRoundZinc;
+    } & ParsedClaimRoundZincInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ClaimStakingYield;
     } & ParsedClaimStakingYieldInstruction<TProgram>)
@@ -1350,11 +1369,18 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseClaimBuybackPoolFeesInstruction(instruction),
       };
     }
-    case ZincInstruction.ClaimRound: {
+    case ZincInstruction.ClaimRoundSol: {
       assertIsInstructionWithAccounts(instruction);
       return {
-        instructionType: ZincInstruction.ClaimRound,
-        ...parseClaimRoundInstruction(instruction),
+        instructionType: ZincInstruction.ClaimRoundSol,
+        ...parseClaimRoundSolInstruction(instruction),
+      };
+    }
+    case ZincInstruction.ClaimRoundZinc: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.ClaimRoundZinc,
+        ...parseClaimRoundZincInstruction(instruction),
       };
     }
     case ZincInstruction.ClaimStakingYield: {
@@ -1746,9 +1772,13 @@ export type ZincPluginInstructions = {
     input: ClaimBuybackPoolFeesAsyncInput,
   ) => ReturnType<typeof getClaimBuybackPoolFeesInstructionAsync> &
     SelfPlanAndSendFunctions;
-  claimRound: (
-    input: ClaimRoundAsyncInput,
-  ) => ReturnType<typeof getClaimRoundInstructionAsync> &
+  claimRoundSol: (
+    input: ClaimRoundSolInput,
+  ) => ReturnType<typeof getClaimRoundSolInstruction> &
+    SelfPlanAndSendFunctions;
+  claimRoundZinc: (
+    input: ClaimRoundZincAsyncInput,
+  ) => ReturnType<typeof getClaimRoundZincInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimStakingYield: (
     input: ClaimStakingYieldAsyncInput,
@@ -2023,10 +2053,15 @@ export function zincProgram() {
               client,
               getClaimBuybackPoolFeesInstructionAsync(input),
             ),
-          claimRound: (input) =>
+          claimRoundSol: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimRoundInstructionAsync(input),
+              getClaimRoundSolInstruction(input),
+            ),
+          claimRoundZinc: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getClaimRoundZincInstructionAsync(input),
             ),
           claimStakingYield: (input) =>
             addSelfPlanAndSendFunctions(

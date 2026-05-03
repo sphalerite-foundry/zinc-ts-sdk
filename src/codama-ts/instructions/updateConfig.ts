@@ -128,6 +128,16 @@ export type UpdateConfigInstructionData = {
   wildcatWinnerZincSharePpm: Option<bigint>;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: Option<bigint>;
+  /** ZINC fee skim for round winner claims, in basis points. */
+  roundClaimZincFeeBps: Option<bigint>;
+  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  stockpileEntryMinZincFee: Option<bigint>;
+  /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
+  stockpileEntryPotFeeBps: Option<bigint>;
+  /** Accepted-entry step multiplier for stockpile entry costs, in basis points. */
+  stockpileEntryStepBps: Option<bigint>;
+  /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
+  stakingBricksPerZincX10k: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -175,6 +185,16 @@ export type UpdateConfigInstructionDataArgs = {
   wildcatWinnerZincSharePpm: OptionOrNullable<number | bigint>;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: OptionOrNullable<number | bigint>;
+  /** ZINC fee skim for round winner claims, in basis points. */
+  roundClaimZincFeeBps: OptionOrNullable<number | bigint>;
+  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  stockpileEntryMinZincFee: OptionOrNullable<number | bigint>;
+  /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
+  stockpileEntryPotFeeBps: OptionOrNullable<number | bigint>;
+  /** Accepted-entry step multiplier for stockpile entry costs, in basis points. */
+  stockpileEntryStepBps: OptionOrNullable<number | bigint>;
+  /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
+  stakingBricksPerZincX10k: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -203,6 +223,11 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["wildcatRoundFrequency", getOptionEncoder(getU64Encoder())],
       ["wildcatWinnerZincSharePpm", getOptionEncoder(getU64Encoder())],
       ["bonanzaHitDivisor", getOptionEncoder(getU64Encoder())],
+      ["roundClaimZincFeeBps", getOptionEncoder(getU64Encoder())],
+      ["stockpileEntryMinZincFee", getOptionEncoder(getU64Encoder())],
+      ["stockpileEntryPotFeeBps", getOptionEncoder(getU64Encoder())],
+      ["stockpileEntryStepBps", getOptionEncoder(getU64Encoder())],
+      ["stakingBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -233,6 +258,11 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["wildcatRoundFrequency", getOptionDecoder(getU64Decoder())],
     ["wildcatWinnerZincSharePpm", getOptionDecoder(getU64Decoder())],
     ["bonanzaHitDivisor", getOptionDecoder(getU64Decoder())],
+    ["roundClaimZincFeeBps", getOptionDecoder(getU64Decoder())],
+    ["stockpileEntryMinZincFee", getOptionDecoder(getU64Decoder())],
+    ["stockpileEntryPotFeeBps", getOptionDecoder(getU64Decoder())],
+    ["stockpileEntryStepBps", getOptionDecoder(getU64Decoder())],
+    ["stakingBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -277,6 +307,11 @@ export type UpdateConfigAsyncInput<
   wildcatRoundFrequency: UpdateConfigInstructionDataArgs["wildcatRoundFrequency"];
   wildcatWinnerZincSharePpm: UpdateConfigInstructionDataArgs["wildcatWinnerZincSharePpm"];
   bonanzaHitDivisor: UpdateConfigInstructionDataArgs["bonanzaHitDivisor"];
+  roundClaimZincFeeBps: UpdateConfigInstructionDataArgs["roundClaimZincFeeBps"];
+  stockpileEntryMinZincFee: UpdateConfigInstructionDataArgs["stockpileEntryMinZincFee"];
+  stockpileEntryPotFeeBps: UpdateConfigInstructionDataArgs["stockpileEntryPotFeeBps"];
+  stockpileEntryStepBps: UpdateConfigInstructionDataArgs["stockpileEntryStepBps"];
+  stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -370,6 +405,11 @@ export type UpdateConfigInput<
   wildcatRoundFrequency: UpdateConfigInstructionDataArgs["wildcatRoundFrequency"];
   wildcatWinnerZincSharePpm: UpdateConfigInstructionDataArgs["wildcatWinnerZincSharePpm"];
   bonanzaHitDivisor: UpdateConfigInstructionDataArgs["bonanzaHitDivisor"];
+  roundClaimZincFeeBps: UpdateConfigInstructionDataArgs["roundClaimZincFeeBps"];
+  stockpileEntryMinZincFee: UpdateConfigInstructionDataArgs["stockpileEntryMinZincFee"];
+  stockpileEntryPotFeeBps: UpdateConfigInstructionDataArgs["stockpileEntryPotFeeBps"];
+  stockpileEntryStepBps: UpdateConfigInstructionDataArgs["stockpileEntryStepBps"];
+  stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
 };
 
 export function getUpdateConfigInstruction<

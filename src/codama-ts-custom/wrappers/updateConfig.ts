@@ -31,6 +31,11 @@ export type BuildUpdateConfigInstruction = {
   wildcatRoundFrequency?: number | bigint;
   wildcatWinnerZincSharePpm?: number | bigint;
   bonanzaHitDivisor?: number | bigint;
+  roundClaimZincFeeBps?: number | bigint;
+  stockpileEntryMinZincFee?: number | bigint;
+  stockpileEntryPotFeeBps?: number | bigint;
+  stockpileEntryStepBps?: number | bigint;
+  stakingBricksPerZincX10k?: number | bigint;
 };
 
 export async function buildUpdateConfigInstruction({
@@ -57,6 +62,11 @@ export async function buildUpdateConfigInstruction({
   wildcatRoundFrequency,
   wildcatWinnerZincSharePpm,
   bonanzaHitDivisor,
+  roundClaimZincFeeBps,
+  stockpileEntryMinZincFee,
+  stockpileEntryPotFeeBps,
+  stockpileEntryStepBps,
+  stakingBricksPerZincX10k,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -87,6 +97,11 @@ export async function buildUpdateConfigInstruction({
     wildcatRoundFrequency: toNullable(wildcatRoundFrequency),
     wildcatWinnerZincSharePpm: toNullable(wildcatWinnerZincSharePpm),
     bonanzaHitDivisor: toNullable(bonanzaHitDivisor),
+    roundClaimZincFeeBps: toNullable(roundClaimZincFeeBps),
+    stockpileEntryMinZincFee: toNullable(stockpileEntryMinZincFee),
+    stockpileEntryPotFeeBps: toNullable(stockpileEntryPotFeeBps),
+    stockpileEntryStepBps: toNullable(stockpileEntryStepBps),
+    stakingBricksPerZincX10k: toNullable(stakingBricksPerZincX10k),
     crank: crank ? toAddress(crank) : null,
   });
 

@@ -9,7 +9,6 @@
 export * from "./activation";
 export * from "./bN254G2BLSPublicKey";
 export * from "./circuitSource";
-export * from "./claimStatus";
 export * from "./computationDefinitionMeta";
 export * from "./computationSignature";
 export * from "./epoch";
@@ -37,7 +36,7 @@ export * from "./signedComputationOutputsInitStockpileRandOutput";
 export * from "./signedComputationOutputsRevealRoundRandOutput";
 export * from "./signedComputationOutputsRevealStockpileRandOutput";
 export * from "./signedComputationOutputsSettleWinningStakesBatchOutput";
-export * from "./stockpileEntryRange";
+export * from "./stockpileEntry";
 export * from "./stockpileExtra";
 export * from "./stockpileStatus";
 export * from "./timestamp";

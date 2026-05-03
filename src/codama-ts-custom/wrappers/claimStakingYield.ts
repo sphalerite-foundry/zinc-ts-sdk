@@ -1,6 +1,11 @@
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { getClaimStakingYieldInstructionAsync } from "../../codama-ts";
-import { fetchTreasuryAccount, getTreasuryAddress } from "../pda";
+import {
+  fetchTreasuryAccount,
+  getConfigAddress,
+  getPlayerProfileAddress,
+  getTreasuryAddress,
+} from "../pda";
 import {
   toTransactionInstruction,
   toTransactionSigner,
@@ -20,12 +25,15 @@ export async function buildClaimStakingYieldInstruction(
 ): Promise<TransactionInstruction> {
   const { connection, signer } = input;
   const treasury = getTreasuryAddress()[0];
+  const playerProfile = getPlayerProfileAddress(signer)[0];
   const treasuryAccount = await fetchTreasuryAccount(connection, treasury);
   const zincMint = new PublicKey(treasuryAccount.data.zincMint);
   const instruction = await getClaimStakingYieldInstructionAsync({
     signer: toTransactionSigner(signer),
+    config: toAddress(getConfigAddress()[0]),
     treasury: toAddress(treasury),
     zincMint: toAddress(zincMint),
+    playerProfile: toAddress(playerProfile),
   });
 
   return toTransactionInstruction(

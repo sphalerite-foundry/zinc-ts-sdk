@@ -72,6 +72,7 @@ function encodePlayerProfileAccount({
       pendingAffiliatePayLamports: 0n,
       totalAffiliatePayLamports: 0n,
       lifetimeStockpileBricksEarnedX10k: 0n,
+      lifetimeStakingStockpileBricksEarnedX10k: 0n,
       lifetimeStreakStockpileBricksEarnedX10k: 0n,
       lifetimeHiddenBonusStockpileBricksEarnedX10k: 0n,
       availableStockpileBricksX10k: 0n,
