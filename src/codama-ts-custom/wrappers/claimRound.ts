@@ -89,7 +89,6 @@ export async function buildCreditRoundZincInstruction({
     config: toAddress(getConfigAddress()[0]),
     round: toAddress(round),
     miner: toAddress(miner),
-    player: toAddress(player),
     playerProfile: toAddress(getPlayerProfileAddress(player)[0]),
     treasury: toAddress(treasury),
     zincMint: toAddress(zincMint),

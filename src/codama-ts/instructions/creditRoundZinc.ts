@@ -58,7 +58,6 @@ export type CreditRoundZincInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountMiner extends string | AccountMeta<string> = string,
-  TAccountPlayer extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
@@ -69,8 +68,6 @@ export type CreditRoundZincInstruction<
     string,
   TAccountTokenProgram extends string | AccountMeta<string> =
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -89,9 +86,6 @@ export type CreditRoundZincInstruction<
       TAccountMiner extends string
         ? WritableAccount<TAccountMiner>
         : TAccountMiner,
-      TAccountPlayer extends string
-        ? WritableAccount<TAccountPlayer>
-        : TAccountPlayer,
       TAccountPlayerProfile extends string
         ? WritableAccount<TAccountPlayerProfile>
         : TAccountPlayerProfile,
@@ -113,9 +107,6 @@ export type CreditRoundZincInstruction<
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
@@ -154,7 +145,6 @@ export type CreditRoundZincAsyncInput<
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountMiner extends string = string,
-  TAccountPlayer extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
@@ -162,7 +152,6 @@ export type CreditRoundZincAsyncInput<
   TAccountBonanzaTokenAccount extends string = string,
   TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer that submits the reward-credit transaction. */
   signer: TransactionSigner<TAccountSigner>;
@@ -172,7 +161,7 @@ export type CreditRoundZincAsyncInput<
   round: Address<TAccountRound>;
   /** Per-player round position that tracks winning stake and split terminal state. */
   miner: Address<TAccountMiner>;
-  player: Address<TAccountPlayer>;
+  /** Player profile that receives the durable round ZINC reward credit. */
   playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
   treasury?: Address<TAccountTreasury>;
@@ -186,8 +175,6 @@ export type CreditRoundZincAsyncInput<
   roundZincRewardTokenAccount?: Address<TAccountRoundZincRewardTokenAccount>;
   /** SPL Token Program that owns the ZINC mint and token accounts. */
   tokenProgram?: Address<TAccountTokenProgram>;
-  /** System Program used if the player's profile needs to be created. */
-  systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export async function getCreditRoundZincInstructionAsync<
@@ -195,7 +182,6 @@ export async function getCreditRoundZincInstructionAsync<
   TAccountConfig extends string,
   TAccountRound extends string,
   TAccountMiner extends string,
-  TAccountPlayer extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
@@ -203,7 +189,6 @@ export async function getCreditRoundZincInstructionAsync<
   TAccountBonanzaTokenAccount extends string,
   TAccountRoundZincRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CreditRoundZincAsyncInput<
@@ -211,15 +196,13 @@ export async function getCreditRoundZincInstructionAsync<
     TAccountConfig,
     TAccountRound,
     TAccountMiner,
-    TAccountPlayer,
     TAccountPlayerProfile,
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
     TAccountBonanzaTokenAccount,
     TAccountRoundZincRewardTokenAccount,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountTokenProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
@@ -229,15 +212,13 @@ export async function getCreditRoundZincInstructionAsync<
     TAccountConfig,
     TAccountRound,
     TAccountMiner,
-    TAccountPlayer,
     TAccountPlayerProfile,
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
     TAccountBonanzaTokenAccount,
     TAccountRoundZincRewardTokenAccount,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountTokenProgram
   >
 > {
   // Program address.
@@ -249,7 +230,6 @@ export async function getCreditRoundZincInstructionAsync<
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
     miner: { value: input.miner ?? null, isWritable: true },
-    player: { value: input.player ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
@@ -266,7 +246,6 @@ export async function getCreditRoundZincInstructionAsync<
       isWritable: true,
     },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -288,10 +267,6 @@ export async function getCreditRoundZincInstructionAsync<
     accounts.tokenProgram.value =
       "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
   }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
@@ -300,7 +275,6 @@ export async function getCreditRoundZincInstructionAsync<
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
       getAccountMeta("miner", accounts.miner),
-      getAccountMeta("player", accounts.player),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
@@ -314,7 +288,6 @@ export async function getCreditRoundZincInstructionAsync<
         accounts.roundZincRewardTokenAccount,
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
-      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getCreditRoundZincInstructionDataEncoder().encode({}),
     programAddress,
@@ -324,15 +297,13 @@ export async function getCreditRoundZincInstructionAsync<
     TAccountConfig,
     TAccountRound,
     TAccountMiner,
-    TAccountPlayer,
     TAccountPlayerProfile,
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
     TAccountBonanzaTokenAccount,
     TAccountRoundZincRewardTokenAccount,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountTokenProgram
   >);
 }
 
@@ -341,7 +312,6 @@ export type CreditRoundZincInput<
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountMiner extends string = string,
-  TAccountPlayer extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
@@ -349,7 +319,6 @@ export type CreditRoundZincInput<
   TAccountBonanzaTokenAccount extends string = string,
   TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string,
 > = {
   /** Crank signer that submits the reward-credit transaction. */
   signer: TransactionSigner<TAccountSigner>;
@@ -359,7 +328,7 @@ export type CreditRoundZincInput<
   round: Address<TAccountRound>;
   /** Per-player round position that tracks winning stake and split terminal state. */
   miner: Address<TAccountMiner>;
-  player: Address<TAccountPlayer>;
+  /** Player profile that receives the durable round ZINC reward credit. */
   playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
   treasury: Address<TAccountTreasury>;
@@ -373,8 +342,6 @@ export type CreditRoundZincInput<
   roundZincRewardTokenAccount: Address<TAccountRoundZincRewardTokenAccount>;
   /** SPL Token Program that owns the ZINC mint and token accounts. */
   tokenProgram?: Address<TAccountTokenProgram>;
-  /** System Program used if the player's profile needs to be created. */
-  systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export function getCreditRoundZincInstruction<
@@ -382,7 +349,6 @@ export function getCreditRoundZincInstruction<
   TAccountConfig extends string,
   TAccountRound extends string,
   TAccountMiner extends string,
-  TAccountPlayer extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
@@ -390,7 +356,6 @@ export function getCreditRoundZincInstruction<
   TAccountBonanzaTokenAccount extends string,
   TAccountRoundZincRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: CreditRoundZincInput<
@@ -398,15 +363,13 @@ export function getCreditRoundZincInstruction<
     TAccountConfig,
     TAccountRound,
     TAccountMiner,
-    TAccountPlayer,
     TAccountPlayerProfile,
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
     TAccountBonanzaTokenAccount,
     TAccountRoundZincRewardTokenAccount,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountTokenProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): CreditRoundZincInstruction<
@@ -415,15 +378,13 @@ export function getCreditRoundZincInstruction<
   TAccountConfig,
   TAccountRound,
   TAccountMiner,
-  TAccountPlayer,
   TAccountPlayerProfile,
   TAccountTreasury,
   TAccountZincMint,
   TAccountRoundZincPayoutTokenAccount,
   TAccountBonanzaTokenAccount,
   TAccountRoundZincRewardTokenAccount,
-  TAccountTokenProgram,
-  TAccountSystemProgram
+  TAccountTokenProgram
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
@@ -434,7 +395,6 @@ export function getCreditRoundZincInstruction<
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
     miner: { value: input.miner ?? null, isWritable: true },
-    player: { value: input.player ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
@@ -451,7 +411,6 @@ export function getCreditRoundZincInstruction<
       isWritable: true,
     },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -463,10 +422,6 @@ export function getCreditRoundZincInstruction<
     accounts.tokenProgram.value =
       "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
   }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
@@ -475,7 +430,6 @@ export function getCreditRoundZincInstruction<
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
       getAccountMeta("miner", accounts.miner),
-      getAccountMeta("player", accounts.player),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
@@ -489,7 +443,6 @@ export function getCreditRoundZincInstruction<
         accounts.roundZincRewardTokenAccount,
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
-      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getCreditRoundZincInstructionDataEncoder().encode({}),
     programAddress,
@@ -499,15 +452,13 @@ export function getCreditRoundZincInstruction<
     TAccountConfig,
     TAccountRound,
     TAccountMiner,
-    TAccountPlayer,
     TAccountPlayerProfile,
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
     TAccountBonanzaTokenAccount,
     TAccountRoundZincRewardTokenAccount,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountTokenProgram
   >);
 }
 
@@ -525,22 +476,20 @@ export type ParsedCreditRoundZincInstruction<
     round: TAccountMetas[2];
     /** Per-player round position that tracks winning stake and split terminal state. */
     miner: TAccountMetas[3];
-    player: TAccountMetas[4];
-    playerProfile: TAccountMetas[5];
+    /** Player profile that receives the durable round ZINC reward credit. */
+    playerProfile: TAccountMetas[4];
     /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
-    treasury: TAccountMetas[6];
+    treasury: TAccountMetas[5];
     /** Protocol ZINC mint used for round reward credits. */
-    zincMint: TAccountMetas[7];
+    zincMint: TAccountMetas[6];
     /** Round-owned payout vault that funds direct-winner credits. */
-    roundZincPayoutTokenAccount: TAccountMetas[8];
+    roundZincPayoutTokenAccount: TAccountMetas[7];
     /** Treasury-owned Bonanza vault that funds captured Bonanza credits. */
-    bonanzaTokenAccount: TAccountMetas[9];
+    bonanzaTokenAccount: TAccountMetas[8];
     /** Treasury-owned singleton vault that holds credited but unclaimed round ZINC. */
-    roundZincRewardTokenAccount: TAccountMetas[10];
+    roundZincRewardTokenAccount: TAccountMetas[9];
     /** SPL Token Program that owns the ZINC mint and token accounts. */
-    tokenProgram: TAccountMetas[11];
-    /** System Program used if the player's profile needs to be created. */
-    systemProgram: TAccountMetas[12];
+    tokenProgram: TAccountMetas[10];
   };
   data: CreditRoundZincInstructionData;
 };
@@ -553,12 +502,12 @@ export function parseCreditRoundZincInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCreditRoundZincInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 13) {
+  if (instruction.accounts.length < 11) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 13,
+        expectedAccountMetas: 11,
       },
     );
   }
@@ -575,7 +524,6 @@ export function parseCreditRoundZincInstruction<
       config: getNextAccount(),
       round: getNextAccount(),
       miner: getNextAccount(),
-      player: getNextAccount(),
       playerProfile: getNextAccount(),
       treasury: getNextAccount(),
       zincMint: getNextAccount(),
@@ -583,7 +531,6 @@ export function parseCreditRoundZincInstruction<
       bonanzaTokenAccount: getNextAccount(),
       roundZincRewardTokenAccount: getNextAccount(),
       tokenProgram: getNextAccount(),
-      systemProgram: getNextAccount(),
     },
     data: getCreditRoundZincInstructionDataDecoder().decode(instruction.data),
   };
