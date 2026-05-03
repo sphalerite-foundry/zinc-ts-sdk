@@ -64,23 +64,23 @@ export type StockpileExtras = {
   discriminator: ReadonlyUint8Array;
   /** Whether the singleton has been initialized after account creation. */
   initialized: boolean;
+  /** PDA bump seed. */
+  bump: number;
   /** Stockpile cycle that currently owns these pending extras, if any. */
   stockpileId: Option<bigint>;
   /** Pending extra prizes reserved for the assigned stockpile cycle. */
   extras: Array<StockpileExtra>;
-  /** PDA bump seed. */
-  bump: number;
 };
 
 export type StockpileExtrasArgs = {
   /** Whether the singleton has been initialized after account creation. */
   initialized: boolean;
+  /** PDA bump seed. */
+  bump: number;
   /** Stockpile cycle that currently owns these pending extras, if any. */
   stockpileId: OptionOrNullable<number | bigint>;
   /** Pending extra prizes reserved for the assigned stockpile cycle. */
   extras: Array<StockpileExtraArgs>;
-  /** PDA bump seed. */
-  bump: number;
 };
 
 /** Gets the encoder for {@link StockpileExtrasArgs} account data. */
@@ -89,9 +89,9 @@ export function getStockpileExtrasEncoder(): Encoder<StockpileExtrasArgs> {
     getStructEncoder([
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["initialized", getBooleanEncoder()],
+      ["bump", getU8Encoder()],
       ["stockpileId", getOptionEncoder(getU64Encoder())],
       ["extras", getArrayEncoder(getStockpileExtraEncoder())],
-      ["bump", getU8Encoder()],
     ]),
     (value) => ({ ...value, discriminator: STOCKPILE_EXTRAS_DISCRIMINATOR }),
   );
@@ -102,9 +102,9 @@ export function getStockpileExtrasDecoder(): Decoder<StockpileExtras> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["initialized", getBooleanDecoder()],
+    ["bump", getU8Decoder()],
     ["stockpileId", getOptionDecoder(getU64Decoder())],
     ["extras", getArrayDecoder(getStockpileExtraDecoder())],
-    ["bump", getU8Decoder()],
   ]);
 }
 
