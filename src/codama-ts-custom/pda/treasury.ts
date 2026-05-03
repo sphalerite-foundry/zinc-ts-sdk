@@ -10,6 +10,7 @@ import {
   BUYBACK_TOKEN_ACCOUNT_SEED,
   STAKING_TOKEN_ACCOUNT_SEED,
   STAKING_REWARD_TOKEN_ACCOUNT_SEED,
+  STOCKPILE_TOKEN_ACCOUNT_SEED,
   TREASURY_SEED,
   ZINC_PROGRAM_ID,
 } from "../constants";
@@ -64,6 +65,19 @@ export function getBonanzaTokenAccountAddress(
     [
       TEXT_ENCODER.encode(TREASURY_SEED),
       TEXT_ENCODER.encode(BONANZA_TOKEN_ACCOUNT_SEED),
+    ],
+    programId,
+  );
+}
+
+/** Derives the treasury-owned vault used for rolling Stockpile ZINC. */
+export function getStockpileTokenAccountAddress(
+  programId: PublicKey = ZINC_PROGRAM_ID,
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [
+      TEXT_ENCODER.encode(TREASURY_SEED),
+      TEXT_ENCODER.encode(STOCKPILE_TOKEN_ACCOUNT_SEED),
     ],
     programId,
   );

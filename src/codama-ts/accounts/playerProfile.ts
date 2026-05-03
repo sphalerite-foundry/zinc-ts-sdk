@@ -81,6 +81,8 @@ export type PlayerProfile = {
   totalAffiliatePayLamports: bigint;
   /** Lifetime stockpile bricks earned from streak and hidden-bonus accrual, in `x10k` units. */
   lifetimeStockpileBricksEarnedX10k: bigint;
+  /** Lifetime stockpile bricks earned from staking-yield claims, in `x10k` units. */
+  lifetimeStakingStockpileBricksEarnedX10k: bigint;
   /** Lifetime stockpile bricks earned from deploy streaks, in `x10k` units. */
   lifetimeStreakStockpileBricksEarnedX10k: bigint;
   /** Lifetime stockpile bricks earned from hidden settlement bonuses, in `x10k` units. */
@@ -118,6 +120,8 @@ export type PlayerProfileArgs = {
   totalAffiliatePayLamports: number | bigint;
   /** Lifetime stockpile bricks earned from streak and hidden-bonus accrual, in `x10k` units. */
   lifetimeStockpileBricksEarnedX10k: number | bigint;
+  /** Lifetime stockpile bricks earned from staking-yield claims, in `x10k` units. */
+  lifetimeStakingStockpileBricksEarnedX10k: number | bigint;
   /** Lifetime stockpile bricks earned from deploy streaks, in `x10k` units. */
   lifetimeStreakStockpileBricksEarnedX10k: number | bigint;
   /** Lifetime stockpile bricks earned from hidden settlement bonuses, in `x10k` units. */
@@ -147,6 +151,7 @@ export function getPlayerProfileEncoder(): Encoder<PlayerProfileArgs> {
       ["pendingAffiliatePayLamports", getU64Encoder()],
       ["totalAffiliatePayLamports", getU64Encoder()],
       ["lifetimeStockpileBricksEarnedX10k", getU64Encoder()],
+      ["lifetimeStakingStockpileBricksEarnedX10k", getU64Encoder()],
       ["lifetimeStreakStockpileBricksEarnedX10k", getU64Encoder()],
       ["lifetimeHiddenBonusStockpileBricksEarnedX10k", getU64Encoder()],
       ["availableStockpileBricksX10k", getU64Encoder()],
@@ -173,6 +178,7 @@ export function getPlayerProfileDecoder(): Decoder<PlayerProfile> {
     ["pendingAffiliatePayLamports", getU64Decoder()],
     ["totalAffiliatePayLamports", getU64Decoder()],
     ["lifetimeStockpileBricksEarnedX10k", getU64Decoder()],
+    ["lifetimeStakingStockpileBricksEarnedX10k", getU64Decoder()],
     ["lifetimeStreakStockpileBricksEarnedX10k", getU64Decoder()],
     ["lifetimeHiddenBonusStockpileBricksEarnedX10k", getU64Decoder()],
     ["availableStockpileBricksX10k", getU64Decoder()],

@@ -47,12 +47,12 @@ import {
   type ReadonlyUint8Array,
 } from "@solana/kit";
 import {
-  getStockpileEntryRangeDecoder,
-  getStockpileEntryRangeEncoder,
+  getStockpileEntryDecoder,
+  getStockpileEntryEncoder,
   getStockpileStatusDecoder,
   getStockpileStatusEncoder,
-  type StockpileEntryRange,
-  type StockpileEntryRangeArgs,
+  type StockpileEntry,
+  type StockpileEntryArgs,
   type StockpileStatus,
   type StockpileStatusArgs,
 } from "../types";
@@ -95,8 +95,10 @@ export type Stockpile = {
   zincPayoutAmount: bigint;
   /** PDA bump seed. */
   bump: number;
-  /** All joined ranges for this cycle. */
-  entries: Array<StockpileEntryRange>;
+  /** Number of accepted joins including same-player top-ups. */
+  acceptedJoinCount: bigint;
+  /** All joined entries for this cycle. */
+  entries: Array<StockpileEntry>;
 };
 
 export type StockpileArgs = {
@@ -128,8 +130,10 @@ export type StockpileArgs = {
   zincPayoutAmount: number | bigint;
   /** PDA bump seed. */
   bump: number;
-  /** All joined ranges for this cycle. */
-  entries: Array<StockpileEntryRangeArgs>;
+  /** Number of accepted joins including same-player top-ups. */
+  acceptedJoinCount: number | bigint;
+  /** All joined entries for this cycle. */
+  entries: Array<StockpileEntryArgs>;
 };
 
 /** Gets the encoder for {@link StockpileArgs} account data. */
@@ -151,7 +155,8 @@ export function getStockpileEncoder(): Encoder<StockpileArgs> {
       ["solPayoutAmount", getU64Encoder()],
       ["zincPayoutAmount", getU64Encoder()],
       ["bump", getU8Encoder()],
-      ["entries", getArrayEncoder(getStockpileEntryRangeEncoder())],
+      ["acceptedJoinCount", getU64Encoder()],
+      ["entries", getArrayEncoder(getStockpileEntryEncoder())],
     ]),
     (value) => ({ ...value, discriminator: STOCKPILE_DISCRIMINATOR }),
   );
@@ -175,7 +180,8 @@ export function getStockpileDecoder(): Decoder<Stockpile> {
     ["solPayoutAmount", getU64Decoder()],
     ["zincPayoutAmount", getU64Decoder()],
     ["bump", getU8Decoder()],
-    ["entries", getArrayDecoder(getStockpileEntryRangeDecoder())],
+    ["acceptedJoinCount", getU64Decoder()],
+    ["entries", getArrayDecoder(getStockpileEntryDecoder())],
   ]);
 }
 

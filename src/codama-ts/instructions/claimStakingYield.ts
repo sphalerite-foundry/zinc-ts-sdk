@@ -40,6 +40,7 @@ import {
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
 import {
+  findConfigPda,
   findStakePositionPda,
   findStakingRewardTokenAccountPda,
   findTreasuryPda,
@@ -58,9 +59,11 @@ export function getClaimStakingYieldDiscriminatorBytes(): ReadonlyUint8Array {
 export type ClaimStakingYieldInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountStakePosition extends string | AccountMeta<string> = string,
+  TAccountPlayerProfile extends string | AccountMeta<string> = string,
   TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
     string,
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
@@ -79,6 +82,9 @@ export type ClaimStakingYieldInstruction<
         ? WritableSignerAccount<TAccountSigner> &
             AccountSignerMeta<TAccountSigner>
         : TAccountSigner,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountTreasury extends string
         ? WritableAccount<TAccountTreasury>
         : TAccountTreasury,
@@ -88,6 +94,9 @@ export type ClaimStakingYieldInstruction<
       TAccountStakePosition extends string
         ? WritableAccount<TAccountStakePosition>
         : TAccountStakePosition,
+      TAccountPlayerProfile extends string
+        ? WritableAccount<TAccountPlayerProfile>
+        : TAccountPlayerProfile,
       TAccountStakingRewardTokenAccount extends string
         ? WritableAccount<TAccountStakingRewardTokenAccount>
         : TAccountStakingRewardTokenAccount,
@@ -138,9 +147,11 @@ export function getClaimStakingYieldInstructionDataCodec(): FixedSizeCodec<
 
 export type ClaimStakingYieldAsyncInput<
   TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountStakePosition extends string = string,
+  TAccountPlayerProfile extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
@@ -149,12 +160,15 @@ export type ClaimStakingYieldAsyncInput<
 > = {
   /** Wallet that owns the stake position and receives the claimed yield. */
   signer: TransactionSigner<TAccountSigner>;
+  /** Protocol config containing the staking-yield brick conversion rate. */
+  config?: Address<TAccountConfig>;
   /** Treasury PDA that owns the reward vault and cumulative reward factor. */
   treasury?: Address<TAccountTreasury>;
   /** Protocol ZINC mint. */
   zincMint: Address<TAccountZincMint>;
   /** Per-user stake position that settles and claims cumulative rewards. */
   stakePosition?: Address<TAccountStakePosition>;
+  playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury-owned reward vault that funds staker-yield claims. */
   stakingRewardTokenAccount?: Address<TAccountStakingRewardTokenAccount>;
   /** Signer-owned destination account for the claimed ZINC yield. */
@@ -167,9 +181,11 @@ export type ClaimStakingYieldAsyncInput<
 
 export async function getClaimStakingYieldInstructionAsync<
   TAccountSigner extends string,
+  TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountStakePosition extends string,
+  TAccountPlayerProfile extends string,
   TAccountStakingRewardTokenAccount extends string,
   TAccountSignerZincTokenAccount extends string,
   TAccountAssociatedTokenProgram extends string,
@@ -179,9 +195,11 @@ export async function getClaimStakingYieldInstructionAsync<
 >(
   input: ClaimStakingYieldAsyncInput<
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountStakePosition,
+    TAccountPlayerProfile,
     TAccountStakingRewardTokenAccount,
     TAccountSignerZincTokenAccount,
     TAccountAssociatedTokenProgram,
@@ -193,9 +211,11 @@ export async function getClaimStakingYieldInstructionAsync<
   ClaimStakingYieldInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountStakePosition,
+    TAccountPlayerProfile,
     TAccountStakingRewardTokenAccount,
     TAccountSignerZincTokenAccount,
     TAccountAssociatedTokenProgram,
@@ -209,9 +229,11 @@ export async function getClaimStakingYieldInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stakePosition: { value: input.stakePosition ?? null, isWritable: true },
+    playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     stakingRewardTokenAccount: {
       value: input.stakingRewardTokenAccount ?? null,
       isWritable: true,
@@ -233,6 +255,9 @@ export async function getClaimStakingYieldInstructionAsync<
   >;
 
   // Resolve default values.
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
   if (!accounts.treasury.value) {
     accounts.treasury.value = await findTreasuryPda();
   }
@@ -291,9 +316,11 @@ export async function getClaimStakingYieldInstructionAsync<
   return Object.freeze({
     accounts: [
       getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("stakePosition", accounts.stakePosition),
+      getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta(
         "stakingRewardTokenAccount",
         accounts.stakingRewardTokenAccount,
@@ -308,9 +335,11 @@ export async function getClaimStakingYieldInstructionAsync<
   } as ClaimStakingYieldInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountStakePosition,
+    TAccountPlayerProfile,
     TAccountStakingRewardTokenAccount,
     TAccountSignerZincTokenAccount,
     TAccountAssociatedTokenProgram,
@@ -321,9 +350,11 @@ export async function getClaimStakingYieldInstructionAsync<
 
 export type ClaimStakingYieldInput<
   TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountStakePosition extends string = string,
+  TAccountPlayerProfile extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
   TAccountAssociatedTokenProgram extends string = string,
@@ -332,12 +363,15 @@ export type ClaimStakingYieldInput<
 > = {
   /** Wallet that owns the stake position and receives the claimed yield. */
   signer: TransactionSigner<TAccountSigner>;
+  /** Protocol config containing the staking-yield brick conversion rate. */
+  config: Address<TAccountConfig>;
   /** Treasury PDA that owns the reward vault and cumulative reward factor. */
   treasury: Address<TAccountTreasury>;
   /** Protocol ZINC mint. */
   zincMint: Address<TAccountZincMint>;
   /** Per-user stake position that settles and claims cumulative rewards. */
   stakePosition: Address<TAccountStakePosition>;
+  playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury-owned reward vault that funds staker-yield claims. */
   stakingRewardTokenAccount: Address<TAccountStakingRewardTokenAccount>;
   /** Signer-owned destination account for the claimed ZINC yield. */
@@ -350,9 +384,11 @@ export type ClaimStakingYieldInput<
 
 export function getClaimStakingYieldInstruction<
   TAccountSigner extends string,
+  TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountStakePosition extends string,
+  TAccountPlayerProfile extends string,
   TAccountStakingRewardTokenAccount extends string,
   TAccountSignerZincTokenAccount extends string,
   TAccountAssociatedTokenProgram extends string,
@@ -362,9 +398,11 @@ export function getClaimStakingYieldInstruction<
 >(
   input: ClaimStakingYieldInput<
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountStakePosition,
+    TAccountPlayerProfile,
     TAccountStakingRewardTokenAccount,
     TAccountSignerZincTokenAccount,
     TAccountAssociatedTokenProgram,
@@ -375,9 +413,11 @@ export function getClaimStakingYieldInstruction<
 ): ClaimStakingYieldInstruction<
   TProgramAddress,
   TAccountSigner,
+  TAccountConfig,
   TAccountTreasury,
   TAccountZincMint,
   TAccountStakePosition,
+  TAccountPlayerProfile,
   TAccountStakingRewardTokenAccount,
   TAccountSignerZincTokenAccount,
   TAccountAssociatedTokenProgram,
@@ -390,9 +430,11 @@ export function getClaimStakingYieldInstruction<
   // Original accounts.
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stakePosition: { value: input.stakePosition ?? null, isWritable: true },
+    playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     stakingRewardTokenAccount: {
       value: input.stakingRewardTokenAccount ?? null,
       isWritable: true,
@@ -431,9 +473,11 @@ export function getClaimStakingYieldInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("stakePosition", accounts.stakePosition),
+      getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta(
         "stakingRewardTokenAccount",
         accounts.stakingRewardTokenAccount,
@@ -448,9 +492,11 @@ export function getClaimStakingYieldInstruction<
   } as ClaimStakingYieldInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountStakePosition,
+    TAccountPlayerProfile,
     TAccountStakingRewardTokenAccount,
     TAccountSignerZincTokenAccount,
     TAccountAssociatedTokenProgram,
@@ -467,20 +513,23 @@ export type ParsedClaimStakingYieldInstruction<
   accounts: {
     /** Wallet that owns the stake position and receives the claimed yield. */
     signer: TAccountMetas[0];
+    /** Protocol config containing the staking-yield brick conversion rate. */
+    config: TAccountMetas[1];
     /** Treasury PDA that owns the reward vault and cumulative reward factor. */
-    treasury: TAccountMetas[1];
+    treasury: TAccountMetas[2];
     /** Protocol ZINC mint. */
-    zincMint: TAccountMetas[2];
+    zincMint: TAccountMetas[3];
     /** Per-user stake position that settles and claims cumulative rewards. */
-    stakePosition: TAccountMetas[3];
+    stakePosition: TAccountMetas[4];
+    playerProfile: TAccountMetas[5];
     /** Treasury-owned reward vault that funds staker-yield claims. */
-    stakingRewardTokenAccount: TAccountMetas[4];
+    stakingRewardTokenAccount: TAccountMetas[6];
     /** Signer-owned destination account for the claimed ZINC yield. */
-    signerZincTokenAccount: TAccountMetas[5];
-    associatedTokenProgram: TAccountMetas[6];
+    signerZincTokenAccount: TAccountMetas[7];
+    associatedTokenProgram: TAccountMetas[8];
     /** SPL Token Program that owns the reward vault and ZINC mint. */
-    tokenProgram: TAccountMetas[7];
-    systemProgram: TAccountMetas[8];
+    tokenProgram: TAccountMetas[9];
+    systemProgram: TAccountMetas[10];
   };
   data: ClaimStakingYieldInstructionData;
 };
@@ -493,12 +542,12 @@ export function parseClaimStakingYieldInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimStakingYieldInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 9) {
+  if (instruction.accounts.length < 11) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 9,
+        expectedAccountMetas: 11,
       },
     );
   }
@@ -512,9 +561,11 @@ export function parseClaimStakingYieldInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       signer: getNextAccount(),
+      config: getNextAccount(),
       treasury: getNextAccount(),
       zincMint: getNextAccount(),
       stakePosition: getNextAccount(),
+      playerProfile: getNextAccount(),
       stakingRewardTokenAccount: getNextAccount(),
       signerZincTokenAccount: getNextAccount(),
       associatedTokenProgram: getNextAccount(),

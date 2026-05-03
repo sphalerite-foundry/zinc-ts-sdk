@@ -17,6 +17,8 @@ import {
   fixEncoderSize,
   getAddressDecoder,
   getAddressEncoder,
+  getBooleanDecoder,
+  getBooleanEncoder,
   getBytesDecoder,
   getBytesEncoder,
   getOptionDecoder,
@@ -44,12 +46,6 @@ import {
   type OptionOrNullable,
   type ReadonlyUint8Array,
 } from "@solana/kit";
-import {
-  getClaimStatusDecoder,
-  getClaimStatusEncoder,
-  type ClaimStatus,
-  type ClaimStatusArgs,
-} from "../types";
 
 export const MINER_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
   223, 113, 15, 54, 123, 122, 140, 100,
@@ -73,8 +69,10 @@ export type Miner = {
   maskNonce: bigint;
   /** Ciphertext limbs for `Enc<Shared, Pack<[u8; 30]>>`. */
   maskCiphertext: ReadonlyUint8Array;
-  /** Claimed or not. */
-  claimed: ClaimStatus;
+  /** Whether this miner's SOL payout has been claimed. */
+  solClaimed: boolean;
+  /** Whether this miner's ZINC payout has been claimed. */
+  zincClaimed: boolean;
   /** PDA bump seed. */
   bump: number;
   /**
@@ -101,8 +99,10 @@ export type MinerArgs = {
   maskNonce: number | bigint;
   /** Ciphertext limbs for `Enc<Shared, Pack<[u8; 30]>>`. */
   maskCiphertext: ReadonlyUint8Array;
-  /** Claimed or not. */
-  claimed: ClaimStatusArgs;
+  /** Whether this miner's SOL payout has been claimed. */
+  solClaimed: boolean;
+  /** Whether this miner's ZINC payout has been claimed. */
+  zincClaimed: boolean;
   /** PDA bump seed. */
   bump: number;
   /**
@@ -127,7 +127,8 @@ export function getMinerEncoder(): Encoder<MinerArgs> {
       ["maskEncryptionKey", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskNonce", getU128Encoder()],
       ["maskCiphertext", fixEncoderSize(getBytesEncoder(), 64)],
-      ["claimed", getClaimStatusEncoder()],
+      ["solClaimed", getBooleanEncoder()],
+      ["zincClaimed", getBooleanEncoder()],
       ["bump", getU8Encoder()],
       ["winningStake", getOptionEncoder(getU64Encoder())],
       ["minerIndex", getU64Encoder()],
@@ -147,7 +148,8 @@ export function getMinerDecoder(): Decoder<Miner> {
     ["maskEncryptionKey", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskNonce", getU128Decoder()],
     ["maskCiphertext", fixDecoderSize(getBytesDecoder(), 64)],
-    ["claimed", getClaimStatusDecoder()],
+    ["solClaimed", getBooleanDecoder()],
+    ["zincClaimed", getBooleanDecoder()],
     ["bump", getU8Decoder()],
     ["winningStake", getOptionDecoder(getU64Decoder())],
     ["minerIndex", getU64Decoder()],

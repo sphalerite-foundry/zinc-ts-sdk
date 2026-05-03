@@ -1,7 +1,11 @@
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { getClaimRoundInstructionAsync } from "../../codama-ts";
+import {
+  getClaimRoundSolInstruction,
+  getClaimRoundZincInstructionAsync,
+} from "../../codama-ts";
 import {
   fetchTreasuryAccount,
+  getConfigAddress,
   getRoundZincPayoutTokenAccountAddress,
   getTreasuryAddress,
 } from "../pda";
@@ -27,6 +31,12 @@ export type BuildClaimRoundInstruction = {
   roundId: number | bigint;
 };
 
+export type BuildClaimRoundSolInstruction = {
+  signer: PublicKey;
+  player: PublicKey;
+  roundId: number | bigint;
+};
+
 /** Derives the canonical player ATA that receives optional ZINC stockpile payouts. */
 function getPlayerZincTokenAccount(
   player: PublicKey,
@@ -38,7 +48,7 @@ function getPlayerZincTokenAccount(
   )[0];
 }
 
-export async function buildClaimRoundInstruction({
+export async function buildClaimRoundZincInstruction({
   connection,
   signer,
   player,
@@ -58,9 +68,10 @@ export async function buildClaimRoundInstruction({
     treasuryAccount.data.bonanzaTokenAccount,
   );
   const playerZincTokenAccount = getPlayerZincTokenAccount(player, zincMint);
-  const instruction = await getClaimRoundInstructionAsync({
+  const instruction = await getClaimRoundZincInstructionAsync({
     signer: toTransactionSigner(signer),
     round: toAddress(round),
+    config: toAddress(getConfigAddress()[0]),
     miner: toAddress(miner),
     player: toAddress(player),
     treasury: toAddress(treasury),
@@ -73,3 +84,23 @@ export async function buildClaimRoundInstruction({
     instruction as Parameters<typeof toTransactionInstruction>[0],
   );
 }
+
+export function buildClaimRoundSolInstruction({
+  signer,
+  player,
+  roundId,
+}: BuildClaimRoundSolInstruction): TransactionInstruction {
+  const round = getRoundAddress(roundId)[0];
+  const miner = getMinerAddress(roundId, player)[0];
+  const instruction = getClaimRoundSolInstruction({
+    signer: toTransactionSigner(signer),
+    round: toAddress(round),
+    miner: toAddress(miner),
+    player: toAddress(player),
+  });
+  return toTransactionInstruction(
+    instruction as Parameters<typeof toTransactionInstruction>[0],
+  );
+}
+
+export const buildClaimRoundInstruction = buildClaimRoundZincInstruction;

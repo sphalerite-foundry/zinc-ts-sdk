@@ -10,8 +10,10 @@ import {
   combineCodec,
   fixDecoderSize,
   fixEncoderSize,
+  getAddressEncoder,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   getU64Decoder,
@@ -39,7 +41,13 @@ import {
   getAddressFromResolvedInstructionAccount,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findBoardPda, findConfigPda, findPlayerProfilePda } from "../pdas";
+import {
+  findBoardPda,
+  findConfigPda,
+  findPlayerProfilePda,
+  findStakingRewardTokenAccountPda,
+  findTreasuryPda,
+} from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const JOIN_STOCKPILE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
@@ -59,6 +67,14 @@ export type JoinStockpileInstruction<
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
+  TAccountTreasury extends string | AccountMeta<string> = string,
+  TAccountZincMint extends string | AccountMeta<string> = string,
+  TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
+  TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
+  TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
+    string,
+  TAccountTokenProgram extends string | AccountMeta<string> =
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
   TAccountSystemProgram extends string | AccountMeta<string> =
     "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
@@ -82,6 +98,24 @@ export type JoinStockpileInstruction<
       TAccountPlayerProfile extends string
         ? WritableAccount<TAccountPlayerProfile>
         : TAccountPlayerProfile,
+      TAccountTreasury extends string
+        ? WritableAccount<TAccountTreasury>
+        : TAccountTreasury,
+      TAccountZincMint extends string
+        ? WritableAccount<TAccountZincMint>
+        : TAccountZincMint,
+      TAccountStockpileTokenAccount extends string
+        ? WritableAccount<TAccountStockpileTokenAccount>
+        : TAccountStockpileTokenAccount,
+      TAccountSignerZincTokenAccount extends string
+        ? WritableAccount<TAccountSignerZincTokenAccount>
+        : TAccountSignerZincTokenAccount,
+      TAccountStakingRewardTokenAccount extends string
+        ? WritableAccount<TAccountStakingRewardTokenAccount>
+        : TAccountStakingRewardTokenAccount,
+      TAccountTokenProgram extends string
+        ? ReadonlyAccount<TAccountTokenProgram>
+        : TAccountTokenProgram,
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
@@ -133,6 +167,12 @@ export type JoinStockpileAsyncInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountPlayerProfile extends string = string,
+  TAccountTreasury extends string = string,
+  TAccountZincMint extends string = string,
+  TAccountStockpileTokenAccount extends string = string,
+  TAccountSignerZincTokenAccount extends string = string,
+  TAccountStakingRewardTokenAccount extends string = string,
+  TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   /** Player joining the currently open stockpile. */
@@ -145,6 +185,18 @@ export type JoinStockpileAsyncInput<
   stockpile: Address<TAccountStockpile>;
   /** Lifetime profile storing historical and spendable stockpile bricks. */
   playerProfile?: Address<TAccountPlayerProfile>;
+  /** Treasury account that owns global ZINC and staking accounting. */
+  treasury?: Address<TAccountTreasury>;
+  /** Protocol ZINC mint burned by the stockpile entry sink. */
+  zincMint: Address<TAccountZincMint>;
+  /** Live stockpile ZINC vault used to price the entry fee. */
+  stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
+  /** Signer-owned ZINC token account that funds the entry fee. */
+  signerZincTokenAccount?: Address<TAccountSignerZincTokenAccount>;
+  /** Treasury-owned reward vault that receives the staker share of the entry fee. */
+  stakingRewardTokenAccount?: Address<TAccountStakingRewardTokenAccount>;
+  /** SPL Token Program that owns the ZINC mint and vaults. */
+  tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
   bricksX10k: JoinStockpileInstructionDataArgs["bricksX10k"];
 };
@@ -155,6 +207,12 @@ export async function getJoinStockpileInstructionAsync<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountPlayerProfile extends string,
+  TAccountTreasury extends string,
+  TAccountZincMint extends string,
+  TAccountStockpileTokenAccount extends string,
+  TAccountSignerZincTokenAccount extends string,
+  TAccountStakingRewardTokenAccount extends string,
+  TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
@@ -164,6 +222,12 @@ export async function getJoinStockpileInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountPlayerProfile,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
@@ -175,6 +239,12 @@ export async function getJoinStockpileInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountPlayerProfile,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram,
     TAccountSystemProgram
   >
 > {
@@ -188,6 +258,21 @@ export async function getJoinStockpileInstructionAsync<
     board: { value: input.board ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
+    treasury: { value: input.treasury ?? null, isWritable: true },
+    zincMint: { value: input.zincMint ?? null, isWritable: true },
+    stockpileTokenAccount: {
+      value: input.stockpileTokenAccount ?? null,
+      isWritable: true,
+    },
+    signerZincTokenAccount: {
+      value: input.signerZincTokenAccount ?? null,
+      isWritable: true,
+    },
+    stakingRewardTokenAccount: {
+      value: input.stakingRewardTokenAccount ?? null,
+      isWritable: true,
+    },
+    tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -213,6 +298,43 @@ export async function getJoinStockpileInstructionAsync<
       ),
     });
   }
+  if (!accounts.treasury.value) {
+    accounts.treasury.value = await findTreasuryPda();
+  }
+  if (!accounts.tokenProgram.value) {
+    accounts.tokenProgram.value =
+      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  }
+  if (!accounts.signerZincTokenAccount.value) {
+    accounts.signerZincTokenAccount.value = await getProgramDerivedAddress({
+      programAddress:
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+      seeds: [
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "signer",
+            accounts.signer.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "tokenProgram",
+            accounts.tokenProgram.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "zincMint",
+            accounts.zincMint.value,
+          ),
+        ),
+      ],
+    });
+  }
+  if (!accounts.stakingRewardTokenAccount.value) {
+    accounts.stakingRewardTokenAccount.value =
+      await findStakingRewardTokenAccountPda();
+  }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
       "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
@@ -226,6 +348,15 @@ export async function getJoinStockpileInstructionAsync<
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("playerProfile", accounts.playerProfile),
+      getAccountMeta("treasury", accounts.treasury),
+      getAccountMeta("zincMint", accounts.zincMint),
+      getAccountMeta("stockpileTokenAccount", accounts.stockpileTokenAccount),
+      getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
+      getAccountMeta(
+        "stakingRewardTokenAccount",
+        accounts.stakingRewardTokenAccount,
+      ),
+      getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getJoinStockpileInstructionDataEncoder().encode(
@@ -239,6 +370,12 @@ export async function getJoinStockpileInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountPlayerProfile,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram,
     TAccountSystemProgram
   >);
 }
@@ -249,6 +386,12 @@ export type JoinStockpileInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountPlayerProfile extends string = string,
+  TAccountTreasury extends string = string,
+  TAccountZincMint extends string = string,
+  TAccountStockpileTokenAccount extends string = string,
+  TAccountSignerZincTokenAccount extends string = string,
+  TAccountStakingRewardTokenAccount extends string = string,
+  TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   /** Player joining the currently open stockpile. */
@@ -261,6 +404,18 @@ export type JoinStockpileInput<
   stockpile: Address<TAccountStockpile>;
   /** Lifetime profile storing historical and spendable stockpile bricks. */
   playerProfile: Address<TAccountPlayerProfile>;
+  /** Treasury account that owns global ZINC and staking accounting. */
+  treasury: Address<TAccountTreasury>;
+  /** Protocol ZINC mint burned by the stockpile entry sink. */
+  zincMint: Address<TAccountZincMint>;
+  /** Live stockpile ZINC vault used to price the entry fee. */
+  stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
+  /** Signer-owned ZINC token account that funds the entry fee. */
+  signerZincTokenAccount: Address<TAccountSignerZincTokenAccount>;
+  /** Treasury-owned reward vault that receives the staker share of the entry fee. */
+  stakingRewardTokenAccount: Address<TAccountStakingRewardTokenAccount>;
+  /** SPL Token Program that owns the ZINC mint and vaults. */
+  tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
   bricksX10k: JoinStockpileInstructionDataArgs["bricksX10k"];
 };
@@ -271,6 +426,12 @@ export function getJoinStockpileInstruction<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountPlayerProfile extends string,
+  TAccountTreasury extends string,
+  TAccountZincMint extends string,
+  TAccountStockpileTokenAccount extends string,
+  TAccountSignerZincTokenAccount extends string,
+  TAccountStakingRewardTokenAccount extends string,
+  TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
@@ -280,6 +441,12 @@ export function getJoinStockpileInstruction<
     TAccountBoard,
     TAccountStockpile,
     TAccountPlayerProfile,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
@@ -290,6 +457,12 @@ export function getJoinStockpileInstruction<
   TAccountBoard,
   TAccountStockpile,
   TAccountPlayerProfile,
+  TAccountTreasury,
+  TAccountZincMint,
+  TAccountStockpileTokenAccount,
+  TAccountSignerZincTokenAccount,
+  TAccountStakingRewardTokenAccount,
+  TAccountTokenProgram,
   TAccountSystemProgram
 > {
   // Program address.
@@ -302,6 +475,21 @@ export function getJoinStockpileInstruction<
     board: { value: input.board ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
+    treasury: { value: input.treasury ?? null, isWritable: true },
+    zincMint: { value: input.zincMint ?? null, isWritable: true },
+    stockpileTokenAccount: {
+      value: input.stockpileTokenAccount ?? null,
+      isWritable: true,
+    },
+    signerZincTokenAccount: {
+      value: input.signerZincTokenAccount ?? null,
+      isWritable: true,
+    },
+    stakingRewardTokenAccount: {
+      value: input.stakingRewardTokenAccount ?? null,
+      isWritable: true,
+    },
+    tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -313,6 +501,10 @@ export function getJoinStockpileInstruction<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.tokenProgram.value) {
+    accounts.tokenProgram.value =
+      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
       "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
@@ -326,6 +518,15 @@ export function getJoinStockpileInstruction<
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("playerProfile", accounts.playerProfile),
+      getAccountMeta("treasury", accounts.treasury),
+      getAccountMeta("zincMint", accounts.zincMint),
+      getAccountMeta("stockpileTokenAccount", accounts.stockpileTokenAccount),
+      getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
+      getAccountMeta(
+        "stakingRewardTokenAccount",
+        accounts.stakingRewardTokenAccount,
+      ),
+      getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getJoinStockpileInstructionDataEncoder().encode(
@@ -339,6 +540,12 @@ export function getJoinStockpileInstruction<
     TAccountBoard,
     TAccountStockpile,
     TAccountPlayerProfile,
+    TAccountTreasury,
+    TAccountZincMint,
+    TAccountStockpileTokenAccount,
+    TAccountSignerZincTokenAccount,
+    TAccountStakingRewardTokenAccount,
+    TAccountTokenProgram,
     TAccountSystemProgram
   >);
 }
@@ -359,7 +566,19 @@ export type ParsedJoinStockpileInstruction<
     stockpile: TAccountMetas[3];
     /** Lifetime profile storing historical and spendable stockpile bricks. */
     playerProfile: TAccountMetas[4];
-    systemProgram: TAccountMetas[5];
+    /** Treasury account that owns global ZINC and staking accounting. */
+    treasury: TAccountMetas[5];
+    /** Protocol ZINC mint burned by the stockpile entry sink. */
+    zincMint: TAccountMetas[6];
+    /** Live stockpile ZINC vault used to price the entry fee. */
+    stockpileTokenAccount: TAccountMetas[7];
+    /** Signer-owned ZINC token account that funds the entry fee. */
+    signerZincTokenAccount: TAccountMetas[8];
+    /** Treasury-owned reward vault that receives the staker share of the entry fee. */
+    stakingRewardTokenAccount: TAccountMetas[9];
+    /** SPL Token Program that owns the ZINC mint and vaults. */
+    tokenProgram: TAccountMetas[10];
+    systemProgram: TAccountMetas[11];
   };
   data: JoinStockpileInstructionData;
 };
@@ -372,12 +591,12 @@ export function parseJoinStockpileInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedJoinStockpileInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 6) {
+  if (instruction.accounts.length < 12) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 6,
+        expectedAccountMetas: 12,
       },
     );
   }
@@ -395,6 +614,12 @@ export function parseJoinStockpileInstruction<
       board: getNextAccount(),
       stockpile: getNextAccount(),
       playerProfile: getNextAccount(),
+      treasury: getNextAccount(),
+      zincMint: getNextAccount(),
+      stockpileTokenAccount: getNextAccount(),
+      signerZincTokenAccount: getNextAccount(),
+      stakingRewardTokenAccount: getNextAccount(),
+      tokenProgram: getNextAccount(),
       systemProgram: getNextAccount(),
     },
     data: getJoinStockpileInstructionDataDecoder().decode(instruction.data),
