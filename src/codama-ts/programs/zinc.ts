@@ -99,8 +99,8 @@ import {
   getBuybackInstructionAsync,
   getClaimAffiliateInstructionAsync,
   getClaimBuybackPoolFeesInstructionAsync,
-  getClaimRoundSolInstruction,
-  getClaimRoundZincInstructionAsync,
+  getClaimPlayerZincRewardsInstructionAsync,
+  getClaimRoundSolInstructionAsync,
   getClaimStakingYieldInstructionAsync,
   getClaimWildcatInstructionAsync,
   getCloseConfigInstructionAsync,
@@ -113,6 +113,7 @@ import {
   getCloseStockpileInstructionAsync,
   getCloseTreasuryTokenAccountInstructionAsync,
   getCreateBuybackPoolInstructionAsync,
+  getCreditRoundZincInstructionAsync,
   getDeployRoundInstructionAsync,
   getDepositStockpileExtraInstructionAsync,
   getFinalizeNoWinnerRoundInstructionAsync,
@@ -149,8 +150,8 @@ import {
   parseBuybackInstruction,
   parseClaimAffiliateInstruction,
   parseClaimBuybackPoolFeesInstruction,
+  parseClaimPlayerZincRewardsInstruction,
   parseClaimRoundSolInstruction,
-  parseClaimRoundZincInstruction,
   parseClaimStakingYieldInstruction,
   parseClaimWildcatInstruction,
   parseCloseConfigInstruction,
@@ -163,6 +164,7 @@ import {
   parseCloseStockpileInstruction,
   parseCloseTreasuryTokenAccountInstruction,
   parseCreateBuybackPoolInstruction,
+  parseCreditRoundZincInstruction,
   parseDeployRoundInstruction,
   parseDepositStockpileExtraInstruction,
   parseFinalizeNoWinnerRoundInstruction,
@@ -199,8 +201,8 @@ import {
   type BuybackAsyncInput,
   type ClaimAffiliateAsyncInput,
   type ClaimBuybackPoolFeesAsyncInput,
-  type ClaimRoundSolInput,
-  type ClaimRoundZincAsyncInput,
+  type ClaimPlayerZincRewardsAsyncInput,
+  type ClaimRoundSolAsyncInput,
   type ClaimStakingYieldAsyncInput,
   type ClaimWildcatAsyncInput,
   type CloseConfigAsyncInput,
@@ -213,6 +215,7 @@ import {
   type CloseStockpileAsyncInput,
   type CloseTreasuryTokenAccountAsyncInput,
   type CreateBuybackPoolAsyncInput,
+  type CreditRoundZincAsyncInput,
   type DeployRoundAsyncInput,
   type DepositStockpileExtraAsyncInput,
   type FinalizeNoWinnerRoundAsyncInput,
@@ -233,8 +236,8 @@ import {
   type ParsedBuybackInstruction,
   type ParsedClaimAffiliateInstruction,
   type ParsedClaimBuybackPoolFeesInstruction,
+  type ParsedClaimPlayerZincRewardsInstruction,
   type ParsedClaimRoundSolInstruction,
-  type ParsedClaimRoundZincInstruction,
   type ParsedClaimStakingYieldInstruction,
   type ParsedClaimWildcatInstruction,
   type ParsedCloseConfigInstruction,
@@ -247,6 +250,7 @@ import {
   type ParsedCloseStockpileInstruction,
   type ParsedCloseTreasuryTokenAccountInstruction,
   type ParsedCreateBuybackPoolInstruction,
+  type ParsedCreditRoundZincInstruction,
   type ParsedDeployRoundInstruction,
   type ParsedDepositStockpileExtraInstruction,
   type ParsedFinalizeNoWinnerRoundInstruction,
@@ -309,6 +313,7 @@ import {
   findPlayerProfilePda,
   findRoundPda,
   findRoundSecretPda,
+  findRoundZincRewardTokenAccountPda,
   findSignPdaAccountPda,
   findStakePositionPda,
   findStakingRewardTokenAccountPda,
@@ -580,8 +585,8 @@ export enum ZincInstruction {
   Buyback,
   ClaimAffiliate,
   ClaimBuybackPoolFees,
+  ClaimPlayerZincRewards,
   ClaimRoundSol,
-  ClaimRoundZinc,
   ClaimStakingYield,
   ClaimWildcat,
   CloseConfig,
@@ -594,6 +599,7 @@ export enum ZincInstruction {
   CloseStockpileAccounts,
   CloseTreasuryTokenAccount,
   CreateBuybackPool,
+  CreditRoundZinc,
   DeployRound,
   DepositStockpileExtra,
   FinalizeNoWinnerRound,
@@ -670,23 +676,23 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([65, 17, 118, 123, 60, 247, 49, 165]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.ClaimPlayerZincRewards;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([245, 106, 176, 41, 4, 167, 225, 92]),
       ),
       0,
     )
   ) {
     return ZincInstruction.ClaimRoundSol;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([239, 212, 229, 179, 158, 191, 185, 253]),
-      ),
-      0,
-    )
-  ) {
-    return ZincInstruction.ClaimRoundZinc;
   }
   if (
     containsBytes(
@@ -819,6 +825,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.CreateBuybackPool;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([236, 221, 193, 26, 45, 137, 4, 147]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.CreditRoundZinc;
   }
   if (
     containsBytes(
@@ -1202,11 +1219,11 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.ClaimBuybackPoolFees;
     } & ParsedClaimBuybackPoolFeesInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.ClaimPlayerZincRewards;
+    } & ParsedClaimPlayerZincRewardsInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.ClaimRoundSol;
     } & ParsedClaimRoundSolInstruction<TProgram>)
-  | ({
-      instructionType: ZincInstruction.ClaimRoundZinc;
-    } & ParsedClaimRoundZincInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ClaimStakingYield;
     } & ParsedClaimStakingYieldInstruction<TProgram>)
@@ -1243,6 +1260,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.CreateBuybackPool;
     } & ParsedCreateBuybackPoolInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.CreditRoundZinc;
+    } & ParsedCreditRoundZincInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.DeployRound;
     } & ParsedDeployRoundInstruction<TProgram>)
@@ -1369,18 +1389,18 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseClaimBuybackPoolFeesInstruction(instruction),
       };
     }
+    case ZincInstruction.ClaimPlayerZincRewards: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.ClaimPlayerZincRewards,
+        ...parseClaimPlayerZincRewardsInstruction(instruction),
+      };
+    }
     case ZincInstruction.ClaimRoundSol: {
       assertIsInstructionWithAccounts(instruction);
       return {
         instructionType: ZincInstruction.ClaimRoundSol,
         ...parseClaimRoundSolInstruction(instruction),
-      };
-    }
-    case ZincInstruction.ClaimRoundZinc: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: ZincInstruction.ClaimRoundZinc,
-        ...parseClaimRoundZincInstruction(instruction),
       };
     }
     case ZincInstruction.ClaimStakingYield: {
@@ -1465,6 +1485,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.CreateBuybackPool,
         ...parseCreateBuybackPoolInstruction(instruction),
+      };
+    }
+    case ZincInstruction.CreditRoundZinc: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.CreditRoundZinc,
+        ...parseCreditRoundZincInstruction(instruction),
       };
     }
     case ZincInstruction.DeployRound: {
@@ -1772,13 +1799,13 @@ export type ZincPluginInstructions = {
     input: ClaimBuybackPoolFeesAsyncInput,
   ) => ReturnType<typeof getClaimBuybackPoolFeesInstructionAsync> &
     SelfPlanAndSendFunctions;
-  claimRoundSol: (
-    input: ClaimRoundSolInput,
-  ) => ReturnType<typeof getClaimRoundSolInstruction> &
+  claimPlayerZincRewards: (
+    input: ClaimPlayerZincRewardsAsyncInput,
+  ) => ReturnType<typeof getClaimPlayerZincRewardsInstructionAsync> &
     SelfPlanAndSendFunctions;
-  claimRoundZinc: (
-    input: ClaimRoundZincAsyncInput,
-  ) => ReturnType<typeof getClaimRoundZincInstructionAsync> &
+  claimRoundSol: (
+    input: ClaimRoundSolAsyncInput,
+  ) => ReturnType<typeof getClaimRoundSolInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimStakingYield: (
     input: ClaimStakingYieldAsyncInput,
@@ -1827,6 +1854,10 @@ export type ZincPluginInstructions = {
   createBuybackPool: (
     input: CreateBuybackPoolAsyncInput,
   ) => ReturnType<typeof getCreateBuybackPoolInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  creditRoundZinc: (
+    input: CreditRoundZincAsyncInput,
+  ) => ReturnType<typeof getCreditRoundZincInstructionAsync> &
     SelfPlanAndSendFunctions;
   deployRound: (
     input: DeployRoundAsyncInput,
@@ -1970,6 +2001,7 @@ export type ZincPluginPdas = {
   playerProfile: typeof findPlayerProfilePda;
   buybackFeeZincTokenAccount: typeof findBuybackFeeZincTokenAccountPda;
   buybackFeeWsolTokenAccount: typeof findBuybackFeeWsolTokenAccountPda;
+  roundZincRewardTokenAccount: typeof findRoundZincRewardTokenAccountPda;
   stakePosition: typeof findStakePositionPda;
   board: typeof findBoardPda;
   stockpileSolVault: typeof findStockpileSolVaultPda;
@@ -2053,15 +2085,15 @@ export function zincProgram() {
               client,
               getClaimBuybackPoolFeesInstructionAsync(input),
             ),
+          claimPlayerZincRewards: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getClaimPlayerZincRewardsInstructionAsync(input),
+            ),
           claimRoundSol: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getClaimRoundSolInstruction(input),
-            ),
-          claimRoundZinc: (input) =>
-            addSelfPlanAndSendFunctions(
-              client,
-              getClaimRoundZincInstructionAsync(input),
+              getClaimRoundSolInstructionAsync(input),
             ),
           claimStakingYield: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2122,6 +2154,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getCreateBuybackPoolInstructionAsync(input),
+            ),
+          creditRoundZinc: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getCreditRoundZincInstructionAsync(input),
             ),
           deployRound: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2316,6 +2353,7 @@ export function zincProgram() {
           playerProfile: findPlayerProfilePda,
           buybackFeeZincTokenAccount: findBuybackFeeZincTokenAccountPda,
           buybackFeeWsolTokenAccount: findBuybackFeeWsolTokenAccountPda,
+          roundZincRewardTokenAccount: findRoundZincRewardTokenAccountPda,
           stakePosition: findStakePositionPda,
           board: findBoardPda,
           stockpileSolVault: findStockpileSolVaultPda,

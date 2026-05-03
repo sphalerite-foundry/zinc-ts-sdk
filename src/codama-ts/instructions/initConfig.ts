@@ -43,6 +43,7 @@ import {
   findBonanzaTokenAccountPda,
   findBuybackSolVaultPda,
   findConfigPda,
+  findRoundZincRewardTokenAccountPda,
   findStakingRewardTokenAccountPda,
   findStakingTokenAccountPda,
   findStockpileExtrasPda,
@@ -80,6 +81,8 @@ export type InitConfigInstruction<
   TAccountStockpileTokenAccount extends string | AccountMeta<string> = string,
   TAccountStakingTokenAccount extends string | AccountMeta<string> = string,
   TAccountStakingRewardTokenAccount extends string | AccountMeta<string> =
+    string,
+  TAccountRoundZincRewardTokenAccount extends string | AccountMeta<string> =
     string,
   TAccountStockpileSolVault extends string | AccountMeta<string> = string,
   TAccountBuybackSolVault extends string | AccountMeta<string> = string,
@@ -134,6 +137,9 @@ export type InitConfigInstruction<
       TAccountStakingRewardTokenAccount extends string
         ? WritableAccount<TAccountStakingRewardTokenAccount>
         : TAccountStakingRewardTokenAccount,
+      TAccountRoundZincRewardTokenAccount extends string
+        ? WritableAccount<TAccountRoundZincRewardTokenAccount>
+        : TAccountRoundZincRewardTokenAccount,
       TAccountStockpileSolVault extends string
         ? WritableAccount<TAccountStockpileSolVault>
         : TAccountStockpileSolVault,
@@ -208,6 +214,7 @@ export type InitConfigAsyncInput<
   TAccountStockpileTokenAccount extends string = string,
   TAccountStakingTokenAccount extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
+  TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountStockpileSolVault extends string = string,
   TAccountBuybackSolVault extends string = string,
   TAccountStockpileExtras extends string = string,
@@ -234,6 +241,8 @@ export type InitConfigAsyncInput<
   stakingTokenAccount?: Address<TAccountStakingTokenAccount>;
   /** Dedicated reward vault that funds staker-yield claims. */
   stakingRewardTokenAccount?: Address<TAccountStakingRewardTokenAccount>;
+  /** Dedicated reward vault that funds aggregate round ZINC reward claims. */
+  roundZincRewardTokenAccount?: Address<TAccountRoundZincRewardTokenAccount>;
   /** Program-owned lamport vault that accumulates stockpile SOL across cycles. */
   stockpileSolVault?: Address<TAccountStockpileSolVault>;
   /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
@@ -265,6 +274,7 @@ export async function getInitConfigInstructionAsync<
   TAccountStockpileTokenAccount extends string,
   TAccountStakingTokenAccount extends string,
   TAccountStakingRewardTokenAccount extends string,
+  TAccountRoundZincRewardTokenAccount extends string,
   TAccountStockpileSolVault extends string,
   TAccountBuybackSolVault extends string,
   TAccountStockpileExtras extends string,
@@ -287,6 +297,7 @@ export async function getInitConfigInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountStakingTokenAccount,
     TAccountStakingRewardTokenAccount,
+    TAccountRoundZincRewardTokenAccount,
     TAccountStockpileSolVault,
     TAccountBuybackSolVault,
     TAccountStockpileExtras,
@@ -311,6 +322,7 @@ export async function getInitConfigInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountStakingTokenAccount,
     TAccountStakingRewardTokenAccount,
+    TAccountRoundZincRewardTokenAccount,
     TAccountStockpileSolVault,
     TAccountBuybackSolVault,
     TAccountStockpileExtras,
@@ -350,6 +362,10 @@ export async function getInitConfigInstructionAsync<
     },
     stakingRewardTokenAccount: {
       value: input.stakingRewardTokenAccount ?? null,
+      isWritable: true,
+    },
+    roundZincRewardTokenAccount: {
+      value: input.roundZincRewardTokenAccount ?? null,
       isWritable: true,
     },
     stockpileSolVault: {
@@ -444,6 +460,10 @@ export async function getInitConfigInstructionAsync<
     accounts.stakingRewardTokenAccount.value =
       await findStakingRewardTokenAccountPda();
   }
+  if (!accounts.roundZincRewardTokenAccount.value) {
+    accounts.roundZincRewardTokenAccount.value =
+      await findRoundZincRewardTokenAccountPda();
+  }
   if (!accounts.stockpileSolVault.value) {
     accounts.stockpileSolVault.value = await findStockpileSolVaultPda();
   }
@@ -483,6 +503,10 @@ export async function getInitConfigInstructionAsync<
         "stakingRewardTokenAccount",
         accounts.stakingRewardTokenAccount,
       ),
+      getAccountMeta(
+        "roundZincRewardTokenAccount",
+        accounts.roundZincRewardTokenAccount,
+      ),
       getAccountMeta("stockpileSolVault", accounts.stockpileSolVault),
       getAccountMeta("buybackSolVault", accounts.buybackSolVault),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
@@ -509,6 +533,7 @@ export async function getInitConfigInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountStakingTokenAccount,
     TAccountStakingRewardTokenAccount,
+    TAccountRoundZincRewardTokenAccount,
     TAccountStockpileSolVault,
     TAccountBuybackSolVault,
     TAccountStockpileExtras,
@@ -532,6 +557,7 @@ export type InitConfigInput<
   TAccountStockpileTokenAccount extends string = string,
   TAccountStakingTokenAccount extends string = string,
   TAccountStakingRewardTokenAccount extends string = string,
+  TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountStockpileSolVault extends string = string,
   TAccountBuybackSolVault extends string = string,
   TAccountStockpileExtras extends string = string,
@@ -558,6 +584,8 @@ export type InitConfigInput<
   stakingTokenAccount: Address<TAccountStakingTokenAccount>;
   /** Dedicated reward vault that funds staker-yield claims. */
   stakingRewardTokenAccount: Address<TAccountStakingRewardTokenAccount>;
+  /** Dedicated reward vault that funds aggregate round ZINC reward claims. */
+  roundZincRewardTokenAccount: Address<TAccountRoundZincRewardTokenAccount>;
   /** Program-owned lamport vault that accumulates stockpile SOL across cycles. */
   stockpileSolVault: Address<TAccountStockpileSolVault>;
   /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
@@ -589,6 +617,7 @@ export function getInitConfigInstruction<
   TAccountStockpileTokenAccount extends string,
   TAccountStakingTokenAccount extends string,
   TAccountStakingRewardTokenAccount extends string,
+  TAccountRoundZincRewardTokenAccount extends string,
   TAccountStockpileSolVault extends string,
   TAccountBuybackSolVault extends string,
   TAccountStockpileExtras extends string,
@@ -611,6 +640,7 @@ export function getInitConfigInstruction<
     TAccountStockpileTokenAccount,
     TAccountStakingTokenAccount,
     TAccountStakingRewardTokenAccount,
+    TAccountRoundZincRewardTokenAccount,
     TAccountStockpileSolVault,
     TAccountBuybackSolVault,
     TAccountStockpileExtras,
@@ -634,6 +664,7 @@ export function getInitConfigInstruction<
   TAccountStockpileTokenAccount,
   TAccountStakingTokenAccount,
   TAccountStakingRewardTokenAccount,
+  TAccountRoundZincRewardTokenAccount,
   TAccountStockpileSolVault,
   TAccountBuybackSolVault,
   TAccountStockpileExtras,
@@ -672,6 +703,10 @@ export function getInitConfigInstruction<
     },
     stakingRewardTokenAccount: {
       value: input.stakingRewardTokenAccount ?? null,
+      isWritable: true,
+    },
+    roundZincRewardTokenAccount: {
+      value: input.roundZincRewardTokenAccount ?? null,
       isWritable: true,
     },
     stockpileSolVault: {
@@ -739,6 +774,10 @@ export function getInitConfigInstruction<
         "stakingRewardTokenAccount",
         accounts.stakingRewardTokenAccount,
       ),
+      getAccountMeta(
+        "roundZincRewardTokenAccount",
+        accounts.roundZincRewardTokenAccount,
+      ),
       getAccountMeta("stockpileSolVault", accounts.stockpileSolVault),
       getAccountMeta("buybackSolVault", accounts.buybackSolVault),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
@@ -765,6 +804,7 @@ export function getInitConfigInstruction<
     TAccountStockpileTokenAccount,
     TAccountStakingTokenAccount,
     TAccountStakingRewardTokenAccount,
+    TAccountRoundZincRewardTokenAccount,
     TAccountStockpileSolVault,
     TAccountBuybackSolVault,
     TAccountStockpileExtras,
@@ -799,22 +839,24 @@ export type ParsedInitConfigInstruction<
     stakingTokenAccount: TAccountMetas[9];
     /** Dedicated reward vault that funds staker-yield claims. */
     stakingRewardTokenAccount: TAccountMetas[10];
+    /** Dedicated reward vault that funds aggregate round ZINC reward claims. */
+    roundZincRewardTokenAccount: TAccountMetas[11];
     /** Program-owned lamport vault that accumulates stockpile SOL across cycles. */
-    stockpileSolVault: TAccountMetas[11];
+    stockpileSolVault: TAccountMetas[12];
     /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
-    buybackSolVault: TAccountMetas[12];
+    buybackSolVault: TAccountMetas[13];
     /** Singleton account that tracks pending stockpile extras for the current cycle. */
-    stockpileExtras: TAccountMetas[13];
+    stockpileExtras: TAccountMetas[14];
     /** Associated Token Program used to create the treasury ATA. */
-    associatedTokenProgram: TAccountMetas[14];
+    associatedTokenProgram: TAccountMetas[15];
     /** SPL Token Program that owns the ZINC mint and treasury vaults. */
-    tokenProgram: TAccountMetas[15];
+    tokenProgram: TAccountMetas[16];
     /** Metaplex Token Metadata Program used to create ZINC mint metadata. */
-    metadataProgram: TAccountMetas[16];
+    metadataProgram: TAccountMetas[17];
     /** Rent sysvar forwarded to the Metaplex metadata CPI. */
-    rent: TAccountMetas[17];
+    rent: TAccountMetas[18];
     /** System Program used to allocate protocol and metadata accounts. */
-    systemProgram: TAccountMetas[18];
+    systemProgram: TAccountMetas[19];
   };
   data: InitConfigInstructionData;
 };
@@ -827,12 +869,12 @@ export function parseInitConfigInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitConfigInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 19) {
+  if (instruction.accounts.length < 20) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 19,
+        expectedAccountMetas: 20,
       },
     );
   }
@@ -856,6 +898,7 @@ export function parseInitConfigInstruction<
       stockpileTokenAccount: getNextAccount(),
       stakingTokenAccount: getNextAccount(),
       stakingRewardTokenAccount: getNextAccount(),
+      roundZincRewardTokenAccount: getNextAccount(),
       stockpileSolVault: getNextAccount(),
       buybackSolVault: getNextAccount(),
       stockpileExtras: getNextAccount(),

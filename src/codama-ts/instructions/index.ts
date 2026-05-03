@@ -9,8 +9,8 @@
 export * from "./buyback";
 export * from "./claimAffiliate";
 export * from "./claimBuybackPoolFees";
+export * from "./claimPlayerZincRewards";
 export * from "./claimRoundSol";
-export * from "./claimRoundZinc";
 export * from "./claimStakingYield";
 export * from "./claimWildcat";
 export * from "./closeConfig";
@@ -23,6 +23,7 @@ export * from "./closeStockpile";
 export * from "./closeStockpileAccounts";
 export * from "./closeTreasuryTokenAccount";
 export * from "./createBuybackPool";
+export * from "./creditRoundZinc";
 export * from "./deployRound";
 export * from "./depositStockpileExtra";
 export * from "./finalizeNoWinnerRound";

@@ -71,8 +71,8 @@ export type Miner = {
   maskCiphertext: ReadonlyUint8Array;
   /** Whether this miner's SOL payout has been claimed. */
   solClaimed: boolean;
-  /** Whether this miner's ZINC payout has been claimed. */
-  zincClaimed: boolean;
+  /** Whether this miner's ZINC reward has been credited to the player's profile. */
+  zincCredited: boolean;
   /** PDA bump seed. */
   bump: number;
   /**
@@ -101,8 +101,8 @@ export type MinerArgs = {
   maskCiphertext: ReadonlyUint8Array;
   /** Whether this miner's SOL payout has been claimed. */
   solClaimed: boolean;
-  /** Whether this miner's ZINC payout has been claimed. */
-  zincClaimed: boolean;
+  /** Whether this miner's ZINC reward has been credited to the player's profile. */
+  zincCredited: boolean;
   /** PDA bump seed. */
   bump: number;
   /**
@@ -128,7 +128,7 @@ export function getMinerEncoder(): Encoder<MinerArgs> {
       ["maskNonce", getU128Encoder()],
       ["maskCiphertext", fixEncoderSize(getBytesEncoder(), 64)],
       ["solClaimed", getBooleanEncoder()],
-      ["zincClaimed", getBooleanEncoder()],
+      ["zincCredited", getBooleanEncoder()],
       ["bump", getU8Encoder()],
       ["winningStake", getOptionEncoder(getU64Encoder())],
       ["minerIndex", getU64Encoder()],
@@ -149,7 +149,7 @@ export function getMinerDecoder(): Decoder<Miner> {
     ["maskNonce", getU128Decoder()],
     ["maskCiphertext", fixDecoderSize(getBytesDecoder(), 64)],
     ["solClaimed", getBooleanDecoder()],
-    ["zincClaimed", getBooleanDecoder()],
+    ["zincCredited", getBooleanDecoder()],
     ["bump", getU8Decoder()],
     ["winningStake", getOptionDecoder(getU64Decoder())],
     ["minerIndex", getU64Decoder()],

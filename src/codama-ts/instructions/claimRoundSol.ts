@@ -26,6 +26,7 @@ import {
   type Instruction,
   type InstructionWithAccounts,
   type InstructionWithData,
+  type ReadonlyAccount,
   type ReadonlySignerAccount,
   type ReadonlyUint8Array,
   type TransactionSigner,
@@ -35,6 +36,7 @@ import {
   getAccountMetaFactory,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
+import { findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const CLAIM_ROUND_SOL_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array(
@@ -50,6 +52,7 @@ export function getClaimRoundSolDiscriminatorBytes(): ReadonlyUint8Array {
 export type ClaimRoundSolInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountMiner extends string | AccountMeta<string> = string,
   TAccountPlayer extends string | AccountMeta<string> = string,
@@ -62,6 +65,9 @@ export type ClaimRoundSolInstruction<
         ? ReadonlySignerAccount<TAccountSigner> &
             AccountSignerMeta<TAccountSigner>
         : TAccountSigner,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
@@ -104,14 +110,103 @@ export function getClaimRoundSolInstructionDataCodec(): FixedSizeCodec<
   );
 }
 
-export type ClaimRoundSolInput<
+export type ClaimRoundSolAsyncInput<
   TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountMiner extends string = string,
   TAccountPlayer extends string = string,
 > = {
   /** Signer that submits the claim transaction. */
   signer: TransactionSigner<TAccountSigner>;
+  /** Global config containing the crank authority allowed to automate SOL claims. */
+  config?: Address<TAccountConfig>;
+  /** Settled round whose SOL payout is being claimed. */
+  round: Address<TAccountRound>;
+  /** Per-player round position that tracks winning stake and split claim status. */
+  miner: Address<TAccountMiner>;
+  player: Address<TAccountPlayer>;
+};
+
+export async function getClaimRoundSolInstructionAsync<
+  TAccountSigner extends string,
+  TAccountConfig extends string,
+  TAccountRound extends string,
+  TAccountMiner extends string,
+  TAccountPlayer extends string,
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
+>(
+  input: ClaimRoundSolAsyncInput<
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer
+  >,
+  config?: { programAddress?: TProgramAddress },
+): Promise<
+  ClaimRoundSolInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer
+  >
+> {
+  // Program address.
+  const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
+
+  // Original accounts.
+  const originalAccounts = {
+    signer: { value: input.signer ?? null, isWritable: false },
+    config: { value: input.config ?? null, isWritable: false },
+    round: { value: input.round ?? null, isWritable: true },
+    miner: { value: input.miner ?? null, isWritable: true },
+    player: { value: input.player ?? null, isWritable: true },
+  };
+  const accounts = originalAccounts as Record<
+    keyof typeof originalAccounts,
+    ResolvedInstructionAccount
+  >;
+
+  // Resolve default values.
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
+
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  return Object.freeze({
+    accounts: [
+      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
+      getAccountMeta("round", accounts.round),
+      getAccountMeta("miner", accounts.miner),
+      getAccountMeta("player", accounts.player),
+    ],
+    data: getClaimRoundSolInstructionDataEncoder().encode({}),
+    programAddress,
+  } as ClaimRoundSolInstruction<
+    TProgramAddress,
+    TAccountSigner,
+    TAccountConfig,
+    TAccountRound,
+    TAccountMiner,
+    TAccountPlayer
+  >);
+}
+
+export type ClaimRoundSolInput<
+  TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
+  TAccountRound extends string = string,
+  TAccountMiner extends string = string,
+  TAccountPlayer extends string = string,
+> = {
+  /** Signer that submits the claim transaction. */
+  signer: TransactionSigner<TAccountSigner>;
+  /** Global config containing the crank authority allowed to automate SOL claims. */
+  config: Address<TAccountConfig>;
   /** Settled round whose SOL payout is being claimed. */
   round: Address<TAccountRound>;
   /** Per-player round position that tracks winning stake and split claim status. */
@@ -121,6 +216,7 @@ export type ClaimRoundSolInput<
 
 export function getClaimRoundSolInstruction<
   TAccountSigner extends string,
+  TAccountConfig extends string,
   TAccountRound extends string,
   TAccountMiner extends string,
   TAccountPlayer extends string,
@@ -128,6 +224,7 @@ export function getClaimRoundSolInstruction<
 >(
   input: ClaimRoundSolInput<
     TAccountSigner,
+    TAccountConfig,
     TAccountRound,
     TAccountMiner,
     TAccountPlayer
@@ -136,6 +233,7 @@ export function getClaimRoundSolInstruction<
 ): ClaimRoundSolInstruction<
   TProgramAddress,
   TAccountSigner,
+  TAccountConfig,
   TAccountRound,
   TAccountMiner,
   TAccountPlayer
@@ -146,6 +244,7 @@ export function getClaimRoundSolInstruction<
   // Original accounts.
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: false },
+    config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
     miner: { value: input.miner ?? null, isWritable: true },
     player: { value: input.player ?? null, isWritable: true },
@@ -159,6 +258,7 @@ export function getClaimRoundSolInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
       getAccountMeta("miner", accounts.miner),
       getAccountMeta("player", accounts.player),
@@ -168,6 +268,7 @@ export function getClaimRoundSolInstruction<
   } as ClaimRoundSolInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountRound,
     TAccountMiner,
     TAccountPlayer
@@ -182,11 +283,13 @@ export type ParsedClaimRoundSolInstruction<
   accounts: {
     /** Signer that submits the claim transaction. */
     signer: TAccountMetas[0];
+    /** Global config containing the crank authority allowed to automate SOL claims. */
+    config: TAccountMetas[1];
     /** Settled round whose SOL payout is being claimed. */
-    round: TAccountMetas[1];
+    round: TAccountMetas[2];
     /** Per-player round position that tracks winning stake and split claim status. */
-    miner: TAccountMetas[2];
-    player: TAccountMetas[3];
+    miner: TAccountMetas[3];
+    player: TAccountMetas[4];
   };
   data: ClaimRoundSolInstructionData;
 };
@@ -199,12 +302,12 @@ export function parseClaimRoundSolInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimRoundSolInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
+  if (instruction.accounts.length < 5) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 4,
+        expectedAccountMetas: 5,
       },
     );
   }
@@ -218,6 +321,7 @@ export function parseClaimRoundSolInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       signer: getNextAccount(),
+      config: getNextAccount(),
       round: getNextAccount(),
       miner: getNextAccount(),
       player: getNextAccount(),

@@ -27,8 +27,6 @@ import {
   getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
-  getU128Decoder,
-  getU128Encoder,
   getU64Decoder,
   getU64Encoder,
   getU8Decoder,
@@ -91,7 +89,7 @@ export type Round = {
   totalOnWinningTile: bigint;
   /** Number of winners in the round. */
   winners: bigint;
-  /** Remaining winners that still need to claim. */
+  /** Remaining winners whose ZINC rewards still need to be credited. */
   remainingWinnerClaims: bigint;
   /** Total number of players in the round. */
   numberOfPlayers: bigint;
@@ -125,14 +123,6 @@ export type Round = {
   wildcatSelectionComplete: boolean;
   /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
   wildcatClaimed: boolean;
-  /** Unclaimed direct-winner principal still participating in direct claim-fee redistribution. */
-  directZincUnclaimedPrincipal: bigint;
-  /** Unclaimed Bonanza principal still participating in Bonanza claim-fee redistribution. */
-  bonanzaZincUnclaimedPrincipal: bigint;
-  /** Cumulative direct-winner claim-fee factor applied to later direct principal claims. */
-  directZincClaimFeeFactor: bigint;
-  /** Cumulative Bonanza claim-fee factor applied to later Bonanza principal claims. */
-  bonanzaZincClaimFeeFactor: bigint;
   /** Weighted ticket ranges for settled winners eligible for Wildcat. */
   wildcatEntries: Array<RoundWildcatEntryRange>;
 };
@@ -160,7 +150,7 @@ export type RoundArgs = {
   totalOnWinningTile: number | bigint;
   /** Number of winners in the round. */
   winners: number | bigint;
-  /** Remaining winners that still need to claim. */
+  /** Remaining winners whose ZINC rewards still need to be credited. */
   remainingWinnerClaims: number | bigint;
   /** Total number of players in the round. */
   numberOfPlayers: number | bigint;
@@ -194,14 +184,6 @@ export type RoundArgs = {
   wildcatSelectionComplete: boolean;
   /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
   wildcatClaimed: boolean;
-  /** Unclaimed direct-winner principal still participating in direct claim-fee redistribution. */
-  directZincUnclaimedPrincipal: number | bigint;
-  /** Unclaimed Bonanza principal still participating in Bonanza claim-fee redistribution. */
-  bonanzaZincUnclaimedPrincipal: number | bigint;
-  /** Cumulative direct-winner claim-fee factor applied to later direct principal claims. */
-  directZincClaimFeeFactor: number | bigint;
-  /** Cumulative Bonanza claim-fee factor applied to later Bonanza principal claims. */
-  bonanzaZincClaimFeeFactor: number | bigint;
   /** Weighted ticket ranges for settled winners eligible for Wildcat. */
   wildcatEntries: Array<RoundWildcatEntryRangeArgs>;
 };
@@ -239,10 +221,6 @@ export function getRoundEncoder(): Encoder<RoundArgs> {
       ["wildcatWinnerPlayer", getOptionEncoder(getAddressEncoder())],
       ["wildcatSelectionComplete", getBooleanEncoder()],
       ["wildcatClaimed", getBooleanEncoder()],
-      ["directZincUnclaimedPrincipal", getU64Encoder()],
-      ["bonanzaZincUnclaimedPrincipal", getU64Encoder()],
-      ["directZincClaimFeeFactor", getU128Encoder()],
-      ["bonanzaZincClaimFeeFactor", getU128Encoder()],
       ["wildcatEntries", getArrayEncoder(getRoundWildcatEntryRangeEncoder())],
     ]),
     (value) => ({ ...value, discriminator: ROUND_DISCRIMINATOR }),
@@ -281,10 +259,6 @@ export function getRoundDecoder(): Decoder<Round> {
     ["wildcatWinnerPlayer", getOptionDecoder(getAddressDecoder())],
     ["wildcatSelectionComplete", getBooleanDecoder()],
     ["wildcatClaimed", getBooleanDecoder()],
-    ["directZincUnclaimedPrincipal", getU64Decoder()],
-    ["bonanzaZincUnclaimedPrincipal", getU64Decoder()],
-    ["directZincClaimFeeFactor", getU128Decoder()],
-    ["bonanzaZincClaimFeeFactor", getU128Decoder()],
     ["wildcatEntries", getArrayDecoder(getRoundWildcatEntryRangeDecoder())],
   ]);
 }
