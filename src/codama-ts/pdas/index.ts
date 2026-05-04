@@ -6,6 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
+export * from "./autoMinerSession";
 export * from "./board";
 export * from "./bonanzaTokenAccount";
 export * from "./buybackFeeWsolTokenAccount";
@@ -14,6 +15,7 @@ export * from "./buybackPool";
 export * from "./buybackSolVault";
 export * from "./buybackZincTokenAccount";
 export * from "./config";
+export * from "./deployRoundFromAutoSessionPlayerProfile";
 export * from "./playerProfile";
 export * from "./round";
 export * from "./roundSecret";

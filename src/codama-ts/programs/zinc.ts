@@ -35,6 +35,7 @@ import {
 } from "@solana/program-client-core";
 import {
   getArciumSignerAccountCodec,
+  getAutoMinerSessionCodec,
   getBoardCodec,
   getBuybackPoolCodec,
   getBuybackSolVaultCodec,
@@ -56,6 +57,8 @@ import {
   getTreasuryCodec,
   type ArciumSignerAccount,
   type ArciumSignerAccountArgs,
+  type AutoMinerSession,
+  type AutoMinerSessionArgs,
   type Board,
   type BoardArgs,
   type BuybackPool,
@@ -97,8 +100,10 @@ import {
 } from "../accounts";
 import {
   getBuybackInstructionAsync,
+  getCancelAutoMinerSessionInstructionAsync,
   getClaimAffiliateInstructionAsync,
   getClaimBuybackPoolFeesInstructionAsync,
+  getClaimPlayerSolRewardsInstructionAsync,
   getClaimPlayerZincRewardsInstructionAsync,
   getClaimRoundSolInstructionAsync,
   getClaimStakingYieldInstructionAsync,
@@ -113,10 +118,12 @@ import {
   getCloseStockpileInstructionAsync,
   getCloseTreasuryTokenAccountInstructionAsync,
   getCreateBuybackPoolInstructionAsync,
-  getCreditRoundZincInstructionAsync,
+  getCreditRoundRewardsInstructionAsync,
+  getDeployRoundFromAutoSessionInstructionAsync,
   getDeployRoundInstructionAsync,
   getDepositStockpileExtraInstructionAsync,
   getFinalizeNoWinnerRoundInstructionAsync,
+  getInitAutoMinerSessionInstructionAsync,
   getInitBoardInstructionAsync,
   getInitConfigInstructionAsync,
   getInitRevealRoundRandCompDefInstructionAsync,
@@ -141,15 +148,19 @@ import {
   getSelectWildcatWinnerInstructionAsync,
   getSettleWinningStakesBatchCallbackInstructionAsync,
   getStakeInstructionAsync,
+  getTopUpAutoMinerSessionInstructionAsync,
   getUnstakeInstructionAsync,
+  getUpdateAutoMinerSessionInstructionAsync,
   getUpdateConfigInstructionAsync,
   getUpdateZincMintMetadataInstructionAsync,
   getWaitForFirstDeployInstructionAsync,
   getWithdrawTreasuryFeesInstructionAsync,
   getWrapBuybackSolInstructionAsync,
   parseBuybackInstruction,
+  parseCancelAutoMinerSessionInstruction,
   parseClaimAffiliateInstruction,
   parseClaimBuybackPoolFeesInstruction,
+  parseClaimPlayerSolRewardsInstruction,
   parseClaimPlayerZincRewardsInstruction,
   parseClaimRoundSolInstruction,
   parseClaimStakingYieldInstruction,
@@ -164,10 +175,12 @@ import {
   parseCloseStockpileInstruction,
   parseCloseTreasuryTokenAccountInstruction,
   parseCreateBuybackPoolInstruction,
-  parseCreditRoundZincInstruction,
+  parseCreditRoundRewardsInstruction,
+  parseDeployRoundFromAutoSessionInstruction,
   parseDeployRoundInstruction,
   parseDepositStockpileExtraInstruction,
   parseFinalizeNoWinnerRoundInstruction,
+  parseInitAutoMinerSessionInstruction,
   parseInitBoardInstruction,
   parseInitConfigInstruction,
   parseInitRevealRoundRandCompDefInstruction,
@@ -192,15 +205,19 @@ import {
   parseSelectWildcatWinnerInstruction,
   parseSettleWinningStakesBatchCallbackInstruction,
   parseStakeInstruction,
+  parseTopUpAutoMinerSessionInstruction,
   parseUnstakeInstruction,
+  parseUpdateAutoMinerSessionInstruction,
   parseUpdateConfigInstruction,
   parseUpdateZincMintMetadataInstruction,
   parseWaitForFirstDeployInstruction,
   parseWithdrawTreasuryFeesInstruction,
   parseWrapBuybackSolInstruction,
   type BuybackAsyncInput,
+  type CancelAutoMinerSessionAsyncInput,
   type ClaimAffiliateAsyncInput,
   type ClaimBuybackPoolFeesAsyncInput,
+  type ClaimPlayerSolRewardsAsyncInput,
   type ClaimPlayerZincRewardsAsyncInput,
   type ClaimRoundSolAsyncInput,
   type ClaimStakingYieldAsyncInput,
@@ -215,10 +232,12 @@ import {
   type CloseStockpileAsyncInput,
   type CloseTreasuryTokenAccountAsyncInput,
   type CreateBuybackPoolAsyncInput,
-  type CreditRoundZincAsyncInput,
+  type CreditRoundRewardsAsyncInput,
   type DeployRoundAsyncInput,
+  type DeployRoundFromAutoSessionAsyncInput,
   type DepositStockpileExtraAsyncInput,
   type FinalizeNoWinnerRoundAsyncInput,
+  type InitAutoMinerSessionAsyncInput,
   type InitBoardAsyncInput,
   type InitConfigAsyncInput,
   type InitRevealRoundRandCompDefAsyncInput,
@@ -234,8 +253,10 @@ import {
   type MeltAsyncInput,
   type MigrateConfigInput,
   type ParsedBuybackInstruction,
+  type ParsedCancelAutoMinerSessionInstruction,
   type ParsedClaimAffiliateInstruction,
   type ParsedClaimBuybackPoolFeesInstruction,
+  type ParsedClaimPlayerSolRewardsInstruction,
   type ParsedClaimPlayerZincRewardsInstruction,
   type ParsedClaimRoundSolInstruction,
   type ParsedClaimStakingYieldInstruction,
@@ -250,10 +271,12 @@ import {
   type ParsedCloseStockpileInstruction,
   type ParsedCloseTreasuryTokenAccountInstruction,
   type ParsedCreateBuybackPoolInstruction,
-  type ParsedCreditRoundZincInstruction,
+  type ParsedCreditRoundRewardsInstruction,
+  type ParsedDeployRoundFromAutoSessionInstruction,
   type ParsedDeployRoundInstruction,
   type ParsedDepositStockpileExtraInstruction,
   type ParsedFinalizeNoWinnerRoundInstruction,
+  type ParsedInitAutoMinerSessionInstruction,
   type ParsedInitBoardInstruction,
   type ParsedInitConfigInstruction,
   type ParsedInitRevealRoundRandCompDefInstruction,
@@ -278,7 +301,9 @@ import {
   type ParsedSelectWildcatWinnerInstruction,
   type ParsedSettleWinningStakesBatchCallbackInstruction,
   type ParsedStakeInstruction,
+  type ParsedTopUpAutoMinerSessionInstruction,
   type ParsedUnstakeInstruction,
+  type ParsedUpdateAutoMinerSessionInstruction,
   type ParsedUpdateConfigInstruction,
   type ParsedUpdateZincMintMetadataInstruction,
   type ParsedWaitForFirstDeployInstruction,
@@ -294,7 +319,9 @@ import {
   type SelectWildcatWinnerAsyncInput,
   type SettleWinningStakesBatchCallbackAsyncInput,
   type StakeAsyncInput,
+  type TopUpAutoMinerSessionAsyncInput,
   type UnstakeAsyncInput,
+  type UpdateAutoMinerSessionAsyncInput,
   type UpdateConfigAsyncInput,
   type UpdateZincMintMetadataAsyncInput,
   type WaitForFirstDeployAsyncInput,
@@ -302,6 +329,7 @@ import {
   type WrapBuybackSolAsyncInput,
 } from "../instructions";
 import {
+  findAutoMinerSessionPda,
   findBoardPda,
   findBonanzaTokenAccountPda,
   findBuybackFeeWsolTokenAccountPda,
@@ -310,6 +338,7 @@ import {
   findBuybackSolVaultPda,
   findBuybackZincTokenAccountPda,
   findConfigPda,
+  findDeployRoundFromAutoSessionPlayerProfilePda,
   findPlayerProfilePda,
   findRoundPda,
   findRoundSecretPda,
@@ -330,6 +359,7 @@ export const ZINC_PROGRAM_ADDRESS =
 
 export enum ZincAccount {
   ArciumSignerAccount,
+  AutoMinerSession,
   Board,
   BuybackPool,
   BuybackSolVault,
@@ -365,6 +395,17 @@ export function identifyZincAccount(
     )
   ) {
     return ZincAccount.ArciumSignerAccount;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([9, 91, 249, 138, 188, 84, 49, 61]),
+      ),
+      0,
+    )
+  ) {
+    return ZincAccount.AutoMinerSession;
   }
   if (
     containsBytes(
@@ -583,8 +624,10 @@ export function identifyZincAccount(
 
 export enum ZincInstruction {
   Buyback,
+  CancelAutoMinerSession,
   ClaimAffiliate,
   ClaimBuybackPoolFees,
+  ClaimPlayerSolRewards,
   ClaimPlayerZincRewards,
   ClaimRoundSol,
   ClaimStakingYield,
@@ -599,10 +642,12 @@ export enum ZincInstruction {
   CloseStockpileAccounts,
   CloseTreasuryTokenAccount,
   CreateBuybackPool,
-  CreditRoundZinc,
+  CreditRoundRewards,
   DeployRound,
+  DeployRoundFromAutoSession,
   DepositStockpileExtra,
   FinalizeNoWinnerRound,
+  InitAutoMinerSession,
   InitBoard,
   InitConfig,
   InitRevealRoundRandCompDef,
@@ -627,7 +672,9 @@ export enum ZincInstruction {
   SelectWildcatWinner,
   SettleWinningStakesBatchCallback,
   Stake,
+  TopUpAutoMinerSession,
   Unstake,
+  UpdateAutoMinerSession,
   UpdateConfig,
   UpdateZincMintMetadata,
   WaitForFirstDeploy,
@@ -654,6 +701,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([176, 79, 21, 217, 9, 144, 222, 12]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.CancelAutoMinerSession;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([12, 79, 157, 146, 92, 197, 95, 18]),
       ),
       0,
@@ -671,6 +729,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.ClaimBuybackPoolFees;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([252, 223, 200, 209, 252, 5, 243, 65]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.ClaimPlayerSolRewards;
   }
   if (
     containsBytes(
@@ -830,12 +899,12 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([236, 221, 193, 26, 45, 137, 4, 147]),
+        new Uint8Array([180, 14, 54, 75, 153, 232, 67, 94]),
       ),
       0,
     )
   ) {
-    return ZincInstruction.CreditRoundZinc;
+    return ZincInstruction.CreditRoundRewards;
   }
   if (
     containsBytes(
@@ -847,6 +916,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.DeployRound;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([71, 122, 22, 191, 113, 52, 245, 81]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.DeployRoundFromAutoSession;
   }
   if (
     containsBytes(
@@ -869,6 +949,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.FinalizeNoWinnerRound;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([242, 248, 89, 30, 189, 159, 59, 157]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.InitAutoMinerSession;
   }
   if (
     containsBytes(
@@ -1138,12 +1229,34 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([130, 226, 97, 3, 111, 130, 14, 222]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.TopUpAutoMinerSession;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([90, 95, 107, 42, 205, 124, 50, 225]),
       ),
       0,
     )
   ) {
     return ZincInstruction.Unstake;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([123, 139, 24, 168, 50, 205, 157, 81]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.UpdateAutoMinerSession;
   }
   if (
     containsBytes(
@@ -1213,11 +1326,17 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.Buyback;
     } & ParsedBuybackInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.CancelAutoMinerSession;
+    } & ParsedCancelAutoMinerSessionInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.ClaimAffiliate;
     } & ParsedClaimAffiliateInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ClaimBuybackPoolFees;
     } & ParsedClaimBuybackPoolFeesInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.ClaimPlayerSolRewards;
+    } & ParsedClaimPlayerSolRewardsInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ClaimPlayerZincRewards;
     } & ParsedClaimPlayerZincRewardsInstruction<TProgram>)
@@ -1261,17 +1380,23 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.CreateBuybackPool;
     } & ParsedCreateBuybackPoolInstruction<TProgram>)
   | ({
-      instructionType: ZincInstruction.CreditRoundZinc;
-    } & ParsedCreditRoundZincInstruction<TProgram>)
+      instructionType: ZincInstruction.CreditRoundRewards;
+    } & ParsedCreditRoundRewardsInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.DeployRound;
     } & ParsedDeployRoundInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.DeployRoundFromAutoSession;
+    } & ParsedDeployRoundFromAutoSessionInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.DepositStockpileExtra;
     } & ParsedDepositStockpileExtraInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.FinalizeNoWinnerRound;
     } & ParsedFinalizeNoWinnerRoundInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.InitAutoMinerSession;
+    } & ParsedInitAutoMinerSessionInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.InitBoard;
     } & ParsedInitBoardInstruction<TProgram>)
@@ -1345,8 +1470,14 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.Stake;
     } & ParsedStakeInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.TopUpAutoMinerSession;
+    } & ParsedTopUpAutoMinerSessionInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.Unstake;
     } & ParsedUnstakeInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.UpdateAutoMinerSession;
+    } & ParsedUpdateAutoMinerSessionInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.UpdateConfig;
     } & ParsedUpdateConfigInstruction<TProgram>)
@@ -1375,6 +1506,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseBuybackInstruction(instruction),
       };
     }
+    case ZincInstruction.CancelAutoMinerSession: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.CancelAutoMinerSession,
+        ...parseCancelAutoMinerSessionInstruction(instruction),
+      };
+    }
     case ZincInstruction.ClaimAffiliate: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -1387,6 +1525,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.ClaimBuybackPoolFees,
         ...parseClaimBuybackPoolFeesInstruction(instruction),
+      };
+    }
+    case ZincInstruction.ClaimPlayerSolRewards: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.ClaimPlayerSolRewards,
+        ...parseClaimPlayerSolRewardsInstruction(instruction),
       };
     }
     case ZincInstruction.ClaimPlayerZincRewards: {
@@ -1487,11 +1632,11 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseCreateBuybackPoolInstruction(instruction),
       };
     }
-    case ZincInstruction.CreditRoundZinc: {
+    case ZincInstruction.CreditRoundRewards: {
       assertIsInstructionWithAccounts(instruction);
       return {
-        instructionType: ZincInstruction.CreditRoundZinc,
-        ...parseCreditRoundZincInstruction(instruction),
+        instructionType: ZincInstruction.CreditRoundRewards,
+        ...parseCreditRoundRewardsInstruction(instruction),
       };
     }
     case ZincInstruction.DeployRound: {
@@ -1499,6 +1644,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.DeployRound,
         ...parseDeployRoundInstruction(instruction),
+      };
+    }
+    case ZincInstruction.DeployRoundFromAutoSession: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.DeployRoundFromAutoSession,
+        ...parseDeployRoundFromAutoSessionInstruction(instruction),
       };
     }
     case ZincInstruction.DepositStockpileExtra: {
@@ -1513,6 +1665,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.FinalizeNoWinnerRound,
         ...parseFinalizeNoWinnerRoundInstruction(instruction),
+      };
+    }
+    case ZincInstruction.InitAutoMinerSession: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.InitAutoMinerSession,
+        ...parseInitAutoMinerSessionInstruction(instruction),
       };
     }
     case ZincInstruction.InitBoard: {
@@ -1683,11 +1842,25 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseStakeInstruction(instruction),
       };
     }
+    case ZincInstruction.TopUpAutoMinerSession: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.TopUpAutoMinerSession,
+        ...parseTopUpAutoMinerSessionInstruction(instruction),
+      };
+    }
     case ZincInstruction.Unstake: {
       assertIsInstructionWithAccounts(instruction);
       return {
         instructionType: ZincInstruction.Unstake,
         ...parseUnstakeInstruction(instruction),
+      };
+    }
+    case ZincInstruction.UpdateAutoMinerSession: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.UpdateAutoMinerSession,
+        ...parseUpdateAutoMinerSessionInstruction(instruction),
       };
     }
     case ZincInstruction.UpdateConfig: {
@@ -1742,6 +1915,8 @@ export type ZincPlugin = {
 export type ZincPluginAccounts = {
   arciumSignerAccount: ReturnType<typeof getArciumSignerAccountCodec> &
     SelfFetchFunctions<ArciumSignerAccountArgs, ArciumSignerAccount>;
+  autoMinerSession: ReturnType<typeof getAutoMinerSessionCodec> &
+    SelfFetchFunctions<AutoMinerSessionArgs, AutoMinerSession>;
   board: ReturnType<typeof getBoardCodec> &
     SelfFetchFunctions<BoardArgs, Board>;
   buybackPool: ReturnType<typeof getBuybackPoolCodec> &
@@ -1791,6 +1966,10 @@ export type ZincPluginInstructions = {
   buyback: (
     input: BuybackAsyncInput,
   ) => ReturnType<typeof getBuybackInstructionAsync> & SelfPlanAndSendFunctions;
+  cancelAutoMinerSession: (
+    input: CancelAutoMinerSessionAsyncInput,
+  ) => ReturnType<typeof getCancelAutoMinerSessionInstructionAsync> &
+    SelfPlanAndSendFunctions;
   claimAffiliate: (
     input: ClaimAffiliateAsyncInput,
   ) => ReturnType<typeof getClaimAffiliateInstructionAsync> &
@@ -1798,6 +1977,10 @@ export type ZincPluginInstructions = {
   claimBuybackPoolFees: (
     input: ClaimBuybackPoolFeesAsyncInput,
   ) => ReturnType<typeof getClaimBuybackPoolFeesInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  claimPlayerSolRewards: (
+    input: ClaimPlayerSolRewardsAsyncInput,
+  ) => ReturnType<typeof getClaimPlayerSolRewardsInstructionAsync> &
     SelfPlanAndSendFunctions;
   claimPlayerZincRewards: (
     input: ClaimPlayerZincRewardsAsyncInput,
@@ -1855,13 +2038,17 @@ export type ZincPluginInstructions = {
     input: CreateBuybackPoolAsyncInput,
   ) => ReturnType<typeof getCreateBuybackPoolInstructionAsync> &
     SelfPlanAndSendFunctions;
-  creditRoundZinc: (
-    input: CreditRoundZincAsyncInput,
-  ) => ReturnType<typeof getCreditRoundZincInstructionAsync> &
+  creditRoundRewards: (
+    input: CreditRoundRewardsAsyncInput,
+  ) => ReturnType<typeof getCreditRoundRewardsInstructionAsync> &
     SelfPlanAndSendFunctions;
   deployRound: (
     input: DeployRoundAsyncInput,
   ) => ReturnType<typeof getDeployRoundInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  deployRoundFromAutoSession: (
+    input: DeployRoundFromAutoSessionAsyncInput,
+  ) => ReturnType<typeof getDeployRoundFromAutoSessionInstructionAsync> &
     SelfPlanAndSendFunctions;
   depositStockpileExtra: (
     input: DepositStockpileExtraAsyncInput,
@@ -1870,6 +2057,10 @@ export type ZincPluginInstructions = {
   finalizeNoWinnerRound: (
     input: FinalizeNoWinnerRoundAsyncInput,
   ) => ReturnType<typeof getFinalizeNoWinnerRoundInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  initAutoMinerSession: (
+    input: InitAutoMinerSessionAsyncInput,
+  ) => ReturnType<typeof getInitAutoMinerSessionInstructionAsync> &
     SelfPlanAndSendFunctions;
   initBoard: (
     input: InitBoardAsyncInput,
@@ -1967,9 +2158,17 @@ export type ZincPluginInstructions = {
   stake: (
     input: StakeAsyncInput,
   ) => ReturnType<typeof getStakeInstructionAsync> & SelfPlanAndSendFunctions;
+  topUpAutoMinerSession: (
+    input: TopUpAutoMinerSessionAsyncInput,
+  ) => ReturnType<typeof getTopUpAutoMinerSessionInstructionAsync> &
+    SelfPlanAndSendFunctions;
   unstake: (
     input: UnstakeAsyncInput,
   ) => ReturnType<typeof getUnstakeInstructionAsync> & SelfPlanAndSendFunctions;
+  updateAutoMinerSession: (
+    input: UpdateAutoMinerSessionAsyncInput,
+  ) => ReturnType<typeof getUpdateAutoMinerSessionInstructionAsync> &
+    SelfPlanAndSendFunctions;
   updateConfig: (
     input: UpdateConfigAsyncInput,
   ) => ReturnType<typeof getUpdateConfigInstructionAsync> &
@@ -1998,6 +2197,7 @@ export type ZincPluginPdas = {
   buybackPool: typeof findBuybackPoolPda;
   buybackZincTokenAccount: typeof findBuybackZincTokenAccountPda;
   stakingRewardTokenAccount: typeof findStakingRewardTokenAccountPda;
+  autoMinerSession: typeof findAutoMinerSessionPda;
   playerProfile: typeof findPlayerProfilePda;
   buybackFeeZincTokenAccount: typeof findBuybackFeeZincTokenAccountPda;
   buybackFeeWsolTokenAccount: typeof findBuybackFeeWsolTokenAccountPda;
@@ -2006,6 +2206,7 @@ export type ZincPluginPdas = {
   board: typeof findBoardPda;
   stockpileSolVault: typeof findStockpileSolVaultPda;
   buybackSolVault: typeof findBuybackSolVaultPda;
+  deployRoundFromAutoSessionPlayerProfile: typeof findDeployRoundFromAutoSessionPlayerProfilePda;
   stockpileExtras: typeof findStockpileExtrasPda;
   zincMetadata: typeof findZincMetadataPda;
   bonanzaTokenAccount: typeof findBonanzaTokenAccountPda;
@@ -2033,6 +2234,10 @@ export function zincProgram() {
           arciumSignerAccount: addSelfFetchFunctions(
             client,
             getArciumSignerAccountCodec(),
+          ),
+          autoMinerSession: addSelfFetchFunctions(
+            client,
+            getAutoMinerSessionCodec(),
           ),
           board: addSelfFetchFunctions(client, getBoardCodec()),
           buybackPool: addSelfFetchFunctions(client, getBuybackPoolCodec()),
@@ -2075,6 +2280,11 @@ export function zincProgram() {
               client,
               getBuybackInstructionAsync(input),
             ),
+          cancelAutoMinerSession: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getCancelAutoMinerSessionInstructionAsync(input),
+            ),
           claimAffiliate: (input) =>
             addSelfPlanAndSendFunctions(
               client,
@@ -2084,6 +2294,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getClaimBuybackPoolFeesInstructionAsync(input),
+            ),
+          claimPlayerSolRewards: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getClaimPlayerSolRewardsInstructionAsync(input),
             ),
           claimPlayerZincRewards: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2155,15 +2370,20 @@ export function zincProgram() {
               client,
               getCreateBuybackPoolInstructionAsync(input),
             ),
-          creditRoundZinc: (input) =>
+          creditRoundRewards: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getCreditRoundZincInstructionAsync(input),
+              getCreditRoundRewardsInstructionAsync(input),
             ),
           deployRound: (input) =>
             addSelfPlanAndSendFunctions(
               client,
               getDeployRoundInstructionAsync(input),
+            ),
+          deployRoundFromAutoSession: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getDeployRoundFromAutoSessionInstructionAsync(input),
             ),
           depositStockpileExtra: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2174,6 +2394,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getFinalizeNoWinnerRoundInstructionAsync(input),
+            ),
+          initAutoMinerSession: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getInitAutoMinerSessionInstructionAsync(input),
             ),
           initBoard: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2313,10 +2538,20 @@ export function zincProgram() {
               client,
               getStakeInstructionAsync(input),
             ),
+          topUpAutoMinerSession: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getTopUpAutoMinerSessionInstructionAsync(input),
+            ),
           unstake: (input) =>
             addSelfPlanAndSendFunctions(
               client,
               getUnstakeInstructionAsync(input),
+            ),
+          updateAutoMinerSession: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getUpdateAutoMinerSessionInstructionAsync(input),
             ),
           updateConfig: (input) =>
             addSelfPlanAndSendFunctions(
@@ -2350,6 +2585,7 @@ export function zincProgram() {
           buybackPool: findBuybackPoolPda,
           buybackZincTokenAccount: findBuybackZincTokenAccountPda,
           stakingRewardTokenAccount: findStakingRewardTokenAccountPda,
+          autoMinerSession: findAutoMinerSessionPda,
           playerProfile: findPlayerProfilePda,
           buybackFeeZincTokenAccount: findBuybackFeeZincTokenAccountPda,
           buybackFeeWsolTokenAccount: findBuybackFeeWsolTokenAccountPda,
@@ -2358,6 +2594,8 @@ export function zincProgram() {
           board: findBoardPda,
           stockpileSolVault: findStockpileSolVaultPda,
           buybackSolVault: findBuybackSolVaultPda,
+          deployRoundFromAutoSessionPlayerProfile:
+            findDeployRoundFromAutoSessionPlayerProfilePda,
           stockpileExtras: findStockpileExtrasPda,
           zincMetadata: findZincMetadataPda,
           bonanzaTokenAccount: findBonanzaTokenAccountPda,

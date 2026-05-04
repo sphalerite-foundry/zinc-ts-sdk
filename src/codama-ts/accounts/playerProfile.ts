@@ -81,6 +81,10 @@ export type PlayerProfile = {
   pendingAffiliatePayLamports: bigint;
   /** Lifetime affiliate SOL accrued for this wallet. */
   totalAffiliatePayLamports: bigint;
+  /** Claimable round SOL currently held on this player-profile PDA. */
+  claimableRoundSolLamports: bigint;
+  /** Lifetime round SOL credited to this player profile. */
+  lifetimeRoundSolLamports: bigint;
   /** Lifetime stockpile bricks earned from streak and hidden-bonus accrual, in `x10k` units. */
   lifetimeStockpileBricksEarnedX10k: bigint;
   /** Lifetime stockpile bricks earned from staking-yield claims, in `x10k` units. */
@@ -128,6 +132,10 @@ export type PlayerProfileArgs = {
   pendingAffiliatePayLamports: number | bigint;
   /** Lifetime affiliate SOL accrued for this wallet. */
   totalAffiliatePayLamports: number | bigint;
+  /** Claimable round SOL currently held on this player-profile PDA. */
+  claimableRoundSolLamports: number | bigint;
+  /** Lifetime round SOL credited to this player profile. */
+  lifetimeRoundSolLamports: number | bigint;
   /** Lifetime stockpile bricks earned from streak and hidden-bonus accrual, in `x10k` units. */
   lifetimeStockpileBricksEarnedX10k: number | bigint;
   /** Lifetime stockpile bricks earned from staking-yield claims, in `x10k` units. */
@@ -168,6 +176,8 @@ export function getPlayerProfileEncoder(): Encoder<PlayerProfileArgs> {
       ["affiliate", getOptionEncoder(getAddressEncoder())],
       ["pendingAffiliatePayLamports", getU64Encoder()],
       ["totalAffiliatePayLamports", getU64Encoder()],
+      ["claimableRoundSolLamports", getU64Encoder()],
+      ["lifetimeRoundSolLamports", getU64Encoder()],
       ["lifetimeStockpileBricksEarnedX10k", getU64Encoder()],
       ["lifetimeStakingStockpileBricksEarnedX10k", getU64Encoder()],
       ["lifetimeStreakStockpileBricksEarnedX10k", getU64Encoder()],
@@ -199,6 +209,8 @@ export function getPlayerProfileDecoder(): Decoder<PlayerProfile> {
     ["affiliate", getOptionDecoder(getAddressDecoder())],
     ["pendingAffiliatePayLamports", getU64Decoder()],
     ["totalAffiliatePayLamports", getU64Decoder()],
+    ["claimableRoundSolLamports", getU64Decoder()],
+    ["lifetimeRoundSolLamports", getU64Decoder()],
     ["lifetimeStockpileBricksEarnedX10k", getU64Decoder()],
     ["lifetimeStakingStockpileBricksEarnedX10k", getU64Decoder()],
     ["lifetimeStreakStockpileBricksEarnedX10k", getU64Decoder()],

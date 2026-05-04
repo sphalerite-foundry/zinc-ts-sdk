@@ -43,16 +43,16 @@ import {
 } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
-export const CREDIT_ROUND_ZINC_DISCRIMINATOR: ReadonlyUint8Array =
-  new Uint8Array([236, 221, 193, 26, 45, 137, 4, 147]);
+export const CREDIT_ROUND_REWARDS_DISCRIMINATOR: ReadonlyUint8Array =
+  new Uint8Array([180, 14, 54, 75, 153, 232, 67, 94]);
 
-export function getCreditRoundZincDiscriminatorBytes(): ReadonlyUint8Array {
+export function getCreditRoundRewardsDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CREDIT_ROUND_ZINC_DISCRIMINATOR,
+    CREDIT_ROUND_REWARDS_DISCRIMINATOR,
   );
 }
 
-export type CreditRoundZincInstruction<
+export type CreditRoundRewardsInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
@@ -111,36 +111,39 @@ export type CreditRoundZincInstruction<
     ]
   >;
 
-export type CreditRoundZincInstructionData = {
+export type CreditRoundRewardsInstructionData = {
   discriminator: ReadonlyUint8Array;
 };
 
-export type CreditRoundZincInstructionDataArgs = {};
+export type CreditRoundRewardsInstructionDataArgs = {};
 
-export function getCreditRoundZincInstructionDataEncoder(): FixedSizeEncoder<CreditRoundZincInstructionDataArgs> {
+export function getCreditRoundRewardsInstructionDataEncoder(): FixedSizeEncoder<CreditRoundRewardsInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: CREDIT_ROUND_ZINC_DISCRIMINATOR }),
+    (value) => ({
+      ...value,
+      discriminator: CREDIT_ROUND_REWARDS_DISCRIMINATOR,
+    }),
   );
 }
 
-export function getCreditRoundZincInstructionDataDecoder(): FixedSizeDecoder<CreditRoundZincInstructionData> {
+export function getCreditRoundRewardsInstructionDataDecoder(): FixedSizeDecoder<CreditRoundRewardsInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
-export function getCreditRoundZincInstructionDataCodec(): FixedSizeCodec<
-  CreditRoundZincInstructionDataArgs,
-  CreditRoundZincInstructionData
+export function getCreditRoundRewardsInstructionDataCodec(): FixedSizeCodec<
+  CreditRoundRewardsInstructionDataArgs,
+  CreditRoundRewardsInstructionData
 > {
   return combineCodec(
-    getCreditRoundZincInstructionDataEncoder(),
-    getCreditRoundZincInstructionDataDecoder(),
+    getCreditRoundRewardsInstructionDataEncoder(),
+    getCreditRoundRewardsInstructionDataDecoder(),
   );
 }
 
-export type CreditRoundZincAsyncInput<
+export type CreditRoundRewardsAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
@@ -157,11 +160,11 @@ export type CreditRoundZincAsyncInput<
   signer: TransactionSigner<TAccountSigner>;
   /** Global config containing the crank authority. */
   config?: Address<TAccountConfig>;
-  /** Settled round whose ZINC rewards are being credited. */
+  /** Settled round whose rewards are being credited. */
   round: Address<TAccountRound>;
-  /** Per-player round position that tracks winning stake and split terminal state. */
+  /** Per-player round position that tracks winning stake and terminal state. */
   miner: Address<TAccountMiner>;
-  /** Player profile that receives the durable round ZINC reward credit. */
+  /** Player profile that receives durable round SOL and ZINC reward credits. */
   playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
   treasury?: Address<TAccountTreasury>;
@@ -177,7 +180,7 @@ export type CreditRoundZincAsyncInput<
   tokenProgram?: Address<TAccountTokenProgram>;
 };
 
-export async function getCreditRoundZincInstructionAsync<
+export async function getCreditRoundRewardsInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
@@ -191,7 +194,7 @@ export async function getCreditRoundZincInstructionAsync<
   TAccountTokenProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: CreditRoundZincAsyncInput<
+  input: CreditRoundRewardsAsyncInput<
     TAccountSigner,
     TAccountConfig,
     TAccountRound,
@@ -206,7 +209,7 @@ export async function getCreditRoundZincInstructionAsync<
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
-  CreditRoundZincInstruction<
+  CreditRoundRewardsInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
@@ -289,9 +292,9 @@ export async function getCreditRoundZincInstructionAsync<
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
-    data: getCreditRoundZincInstructionDataEncoder().encode({}),
+    data: getCreditRoundRewardsInstructionDataEncoder().encode({}),
     programAddress,
-  } as CreditRoundZincInstruction<
+  } as CreditRoundRewardsInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
@@ -307,7 +310,7 @@ export async function getCreditRoundZincInstructionAsync<
   >);
 }
 
-export type CreditRoundZincInput<
+export type CreditRoundRewardsInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
@@ -324,11 +327,11 @@ export type CreditRoundZincInput<
   signer: TransactionSigner<TAccountSigner>;
   /** Global config containing the crank authority. */
   config: Address<TAccountConfig>;
-  /** Settled round whose ZINC rewards are being credited. */
+  /** Settled round whose rewards are being credited. */
   round: Address<TAccountRound>;
-  /** Per-player round position that tracks winning stake and split terminal state. */
+  /** Per-player round position that tracks winning stake and terminal state. */
   miner: Address<TAccountMiner>;
-  /** Player profile that receives the durable round ZINC reward credit. */
+  /** Player profile that receives durable round SOL and ZINC reward credits. */
   playerProfile: Address<TAccountPlayerProfile>;
   /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
   treasury: Address<TAccountTreasury>;
@@ -344,7 +347,7 @@ export type CreditRoundZincInput<
   tokenProgram?: Address<TAccountTokenProgram>;
 };
 
-export function getCreditRoundZincInstruction<
+export function getCreditRoundRewardsInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
@@ -358,7 +361,7 @@ export function getCreditRoundZincInstruction<
   TAccountTokenProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: CreditRoundZincInput<
+  input: CreditRoundRewardsInput<
     TAccountSigner,
     TAccountConfig,
     TAccountRound,
@@ -372,7 +375,7 @@ export function getCreditRoundZincInstruction<
     TAccountTokenProgram
   >,
   config?: { programAddress?: TProgramAddress },
-): CreditRoundZincInstruction<
+): CreditRoundRewardsInstruction<
   TProgramAddress,
   TAccountSigner,
   TAccountConfig,
@@ -444,9 +447,9 @@ export function getCreditRoundZincInstruction<
       ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
     ],
-    data: getCreditRoundZincInstructionDataEncoder().encode({}),
+    data: getCreditRoundRewardsInstructionDataEncoder().encode({}),
     programAddress,
-  } as CreditRoundZincInstruction<
+  } as CreditRoundRewardsInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
@@ -462,7 +465,7 @@ export function getCreditRoundZincInstruction<
   >);
 }
 
-export type ParsedCreditRoundZincInstruction<
+export type ParsedCreditRoundRewardsInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
@@ -472,11 +475,11 @@ export type ParsedCreditRoundZincInstruction<
     signer: TAccountMetas[0];
     /** Global config containing the crank authority. */
     config: TAccountMetas[1];
-    /** Settled round whose ZINC rewards are being credited. */
+    /** Settled round whose rewards are being credited. */
     round: TAccountMetas[2];
-    /** Per-player round position that tracks winning stake and split terminal state. */
+    /** Per-player round position that tracks winning stake and terminal state. */
     miner: TAccountMetas[3];
-    /** Player profile that receives the durable round ZINC reward credit. */
+    /** Player profile that receives durable round SOL and ZINC reward credits. */
     playerProfile: TAccountMetas[4];
     /** Treasury PDA that owns the Bonanza and singleton round-reward vaults. */
     treasury: TAccountMetas[5];
@@ -491,17 +494,17 @@ export type ParsedCreditRoundZincInstruction<
     /** SPL Token Program that owns the ZINC mint and token accounts. */
     tokenProgram: TAccountMetas[10];
   };
-  data: CreditRoundZincInstructionData;
+  data: CreditRoundRewardsInstructionData;
 };
 
-export function parseCreditRoundZincInstruction<
+export function parseCreditRoundRewardsInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
-): ParsedCreditRoundZincInstruction<TProgram, TAccountMetas> {
+): ParsedCreditRoundRewardsInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 11) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
@@ -532,6 +535,8 @@ export function parseCreditRoundZincInstruction<
       roundZincRewardTokenAccount: getNextAccount(),
       tokenProgram: getNextAccount(),
     },
-    data: getCreditRoundZincInstructionDataDecoder().decode(instruction.data),
+    data: getCreditRoundRewardsInstructionDataDecoder().decode(
+      instruction.data,
+    ),
   };
 }
