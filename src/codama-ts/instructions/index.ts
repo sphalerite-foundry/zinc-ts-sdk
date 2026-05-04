@@ -7,8 +7,10 @@
  */
 
 export * from "./buyback";
+export * from "./cancelAutoMinerSession";
 export * from "./claimAffiliate";
 export * from "./claimBuybackPoolFees";
+export * from "./claimPlayerSolRewards";
 export * from "./claimPlayerZincRewards";
 export * from "./claimRoundSol";
 export * from "./claimStakingYield";
@@ -23,10 +25,12 @@ export * from "./closeStockpile";
 export * from "./closeStockpileAccounts";
 export * from "./closeTreasuryTokenAccount";
 export * from "./createBuybackPool";
-export * from "./creditRoundZinc";
+export * from "./creditRoundRewards";
 export * from "./deployRound";
+export * from "./deployRoundFromAutoSession";
 export * from "./depositStockpileExtra";
 export * from "./finalizeNoWinnerRound";
+export * from "./initAutoMinerSession";
 export * from "./initBoard";
 export * from "./initConfig";
 export * from "./initRevealRoundRandCompDef";
@@ -51,7 +55,9 @@ export * from "./revealStockpileRandCallback";
 export * from "./selectWildcatWinner";
 export * from "./settleWinningStakesBatchCallback";
 export * from "./stake";
+export * from "./topUpAutoMinerSession";
 export * from "./unstake";
+export * from "./updateAutoMinerSession";
 export * from "./updateConfig";
 export * from "./updateZincMintMetadata";
 export * from "./waitForFirstDeploy";

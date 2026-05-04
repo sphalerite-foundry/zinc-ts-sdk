@@ -206,7 +206,7 @@ export type InitRoundAsyncInput<
   config?: Address<TAccountConfig>;
   /** Tracks the active round, if any, and the next allocatable ID. */
   board?: Address<TAccountBoard>;
-  /** Treasury PDA that may refill the crank before queueing Arcium work. */
+  /** Treasury PDA used to validate the canonical protocol configuration. */
   treasury?: Address<TAccountTreasury>;
   /** Newly allocated round account awaiting encrypted entropy. */
   round?: Address<TAccountRound>;
@@ -441,7 +441,7 @@ export type InitRoundInput<
   config: Address<TAccountConfig>;
   /** Tracks the active round, if any, and the next allocatable ID. */
   board: Address<TAccountBoard>;
-  /** Treasury PDA that may refill the crank before queueing Arcium work. */
+  /** Treasury PDA used to validate the canonical protocol configuration. */
   treasury: Address<TAccountTreasury>;
   /** Newly allocated round account awaiting encrypted entropy. */
   round: Address<TAccountRound>;
@@ -639,7 +639,7 @@ export type ParsedInitRoundInstruction<
     config: TAccountMetas[1];
     /** Tracks the active round, if any, and the next allocatable ID. */
     board: TAccountMetas[2];
-    /** Treasury PDA that may refill the crank before queueing Arcium work. */
+    /** Treasury PDA used to validate the canonical protocol configuration. */
     treasury: TAccountMetas[3];
     /** Newly allocated round account awaiting encrypted entropy. */
     round: TAccountMetas[4];

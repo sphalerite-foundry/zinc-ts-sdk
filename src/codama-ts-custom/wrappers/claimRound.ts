@@ -1,8 +1,9 @@
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import {
+  getClaimPlayerSolRewardsInstructionAsync,
   getClaimPlayerZincRewardsInstructionAsync,
   getClaimRoundSolInstruction,
-  getCreditRoundZincInstructionAsync,
+  getCreditRoundRewardsInstructionAsync,
 } from "../../codama-ts";
 import {
   fetchTreasuryAccount,
@@ -35,12 +36,12 @@ export type BuildClaimRoundInstruction = {
   roundId?: number | bigint;
 };
 
-export type BuildCreditRoundZincInstruction = {
+export type BuildCreditRoundRewardsInstruction = {
   /** RPC connection used to resolve the treasury mint and reward vaults. */
   connection: Connection;
-  /** Crank signer submitting the automatic ZINC credit transaction. */
+  /** Crank signer submitting the automatic reward credit transaction. */
   signer: PublicKey;
-  /** Player whose settled round ZINC rewards are credited. */
+  /** Player whose settled round rewards are credited. */
   player: PublicKey;
   roundId: number | bigint;
 };
@@ -49,6 +50,10 @@ export type BuildClaimRoundSolInstruction = {
   signer: PublicKey;
   player: PublicKey;
   roundId: number | bigint;
+};
+
+export type BuildClaimPlayerSolRewardsInstruction = {
+  signer: PublicKey;
 };
 
 /** Derives the canonical player ATA that receives optional ZINC stockpile payouts. */
@@ -62,12 +67,12 @@ function getPlayerZincTokenAccount(
   )[0];
 }
 
-export async function buildCreditRoundZincInstruction({
+export async function buildCreditRoundRewardsInstruction({
   connection,
   signer,
   player,
   roundId,
-}: BuildCreditRoundZincInstruction): Promise<TransactionInstruction> {
+}: BuildCreditRoundRewardsInstruction): Promise<TransactionInstruction> {
   const round = getRoundAddress(roundId)[0];
   const miner = getMinerAddress(roundId, player)[0];
   const treasury = getTreasuryAddress()[0];
@@ -84,7 +89,7 @@ export async function buildCreditRoundZincInstruction({
   const roundZincRewardTokenAccount = new PublicKey(
     treasuryAccount.data.roundZincRewardTokenAccount,
   );
-  const instruction = await getCreditRoundZincInstructionAsync({
+  const instruction = await getCreditRoundRewardsInstructionAsync({
     signer: toTransactionSigner(signer),
     config: toAddress(getConfigAddress()[0]),
     round: toAddress(round),
@@ -114,6 +119,18 @@ export function buildClaimRoundSolInstruction({
     round: toAddress(round),
     miner: toAddress(miner),
     player: toAddress(player),
+  });
+  return toTransactionInstruction(
+    instruction as Parameters<typeof toTransactionInstruction>[0],
+  );
+}
+
+export async function buildClaimPlayerSolRewardsInstruction({
+  signer,
+}: BuildClaimPlayerSolRewardsInstruction): Promise<TransactionInstruction> {
+  const instruction = await getClaimPlayerSolRewardsInstructionAsync({
+    signer: toTransactionSigner(signer),
+    playerProfile: toAddress(getPlayerProfileAddress(signer)[0]),
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
