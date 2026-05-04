@@ -73,11 +73,11 @@ export type Stockpile = {
   id: bigint;
   /** True once this PDA has been initialized for a concrete stockpile cycle. */
   initialized: boolean;
-  /** Configured slot duration captured when the cycle was created. */
+  /** Slot duration captured when the cycle was created for historical metadata. */
   durationSlots: bigint;
   /** Slot when the cycle opened for joins. */
   openSlot: Option<bigint>;
-  /** Slot after which the cycle may be closed. */
+  /** Initial close slot captured at open; live close checks use current config duration. */
   closeAfterSlot: Option<bigint>;
   /** Number of joined entries in this cycle. */
   entrantCount: bigint;
@@ -108,11 +108,11 @@ export type StockpileArgs = {
   id: number | bigint;
   /** True once this PDA has been initialized for a concrete stockpile cycle. */
   initialized: boolean;
-  /** Configured slot duration captured when the cycle was created. */
+  /** Slot duration captured when the cycle was created for historical metadata. */
   durationSlots: number | bigint;
   /** Slot when the cycle opened for joins. */
   openSlot: OptionOrNullable<number | bigint>;
-  /** Slot after which the cycle may be closed. */
+  /** Initial close slot captured at open; live close checks use current config duration. */
   closeAfterSlot: OptionOrNullable<number | bigint>;
   /** Number of joined entries in this cycle. */
   entrantCount: number | bigint;
