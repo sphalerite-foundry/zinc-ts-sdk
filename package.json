@@ -1,6 +1,6 @@
 {
   "name": "@sphalerite-foundry/zinc-ts-sdk",
-  "version": "1.87.0",
+  "version": "0.1.88",
   "private": false,
   "type": "module",
   "license": "UNLICENSED",
