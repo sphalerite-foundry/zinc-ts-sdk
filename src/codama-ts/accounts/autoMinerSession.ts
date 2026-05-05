@@ -76,7 +76,7 @@ export type AutoMinerSession = {
   maskBitsKeyVersion: number;
   /** User-funded lamport budget available for deploys and reimbursements. */
   remainingBudget: bigint;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: bigint;
   /** Number of successful deploys already executed. */
   roundsUsed: bigint;
@@ -107,7 +107,7 @@ export type AutoMinerSessionArgs = {
   maskBitsKeyVersion: number;
   /** User-funded lamport budget available for deploys and reimbursements. */
   remainingBudget: number | bigint;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: number | bigint;
   /** Number of successful deploys already executed. */
   roundsUsed: number | bigint;

@@ -109,7 +109,7 @@ export type InitAutoMinerSessionInstructionData = {
   maskBitsKeyVersion: number;
   /** Initial user-funded spendable budget. */
   initialBudget: bigint;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: Option<bigint>;
@@ -132,7 +132,7 @@ export type InitAutoMinerSessionInstructionDataArgs = {
   maskBitsKeyVersion: number;
   /** Initial user-funded spendable budget. */
   initialBudget: number | bigint;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: number | bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: OptionOrNullable<number | bigint>;

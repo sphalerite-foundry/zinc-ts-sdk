@@ -96,7 +96,7 @@ export type UpdateAutoMinerSessionInstructionData = {
   maskBitsCiphertext: ReadonlyUint8Array;
   /** Crank encryption-key version used by the browser when encrypting the pattern. */
   maskBitsKeyVersion: number;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: Option<bigint>;
@@ -119,7 +119,7 @@ export type UpdateAutoMinerSessionInstructionDataArgs = {
   maskBitsCiphertext: ReadonlyUint8Array;
   /** Crank encryption-key version used by the browser when encrypting the pattern. */
   maskBitsKeyVersion: number;
-  /** Maximum number of auto deploys allowed by this session. */
+  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
   maxRounds: number | bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: OptionOrNullable<number | bigint>;
