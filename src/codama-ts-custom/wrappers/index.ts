@@ -9,6 +9,7 @@ export * from "./closeTreasuryTokenAccount";
 export * from "./closeStockpile";
 export * from "./closeStockpileAccounts";
 export * from "./closeRound";
+export * from "./autoMinerSession";
 export * from "./buyback";
 export * from "./deployRound";
 export * from "./finalizeNoWinnerRound";
