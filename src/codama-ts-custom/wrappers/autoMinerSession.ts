@@ -33,7 +33,7 @@ export type BuildInitAutoMinerSessionInstruction =
     amountPerRound: number | bigint;
     /** Initial user-funded spendable budget. */
     initialBudget: number | bigint;
-    /** Maximum number of auto deploys allowed by this session. */
+    /** Funding quote round count stored for UI display, not an execution cap. */
     maxRounds: number | bigint;
     /** Optional last slot at which the session can still deploy. */
     expirySlot?: number | bigint | null;
@@ -49,7 +49,7 @@ export type BuildUpdateAutoMinerSessionInstruction =
     executor: PublicKey;
     /** Gross lamports to deploy into each eligible round. */
     amountPerRound: number | bigint;
-    /** Maximum number of auto deploys allowed by this session. */
+    /** Funding quote round count stored for UI display, not an execution cap. */
     maxRounds: number | bigint;
     /** Optional last slot at which the session can still deploy. */
     expirySlot?: number | bigint | null;
