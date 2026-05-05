@@ -17,7 +17,7 @@ export async function findStockpileSolVaultPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "5ACS5hVH1J5KaE5qTHQy49fWWrhTae17Mj5yM9VyY69f" as Address<"5ACS5hVH1J5KaE5qTHQy49fWWrhTae17Mj5yM9VyY69f">,
+    programAddress = "DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N" as Address<"DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,

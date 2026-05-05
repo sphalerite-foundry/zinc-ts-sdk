@@ -14,6 +14,7 @@ export const STOCKPILE_SOL_VAULT_SEED = "stockpile-sol-vault";
 export const BUYBACK_SOL_VAULT_SEED = "buyback-sol-vault";
 export const BUYBACK_POOL_SEED = "buyback-pool";
 export const MINER_SEED = "miner";
+export const AUTO_MINER_SESSION_SEED = "auto-miner-session";
 export const ROUND_MINER_INDEX_SEED = "round-miner-index";
 export const PLAYER_PROFILE_SEED = "player-profile";
 export const TREASURY_SEED = "treasury";
