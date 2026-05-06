@@ -25,9 +25,20 @@ export type TxnResult = {
   SignatureResult: SignatureResult;
 };
 
+export type PriorityFeeTier = "urgent" | "background";
+
+export type ComputeBudgetOptions = {
+  priorityFeeTier?: PriorityFeeTier;
+};
+
 const DEFAULT_MAX_COMPUTE_UNIT_LIMIT = 1_400_000;
-const COMPUTE_UNIT_PRICE_ENV = "ZINC_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS";
-const DEFAULT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS = 10_000;
+const LEGACY_COMPUTE_UNIT_PRICE_ENV = "ZINC_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS";
+const URGENT_COMPUTE_UNIT_PRICE_ENV =
+  "ZINC_URGENT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS";
+const BACKGROUND_COMPUTE_UNIT_PRICE_ENV =
+  "ZINC_BACKGROUND_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS";
+const DEFAULT_URGENT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS = 10_000;
+const DEFAULT_BACKGROUND_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS = 2_500;
 const COMPUTE_BUDGET_SET_COMPUTE_UNIT_PRICE_TAG = 3;
 
 type ProcessGlobal = typeof globalThis & {
@@ -47,18 +58,50 @@ function isComputeBudgetInstructionWithTag(
   );
 }
 
-/** Loads the configured compute-unit price for priority fees. */
-function getComputeUnitPriceMicroLamports(): number | undefined {
+/** Resolves the raw configured compute-unit price for a priority-fee tier. */
+function getComputeUnitPriceRawValue(priorityFeeTier: PriorityFeeTier): {
+  envName: string;
+  rawValue: string;
+} {
   const processEnv = (globalThis as ProcessGlobal).process?.env;
-  const rawValue =
-    processEnv?.[COMPUTE_UNIT_PRICE_ENV] ??
-    String(DEFAULT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS);
+  if (priorityFeeTier === "urgent") {
+    const urgentValue = processEnv?.[URGENT_COMPUTE_UNIT_PRICE_ENV];
+    if (urgentValue !== undefined) {
+      return {
+        envName: URGENT_COMPUTE_UNIT_PRICE_ENV,
+        rawValue: urgentValue,
+      };
+    }
+    const legacyValue = processEnv?.[LEGACY_COMPUTE_UNIT_PRICE_ENV];
+    if (legacyValue !== undefined) {
+      return {
+        envName: LEGACY_COMPUTE_UNIT_PRICE_ENV,
+        rawValue: legacyValue,
+      };
+    }
+    return {
+      envName: URGENT_COMPUTE_UNIT_PRICE_ENV,
+      rawValue: String(DEFAULT_URGENT_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS),
+    };
+  }
+
+  return {
+    envName: BACKGROUND_COMPUTE_UNIT_PRICE_ENV,
+    rawValue:
+      processEnv?.[BACKGROUND_COMPUTE_UNIT_PRICE_ENV] ??
+      String(DEFAULT_BACKGROUND_COMPUTE_UNIT_PRICE_MICRO_LAMPORTS),
+  };
+}
+
+/** Loads the configured compute-unit price for a priority-fee tier. */
+function getComputeUnitPriceMicroLamports(
+  priorityFeeTier: PriorityFeeTier,
+): number | undefined {
+  const { envName, rawValue } = getComputeUnitPriceRawValue(priorityFeeTier);
   const trimmedValue = rawValue.trim();
   const price = Number(trimmedValue);
   if (!Number.isSafeInteger(price) || price < 0) {
-    throw new Error(
-      `Invalid ${COMPUTE_UNIT_PRICE_ENV} value ${JSON.stringify(trimmedValue)}`,
-    );
+    throw new Error(`Invalid ${envName} value ${JSON.stringify(trimmedValue)}`);
   }
 
   return price > 0 ? price : undefined;
@@ -67,6 +110,7 @@ function getComputeUnitPriceMicroLamports(): number | undefined {
 /** Prepends default compute-budget instructions unless the caller already supplied them. */
 function withDefaultComputeBudget(
   instructions: readonly TransactionInstruction[],
+  options: ComputeBudgetOptions = {},
 ): TransactionInstruction[] {
   const callerConfiguredComputeBudget = instructions.some((instruction) =>
     instruction.programId.equals(ComputeBudgetProgram.programId),
@@ -88,7 +132,9 @@ function withDefaultComputeBudget(
   }
 
   if (!callerConfiguredComputeUnitPrice) {
-    const computeUnitPrice = getComputeUnitPriceMicroLamports();
+    const computeUnitPrice = getComputeUnitPriceMicroLamports(
+      options.priorityFeeTier ?? "urgent",
+    );
     if (computeUnitPrice !== undefined) {
       computeBudgetInstructions.push(
         ComputeBudgetProgram.setComputeUnitPrice({
@@ -144,9 +190,13 @@ export async function processTransaction(
   connection: Connection,
   payer: Keypair,
   lookupTableAccount?: AddressLookupTableAccount,
+  options: ComputeBudgetOptions = {},
 ): Promise<TxnResult> {
   const blockhash = await connection.getLatestBlockhash();
-  const instructionsWithComputeBudget = withDefaultComputeBudget(instructions);
+  const instructionsWithComputeBudget = withDefaultComputeBudget(
+    instructions,
+    options,
+  );
 
   if (lookupTableAccount) {
     const messageV0 = new TransactionMessage({
@@ -211,12 +261,14 @@ export async function processAndValidateTransaction(
   connection: Connection,
   signer: Keypair,
   lookupTableAccount?: AddressLookupTableAccount,
+  options: ComputeBudgetOptions = {},
 ): Promise<TxnResult> {
   const result = await processTransaction(
     instructions,
     connection,
     signer,
     lookupTableAccount,
+    options,
   );
 
   if (result.SignatureResult.err === null) {
