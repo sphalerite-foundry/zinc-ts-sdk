@@ -24,7 +24,7 @@ export async function findZincMetadataPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N" as Address<"DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N">,
+    programAddress = "CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy" as Address<"CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
