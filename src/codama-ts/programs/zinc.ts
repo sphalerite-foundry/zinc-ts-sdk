@@ -355,7 +355,7 @@ import {
 } from "../pdas";
 
 export const ZINC_PROGRAM_ADDRESS =
-  "DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N" as Address<"DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N">;
+  "CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy" as Address<"CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy">;
 
 export enum ZincAccount {
   ArciumSignerAccount,
@@ -1320,7 +1320,7 @@ export function identifyZincInstruction(
 }
 
 export type ParsedZincInstruction<
-  TProgram extends string = "DhNsfwRced8Z5hWy6Db4BVWrhaF2VAzMXCmBoiHkYW8N",
+  TProgram extends string = "CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy",
 > =
   | ({
       instructionType: ZincInstruction.Buyback;
