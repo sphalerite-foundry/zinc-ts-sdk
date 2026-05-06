@@ -87,6 +87,12 @@ export type Treasury = {
   roundZincRewardsFactor: bigint;
   /** Pool-level carry remainder used when converting one claim fee into the cumulative factor. */
   roundZincRewardsRemainder: bigint;
+  /** Melted staking rewards held in the reward vault but not yet vested into the reward factor. */
+  stakingUnvestedRewards: bigint;
+  /** Last slot at which the global staking vesting bucket was settled or paused. */
+  stakingRewardsVestingLastSlot: bigint;
+  /** Slot at which the current global staking vesting bucket fully vests if staking stays active. */
+  stakingRewardsVestingEndSlot: bigint;
 };
 
 export type TreasuryArgs = {
@@ -126,6 +132,12 @@ export type TreasuryArgs = {
   roundZincRewardsFactor: number | bigint;
   /** Pool-level carry remainder used when converting one claim fee into the cumulative factor. */
   roundZincRewardsRemainder: number | bigint;
+  /** Melted staking rewards held in the reward vault but not yet vested into the reward factor. */
+  stakingUnvestedRewards: number | bigint;
+  /** Last slot at which the global staking vesting bucket was settled or paused. */
+  stakingRewardsVestingLastSlot: number | bigint;
+  /** Slot at which the current global staking vesting bucket fully vests if staking stays active. */
+  stakingRewardsVestingEndSlot: number | bigint;
 };
 
 /** Gets the encoder for {@link TreasuryArgs} account data. */
@@ -151,6 +163,9 @@ export function getTreasuryEncoder(): FixedSizeEncoder<TreasuryArgs> {
       ["totalRoundZincRefined", getU64Encoder()],
       ["roundZincRewardsFactor", getU128Encoder()],
       ["roundZincRewardsRemainder", getU64Encoder()],
+      ["stakingUnvestedRewards", getU64Encoder()],
+      ["stakingRewardsVestingLastSlot", getU64Encoder()],
+      ["stakingRewardsVestingEndSlot", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: TREASURY_DISCRIMINATOR }),
   );
@@ -178,6 +193,9 @@ export function getTreasuryDecoder(): FixedSizeDecoder<Treasury> {
     ["totalRoundZincRefined", getU64Decoder()],
     ["roundZincRewardsFactor", getU128Decoder()],
     ["roundZincRewardsRemainder", getU64Decoder()],
+    ["stakingUnvestedRewards", getU64Decoder()],
+    ["stakingRewardsVestingLastSlot", getU64Decoder()],
+    ["stakingRewardsVestingEndSlot", getU64Decoder()],
   ]);
 }
 
@@ -240,5 +258,5 @@ export async function fetchAllMaybeTreasury(
 }
 
 export function getTreasurySize(): number {
-  return 329;
+  return 353;
 }
