@@ -17,7 +17,6 @@ import {
 
 const AMOUNT_PER_ROUND = 40_000_000n;
 const INITIAL_BUDGET = 400_000_000n;
-const MAX_ROUNDS = 9n;
 const REIMBURSEMENT_LAMPORTS = 25_000n;
 const MASK_BITS_ENCRYPTION_KEY = new Uint8Array(32).fill(1);
 const MASK_BITS_CIPHERTEXT = new Uint8Array(32).fill(2);
@@ -36,7 +35,6 @@ test("buildInitAutoMinerSessionInstruction derives session accounts and encodes 
     maskBitsCiphertext: MASK_BITS_CIPHERTEXT,
     maskBitsKeyVersion: MASK_BITS_KEY_VERSION,
     initialBudget: INITIAL_BUDGET,
-    maxRounds: MAX_ROUNDS,
     crankReimbursementLamports: REIMBURSEMENT_LAMPORTS,
   });
   const decodedData = getInitAutoMinerSessionInstructionDataDecoder().decode(
@@ -55,7 +53,6 @@ test("buildInitAutoMinerSessionInstruction derives session accounts and encodes 
   assert.equal(decodedData.executor, executor.toBase58());
   assert.equal(decodedData.amountPerRound, AMOUNT_PER_ROUND);
   assert.equal(decodedData.initialBudget, INITIAL_BUDGET);
-  assert.equal(decodedData.maxRounds, MAX_ROUNDS);
   assert.equal(decodedData.crankReimbursementLamports, REIMBURSEMENT_LAMPORTS);
 });
 
@@ -70,7 +67,6 @@ test("buildUpdateAutoMinerSessionInstruction encodes paused settings", async () 
     maskBitsNonce: MASK_BITS_NONCE,
     maskBitsCiphertext: MASK_BITS_CIPHERTEXT,
     maskBitsKeyVersion: MASK_BITS_KEY_VERSION,
-    maxRounds: MAX_ROUNDS,
     paused: true,
     crankReimbursementLamports: REIMBURSEMENT_LAMPORTS,
   });
@@ -84,7 +80,6 @@ test("buildUpdateAutoMinerSessionInstruction encodes paused settings", async () 
   );
   assert.equal(decodedData.executor, executor.toBase58());
   assert.equal(decodedData.paused, true);
-  assert.equal(decodedData.maxRounds, MAX_ROUNDS);
 });
 
 test("buildTopUpAutoMinerSessionInstruction derives session and encodes amount", async () => {

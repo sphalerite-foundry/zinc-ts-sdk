@@ -109,8 +109,6 @@ export type InitAutoMinerSessionInstructionData = {
   maskBitsKeyVersion: number;
   /** Initial user-funded spendable budget. */
   initialBudget: bigint;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: Option<bigint>;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
@@ -132,8 +130,6 @@ export type InitAutoMinerSessionInstructionDataArgs = {
   maskBitsKeyVersion: number;
   /** Initial user-funded spendable budget. */
   initialBudget: number | bigint;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: number | bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: OptionOrNullable<number | bigint>;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
@@ -151,7 +147,6 @@ export function getInitAutoMinerSessionInstructionDataEncoder(): Encoder<InitAut
       ["maskBitsCiphertext", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskBitsKeyVersion", getU16Encoder()],
       ["initialBudget", getU64Encoder()],
-      ["maxRounds", getU64Encoder()],
       ["expirySlot", getOptionEncoder(getU64Encoder())],
       ["crankReimbursementLamports", getU64Encoder()],
     ]),
@@ -172,7 +167,6 @@ export function getInitAutoMinerSessionInstructionDataDecoder(): Decoder<InitAut
     ["maskBitsCiphertext", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskBitsKeyVersion", getU16Decoder()],
     ["initialBudget", getU64Decoder()],
-    ["maxRounds", getU64Decoder()],
     ["expirySlot", getOptionDecoder(getU64Decoder())],
     ["crankReimbursementLamports", getU64Decoder()],
   ]);
@@ -209,7 +203,6 @@ export type InitAutoMinerSessionAsyncInput<
   maskBitsCiphertext: InitAutoMinerSessionInstructionDataArgs["maskBitsCiphertext"];
   maskBitsKeyVersion: InitAutoMinerSessionInstructionDataArgs["maskBitsKeyVersion"];
   initialBudget: InitAutoMinerSessionInstructionDataArgs["initialBudget"];
-  maxRounds: InitAutoMinerSessionInstructionDataArgs["maxRounds"];
   expirySlot: InitAutoMinerSessionInstructionDataArgs["expirySlot"];
   crankReimbursementLamports: InitAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
 };
@@ -323,7 +316,6 @@ export type InitAutoMinerSessionInput<
   maskBitsCiphertext: InitAutoMinerSessionInstructionDataArgs["maskBitsCiphertext"];
   maskBitsKeyVersion: InitAutoMinerSessionInstructionDataArgs["maskBitsKeyVersion"];
   initialBudget: InitAutoMinerSessionInstructionDataArgs["initialBudget"];
-  maxRounds: InitAutoMinerSessionInstructionDataArgs["maxRounds"];
   expirySlot: InitAutoMinerSessionInstructionDataArgs["expirySlot"];
   crankReimbursementLamports: InitAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
 };

@@ -96,8 +96,6 @@ export type UpdateAutoMinerSessionInstructionData = {
   maskBitsCiphertext: ReadonlyUint8Array;
   /** Crank encryption-key version used by the browser when encrypting the pattern. */
   maskBitsKeyVersion: number;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: Option<bigint>;
   /** Whether the authority paused auto execution. */
@@ -119,8 +117,6 @@ export type UpdateAutoMinerSessionInstructionDataArgs = {
   maskBitsCiphertext: ReadonlyUint8Array;
   /** Crank encryption-key version used by the browser when encrypting the pattern. */
   maskBitsKeyVersion: number;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: number | bigint;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: OptionOrNullable<number | bigint>;
   /** Whether the authority paused auto execution. */
@@ -139,7 +135,6 @@ export function getUpdateAutoMinerSessionInstructionDataEncoder(): Encoder<Updat
       ["maskBitsNonce", getU128Encoder()],
       ["maskBitsCiphertext", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskBitsKeyVersion", getU16Encoder()],
-      ["maxRounds", getU64Encoder()],
       ["expirySlot", getOptionEncoder(getU64Encoder())],
       ["paused", getBooleanEncoder()],
       ["crankReimbursementLamports", getU64Encoder()],
@@ -160,7 +155,6 @@ export function getUpdateAutoMinerSessionInstructionDataDecoder(): Decoder<Updat
     ["maskBitsNonce", getU128Decoder()],
     ["maskBitsCiphertext", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskBitsKeyVersion", getU16Decoder()],
-    ["maxRounds", getU64Decoder()],
     ["expirySlot", getOptionDecoder(getU64Decoder())],
     ["paused", getBooleanDecoder()],
     ["crankReimbursementLamports", getU64Decoder()],
@@ -191,7 +185,6 @@ export type UpdateAutoMinerSessionAsyncInput<
   maskBitsNonce: UpdateAutoMinerSessionInstructionDataArgs["maskBitsNonce"];
   maskBitsCiphertext: UpdateAutoMinerSessionInstructionDataArgs["maskBitsCiphertext"];
   maskBitsKeyVersion: UpdateAutoMinerSessionInstructionDataArgs["maskBitsKeyVersion"];
-  maxRounds: UpdateAutoMinerSessionInstructionDataArgs["maxRounds"];
   expirySlot: UpdateAutoMinerSessionInstructionDataArgs["expirySlot"];
   paused: UpdateAutoMinerSessionInstructionDataArgs["paused"];
   crankReimbursementLamports: UpdateAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
@@ -274,7 +267,6 @@ export type UpdateAutoMinerSessionInput<
   maskBitsNonce: UpdateAutoMinerSessionInstructionDataArgs["maskBitsNonce"];
   maskBitsCiphertext: UpdateAutoMinerSessionInstructionDataArgs["maskBitsCiphertext"];
   maskBitsKeyVersion: UpdateAutoMinerSessionInstructionDataArgs["maskBitsKeyVersion"];
-  maxRounds: UpdateAutoMinerSessionInstructionDataArgs["maxRounds"];
   expirySlot: UpdateAutoMinerSessionInstructionDataArgs["expirySlot"];
   paused: UpdateAutoMinerSessionInstructionDataArgs["paused"];
   crankReimbursementLamports: UpdateAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
