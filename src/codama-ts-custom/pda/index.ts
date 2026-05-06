@@ -1,4 +1,3 @@
-export * from "./autoMinerSession";
 export * from "./board";
 export * from "./buybackPool";
 export * from "./buybackSolVault";
@@ -8,6 +7,7 @@ export * from "./stockpileSecret";
 export * from "./stockpileSolVault";
 export * from "./metadata";
 export * from "./miner";
+export * from "./autoMinerSession";
 export * from "./playerProfile";
 export * from "./round";
 export * from "./roundSecret";

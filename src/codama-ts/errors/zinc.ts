@@ -278,56 +278,52 @@ export const ZINC_ERROR__INSUFFICIENT_PLAYER_PROFILE_LAMPORTS = 0x17f1; // 6129
 export const ZINC_ERROR__AUTO_MINER_SESSION_PAUSED = 0x17f2; // 6130
 /** AutoMinerSessionExpired: Auto-miner session has expired */
 export const ZINC_ERROR__AUTO_MINER_SESSION_EXPIRED = 0x17f3; // 6131
-/** AutoMinerSessionExhausted: Auto-miner session exhausted its approved rounds */
-export const ZINC_ERROR__AUTO_MINER_SESSION_EXHAUSTED = 0x17f4; // 6132
 /** AutoMinerInsufficientBudget: Auto-miner session budget is insufficient */
-export const ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET = 0x17f5; // 6133
-/** AutoMinerMaxRoundsBelowUsed: Auto-miner max rounds cannot be below rounds already used */
-export const ZINC_ERROR__AUTO_MINER_MAX_ROUNDS_BELOW_USED = 0x17f6; // 6134
+export const ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET = 0x17f4; // 6132
 /** AutoMinerAuthorityInsufficientLamports: Auto-miner authority lamports are insufficient */
-export const ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS = 0x17f7; // 6135
+export const ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS = 0x17f5; // 6133
 /** InvalidAutoMinerEncryptedPattern: Auto-miner encrypted tile pattern is invalid */
-export const ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN = 0x17f8; // 6136
+export const ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN = 0x17f6; // 6134
 /** InvalidStockpileDuration: Stockpile duration must be greater than zero */
-export const ZINC_ERROR__INVALID_STOCKPILE_DURATION = 0x17f9; // 6137
+export const ZINC_ERROR__INVALID_STOCKPILE_DURATION = 0x17f7; // 6135
 /** ClosePdaCannotCloseConfig: Config must be closed with close_config */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x17fa; // 6138
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x17f8; // 6136
 /** WrongTreasuryTokenAccount: Wrong treasury token account */
-export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x17fb; // 6139
+export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x17f9; // 6137
 /** NotAdminOrCrank: Not Admin or Crank */
-export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x17fc; // 6140
+export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x17fa; // 6138
 /** RoundCleanupIncomplete: Round cleanup is incomplete */
-export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x17fd; // 6141
+export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x17fb; // 6139
 /** RoundCleanupComplete: Round cleanup is already complete */
-export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x17fe; // 6142
+export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x17fc; // 6140
 /** BoardRoundStillReferenced: Round is still referenced by the board */
-export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x17ff; // 6143
+export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x17fd; // 6141
 /** MinerClaimNotTerminal: Miner claim state is not terminal */
-export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x1800; // 6144
+export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x17fe; // 6142
 /** OutstandingWinnerClaims: Round still has outstanding winner claims */
-export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x1801; // 6145
+export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x17ff; // 6143
 /** WrongRoundSecret: Wrong round secret */
-export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x1802; // 6146
+export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x1800; // 6144
 /** WildcatSelectionNotReady: Wildcat winner selection is not ready */
-export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x1803; // 6147
+export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x1801; // 6145
 /** WildcatSelectionComplete: Wildcat winner selection is already complete */
-export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x1804; // 6148
+export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x1802; // 6146
 /** WildcatWinnerMissing: Wildcat winner is missing */
-export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x1805; // 6149
+export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x1803; // 6147
 /** WildcatClaimNotReady: Wildcat ZINC claim is not ready */
-export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1806; // 6150
+export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1804; // 6148
 /** WildcatAlreadyClaimed: Wildcat ZINC has already been claimed */
-export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1807; // 6151
+export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1805; // 6149
 /** WildcatClaimIncomplete: Wildcat ZINC claim is incomplete */
-export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1808; // 6152
+export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1806; // 6150
 /** WildcatEntryCapacityExceeded: Wildcat entry capacity is exhausted */
-export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x1809; // 6153
+export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x1807; // 6151
 /** InvalidWildcatWinnerZincSharePpm: Wildcat winner ZINC share exceeds one million ppm */
-export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x180a; // 6154
+export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x1808; // 6152
 /** ClosePdaCannotCloseBoard: Board cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x180b; // 6155
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x1809; // 6153
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x180c; // 6156
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x180a; // 6154
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -338,8 +334,6 @@ export type ZincError =
   | typeof ZINC_ERROR__AMOUNT_MUST_BE_GREATER_THAN_ZERO
   | typeof ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS
   | typeof ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET
-  | typeof ZINC_ERROR__AUTO_MINER_MAX_ROUNDS_BELOW_USED
-  | typeof ZINC_ERROR__AUTO_MINER_SESSION_EXHAUSTED
   | typeof ZINC_ERROR__AUTO_MINER_SESSION_EXPIRED
   | typeof ZINC_ERROR__AUTO_MINER_SESSION_PAUSED
   | typeof ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED
@@ -499,8 +493,6 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__AMOUNT_MUST_BE_GREATER_THAN_ZERO]: `Amount must be greater than zero`,
     [ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS]: `Auto-miner authority lamports are insufficient`,
     [ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET]: `Auto-miner session budget is insufficient`,
-    [ZINC_ERROR__AUTO_MINER_MAX_ROUNDS_BELOW_USED]: `Auto-miner max rounds cannot be below rounds already used`,
-    [ZINC_ERROR__AUTO_MINER_SESSION_EXHAUSTED]: `Auto-miner session exhausted its approved rounds`,
     [ZINC_ERROR__AUTO_MINER_SESSION_EXPIRED]: `Auto-miner session has expired`,
     [ZINC_ERROR__AUTO_MINER_SESSION_PAUSED]: `Auto-miner session is paused`,
     [ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED]: `Round is still referenced by the board`,

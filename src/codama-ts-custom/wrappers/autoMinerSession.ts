@@ -33,8 +33,6 @@ export type BuildInitAutoMinerSessionInstruction =
     amountPerRound: number | bigint;
     /** Initial user-funded spendable budget. */
     initialBudget: number | bigint;
-    /** Funding quote round count stored for UI display, not an execution cap. */
-    maxRounds: number | bigint;
     /** Optional last slot at which the session can still deploy. */
     expirySlot?: number | bigint | null;
     /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
@@ -49,8 +47,6 @@ export type BuildUpdateAutoMinerSessionInstruction =
     executor: PublicKey;
     /** Gross lamports to deploy into each eligible round. */
     amountPerRound: number | bigint;
-    /** Funding quote round count stored for UI display, not an execution cap. */
-    maxRounds: number | bigint;
     /** Optional last slot at which the session can still deploy. */
     expirySlot?: number | bigint | null;
     /** Whether the authority paused auto execution. */
@@ -81,7 +77,6 @@ export async function buildInitAutoMinerSessionInstruction({
   maskBitsCiphertext,
   maskBitsKeyVersion,
   initialBudget,
-  maxRounds,
   expirySlot = null,
   crankReimbursementLamports,
 }: BuildInitAutoMinerSessionInstruction): Promise<TransactionInstruction> {
@@ -94,7 +89,6 @@ export async function buildInitAutoMinerSessionInstruction({
     maskBitsCiphertext,
     maskBitsKeyVersion,
     initialBudget,
-    maxRounds,
     expirySlot,
     crankReimbursementLamports,
   });
@@ -112,7 +106,6 @@ export async function buildUpdateAutoMinerSessionInstruction({
   maskBitsNonce,
   maskBitsCiphertext,
   maskBitsKeyVersion,
-  maxRounds,
   expirySlot = null,
   paused,
   crankReimbursementLamports,
@@ -125,7 +118,6 @@ export async function buildUpdateAutoMinerSessionInstruction({
     maskBitsNonce,
     maskBitsCiphertext,
     maskBitsKeyVersion,
-    maxRounds,
     expirySlot,
     paused,
     crankReimbursementLamports,

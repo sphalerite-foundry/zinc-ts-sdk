@@ -76,8 +76,6 @@ export type AutoMinerSession = {
   maskBitsKeyVersion: number;
   /** User-funded lamport budget available for deploys and reimbursements. */
   remainingBudget: bigint;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: bigint;
   /** Number of successful deploys already executed. */
   roundsUsed: bigint;
   /** Whether the authority paused auto execution. */
@@ -107,8 +105,6 @@ export type AutoMinerSessionArgs = {
   maskBitsKeyVersion: number;
   /** User-funded lamport budget available for deploys and reimbursements. */
   remainingBudget: number | bigint;
-  /** Funding quote round count retained for compatibility; budget is the deploy limiter. */
-  maxRounds: number | bigint;
   /** Number of successful deploys already executed. */
   roundsUsed: number | bigint;
   /** Whether the authority paused auto execution. */
@@ -134,7 +130,6 @@ export function getAutoMinerSessionEncoder(): Encoder<AutoMinerSessionArgs> {
       ["maskBitsCiphertext", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskBitsKeyVersion", getU16Encoder()],
       ["remainingBudget", getU64Encoder()],
-      ["maxRounds", getU64Encoder()],
       ["roundsUsed", getU64Encoder()],
       ["paused", getBooleanEncoder()],
       ["crankReimbursementLamports", getU64Encoder()],
@@ -157,7 +152,6 @@ export function getAutoMinerSessionDecoder(): Decoder<AutoMinerSession> {
     ["maskBitsCiphertext", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskBitsKeyVersion", getU16Decoder()],
     ["remainingBudget", getU64Decoder()],
-    ["maxRounds", getU64Decoder()],
     ["roundsUsed", getU64Decoder()],
     ["paused", getBooleanDecoder()],
     ["crankReimbursementLamports", getU64Decoder()],
