@@ -41,7 +41,11 @@ import {
   getAddressFromResolvedInstructionAccount,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findStakingRewardTokenAccountPda, findTreasuryPda } from "../pdas";
+import {
+  findConfigPda,
+  findStakingRewardTokenAccountPda,
+  findTreasuryPda,
+} from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const MELT_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
@@ -55,6 +59,7 @@ export function getMeltDiscriminatorBytes(): ReadonlyUint8Array {
 export type MeltInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountSignerZincTokenAccount extends string | AccountMeta<string> = string,
@@ -71,6 +76,9 @@ export type MeltInstruction<
         ? WritableSignerAccount<TAccountSigner> &
             AccountSignerMeta<TAccountSigner>
         : TAccountSigner,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountTreasury extends string
         ? WritableAccount<TAccountTreasury>
         : TAccountTreasury,
@@ -130,6 +138,7 @@ export function getMeltInstructionDataCodec(): FixedSizeCodec<
 
 export type MeltAsyncInput<
   TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
@@ -138,6 +147,8 @@ export type MeltAsyncInput<
 > = {
   /** Wallet that contributes ZINC into the shared melt sink. */
   signer: TransactionSigner<TAccountSigner>;
+  /** Protocol config containing the staking reward vesting window. */
+  config?: Address<TAccountConfig>;
   /** Treasury PDA that owns global staking accounting. */
   treasury?: Address<TAccountTreasury>;
   /** Protocol ZINC mint. */
@@ -153,6 +164,7 @@ export type MeltAsyncInput<
 
 export async function getMeltInstructionAsync<
   TAccountSigner extends string,
+  TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountSignerZincTokenAccount extends string,
@@ -162,6 +174,7 @@ export async function getMeltInstructionAsync<
 >(
   input: MeltAsyncInput<
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountSignerZincTokenAccount,
@@ -173,6 +186,7 @@ export async function getMeltInstructionAsync<
   MeltInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountSignerZincTokenAccount,
@@ -186,6 +200,7 @@ export async function getMeltInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: true },
     signerZincTokenAccount: {
@@ -207,6 +222,9 @@ export async function getMeltInstructionAsync<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
   if (!accounts.treasury.value) {
     accounts.treasury.value = await findTreasuryPda();
   }
@@ -249,6 +267,7 @@ export async function getMeltInstructionAsync<
   return Object.freeze({
     accounts: [
       getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
@@ -265,6 +284,7 @@ export async function getMeltInstructionAsync<
   } as MeltInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountSignerZincTokenAccount,
@@ -275,6 +295,7 @@ export async function getMeltInstructionAsync<
 
 export type MeltInput<
   TAccountSigner extends string = string,
+  TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountSignerZincTokenAccount extends string = string,
@@ -283,6 +304,8 @@ export type MeltInput<
 > = {
   /** Wallet that contributes ZINC into the shared melt sink. */
   signer: TransactionSigner<TAccountSigner>;
+  /** Protocol config containing the staking reward vesting window. */
+  config: Address<TAccountConfig>;
   /** Treasury PDA that owns global staking accounting. */
   treasury: Address<TAccountTreasury>;
   /** Protocol ZINC mint. */
@@ -298,6 +321,7 @@ export type MeltInput<
 
 export function getMeltInstruction<
   TAccountSigner extends string,
+  TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountSignerZincTokenAccount extends string,
@@ -307,6 +331,7 @@ export function getMeltInstruction<
 >(
   input: MeltInput<
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountSignerZincTokenAccount,
@@ -317,6 +342,7 @@ export function getMeltInstruction<
 ): MeltInstruction<
   TProgramAddress,
   TAccountSigner,
+  TAccountConfig,
   TAccountTreasury,
   TAccountZincMint,
   TAccountSignerZincTokenAccount,
@@ -329,6 +355,7 @@ export function getMeltInstruction<
   // Original accounts.
   const originalAccounts = {
     signer: { value: input.signer ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: true },
     signerZincTokenAccount: {
@@ -359,6 +386,7 @@ export function getMeltInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta("signer", accounts.signer),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("signerZincTokenAccount", accounts.signerZincTokenAccount),
@@ -375,6 +403,7 @@ export function getMeltInstruction<
   } as MeltInstruction<
     TProgramAddress,
     TAccountSigner,
+    TAccountConfig,
     TAccountTreasury,
     TAccountZincMint,
     TAccountSignerZincTokenAccount,
@@ -391,16 +420,18 @@ export type ParsedMeltInstruction<
   accounts: {
     /** Wallet that contributes ZINC into the shared melt sink. */
     signer: TAccountMetas[0];
+    /** Protocol config containing the staking reward vesting window. */
+    config: TAccountMetas[1];
     /** Treasury PDA that owns global staking accounting. */
-    treasury: TAccountMetas[1];
+    treasury: TAccountMetas[2];
     /** Protocol ZINC mint. */
-    zincMint: TAccountMetas[2];
+    zincMint: TAccountMetas[3];
     /** Signer-owned ZINC token account that funds the melt. */
-    signerZincTokenAccount: TAccountMetas[3];
+    signerZincTokenAccount: TAccountMetas[4];
     /** Treasury-owned reward vault that receives the staker share. */
-    stakingRewardTokenAccount: TAccountMetas[4];
+    stakingRewardTokenAccount: TAccountMetas[5];
     /** SPL Token Program that owns the ZINC mint and reward vault. */
-    tokenProgram: TAccountMetas[5];
+    tokenProgram: TAccountMetas[6];
   };
   data: MeltInstructionData;
 };
@@ -413,12 +444,12 @@ export function parseMeltInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedMeltInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 6) {
+  if (instruction.accounts.length < 7) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 6,
+        expectedAccountMetas: 7,
       },
     );
   }
@@ -432,6 +463,7 @@ export function parseMeltInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       signer: getNextAccount(),
+      config: getNextAccount(),
       treasury: getNextAccount(),
       zincMint: getNextAccount(),
       signerZincTokenAccount: getNextAccount(),

@@ -138,6 +138,8 @@ export type UpdateConfigInstructionData = {
   stockpileEntryStepBps: Option<bigint>;
   /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
   stakingBricksPerZincX10k: Option<bigint>;
+  /** Number of slots over which newly melted staking rewards vest. */
+  stakingRewardVestingSlots: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -195,6 +197,8 @@ export type UpdateConfigInstructionDataArgs = {
   stockpileEntryStepBps: OptionOrNullable<number | bigint>;
   /** Staking brick issuance rate per claimed ZINC, in `x10k` units. */
   stakingBricksPerZincX10k: OptionOrNullable<number | bigint>;
+  /** Number of slots over which newly melted staking rewards vest. */
+  stakingRewardVestingSlots: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -228,6 +232,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["stockpileEntryPotFeeBps", getOptionEncoder(getU64Encoder())],
       ["stockpileEntryStepBps", getOptionEncoder(getU64Encoder())],
       ["stakingBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
+      ["stakingRewardVestingSlots", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -263,6 +268,7 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["stockpileEntryPotFeeBps", getOptionDecoder(getU64Decoder())],
     ["stockpileEntryStepBps", getOptionDecoder(getU64Decoder())],
     ["stakingBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
+    ["stakingRewardVestingSlots", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -312,6 +318,7 @@ export type UpdateConfigAsyncInput<
   stockpileEntryPotFeeBps: UpdateConfigInstructionDataArgs["stockpileEntryPotFeeBps"];
   stockpileEntryStepBps: UpdateConfigInstructionDataArgs["stockpileEntryStepBps"];
   stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
+  stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -410,6 +417,7 @@ export type UpdateConfigInput<
   stockpileEntryPotFeeBps: UpdateConfigInstructionDataArgs["stockpileEntryPotFeeBps"];
   stockpileEntryStepBps: UpdateConfigInstructionDataArgs["stockpileEntryStepBps"];
   stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
+  stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
 };
 
 export function getUpdateConfigInstruction<
