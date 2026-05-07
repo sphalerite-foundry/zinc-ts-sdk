@@ -324,6 +324,8 @@ export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x1808; // 6152
 export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x1809; // 6153
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
 export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x180a; // 6154
+/** WrongZincMintAuthority: Wrong ZINC mint authority */
+export const ZINC_ERROR__WRONG_ZINC_MINT_AUTHORITY = 0x180b; // 6155
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -478,6 +480,7 @@ export type ZincError =
   | typeof ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT
   | typeof ZINC_ERROR__WRONG_WRAPPED_SOL_MINT
   | typeof ZINC_ERROR__WRONG_ZINC_MINT
+  | typeof ZINC_ERROR__WRONG_ZINC_MINT_AUTHORITY
   | typeof ZINC_ERROR__WRONG_ZINC_MINT_METADATA
   | typeof ZINC_ERROR__ZINC_MINT_ALREADY_INITIALIZED
   | typeof ZINC_ERROR__ZINC_MINT_NOT_INITIALIZED;
@@ -637,6 +640,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT]: `Wrong winner stockpile extra token account`,
     [ZINC_ERROR__WRONG_WRAPPED_SOL_MINT]: `Wrong wrapped SOL mint`,
     [ZINC_ERROR__WRONG_ZINC_MINT]: `Wrong ZINC mint`,
+    [ZINC_ERROR__WRONG_ZINC_MINT_AUTHORITY]: `Wrong ZINC mint authority`,
     [ZINC_ERROR__WRONG_ZINC_MINT_METADATA]: `Wrong ZINC mint metadata`,
     [ZINC_ERROR__ZINC_MINT_ALREADY_INITIALIZED]: `ZINC mint is already initialized`,
     [ZINC_ERROR__ZINC_MINT_NOT_INITIALIZED]: `ZINC mint is not initialized`,

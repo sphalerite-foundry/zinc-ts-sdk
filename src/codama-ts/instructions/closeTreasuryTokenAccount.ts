@@ -81,7 +81,7 @@ export type CloseTreasuryTokenAccountInstruction<
         ? WritableAccount<TAccountTreasury>
         : TAccountTreasury,
       TAccountMint extends string
-        ? ReadonlyAccount<TAccountMint>
+        ? WritableAccount<TAccountMint>
         : TAccountMint,
       TAccountSourceTokenAccount extends string
         ? WritableAccount<TAccountSourceTokenAccount>
@@ -211,7 +211,7 @@ export async function getCloseTreasuryTokenAccountInstructionAsync<
     admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
-    mint: { value: input.mint ?? null, isWritable: false },
+    mint: { value: input.mint ?? null, isWritable: true },
     sourceTokenAccount: {
       value: input.sourceTokenAccount ?? null,
       isWritable: true,
@@ -379,7 +379,7 @@ export function getCloseTreasuryTokenAccountInstruction<
     admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
-    mint: { value: input.mint ?? null, isWritable: false },
+    mint: { value: input.mint ?? null, isWritable: true },
     sourceTokenAccount: {
       value: input.sourceTokenAccount ?? null,
       isWritable: true,

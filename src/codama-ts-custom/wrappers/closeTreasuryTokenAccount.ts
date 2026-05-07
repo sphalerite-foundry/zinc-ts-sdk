@@ -20,7 +20,7 @@ export type BuildCloseTreasuryTokenAccountInstruction = {
   programId?: PublicKey;
 };
 
-/** Builds the admin-only instruction that drains and closes one treasury token account. */
+/** Builds the admin-only close instruction; canonical ZINC also returns mint authority to admin. */
 export async function buildCloseTreasuryTokenAccountInstruction({
   admin,
   mint,
