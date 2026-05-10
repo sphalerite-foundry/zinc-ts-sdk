@@ -33,7 +33,7 @@ import {
   getAccountMetaFactory,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findConfigPda } from "../pdas";
+import { findBoardPda, findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 import {
   getSignedComputationOutputsRevealRoundRandOutputDecoder,
@@ -62,6 +62,7 @@ export type RevealRoundRandCallbackInstruction<
   TAccountInstructionsSysvar extends string | AccountMeta<string> =
     "Sysvar1nstructions1111111111111111111111111",
   TAccountRound extends string | AccountMeta<string> = string,
+  TAccountBoard extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
@@ -89,6 +90,9 @@ export type RevealRoundRandCallbackInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
+      TAccountBoard extends string
+        ? WritableAccount<TAccountBoard>
+        : TAccountBoard,
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
@@ -143,6 +147,7 @@ export type RevealRoundRandCallbackAsyncInput<
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
+  TAccountBoard extends string = string,
   TAccountConfig extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
@@ -156,6 +161,8 @@ export type RevealRoundRandCallbackAsyncInput<
   instructionsSysvar?: Address<TAccountInstructionsSysvar>;
   /** Round being settled after Arcium reveals its random value. */
   round: Address<TAccountRound>;
+  /** Board transition gate that is opened by this reveal. */
+  board?: Address<TAccountBoard>;
   /** Live config used to resolve Wildcat eligibility at reveal time. */
   config?: Address<TAccountConfig>;
   output: RevealRoundRandCallbackInstructionDataArgs["output"];
@@ -169,6 +176,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
   TAccountRound extends string,
+  TAccountBoard extends string,
   TAccountConfig extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
@@ -180,6 +188,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountBoard,
     TAccountConfig
   >,
   config?: { programAddress?: TProgramAddress },
@@ -193,6 +202,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountBoard,
     TAccountConfig
   >
 > {
@@ -214,6 +224,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
       isWritable: false,
     },
     round: { value: input.round ?? null, isWritable: true },
+    board: { value: input.board ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -233,6 +244,9 @@ export async function getRevealRoundRandCallbackInstructionAsync<
     accounts.instructionsSysvar.value =
       "Sysvar1nstructions1111111111111111111111111" as Address<"Sysvar1nstructions1111111111111111111111111">;
   }
+  if (!accounts.board.value) {
+    accounts.board.value = await findBoardPda();
+  }
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
@@ -247,6 +261,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
       getAccountMeta("clusterAccount", accounts.clusterAccount),
       getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("board", accounts.board),
       getAccountMeta("config", accounts.config),
     ],
     data: getRevealRoundRandCallbackInstructionDataEncoder().encode(
@@ -262,6 +277,7 @@ export async function getRevealRoundRandCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountBoard,
     TAccountConfig
   >);
 }
@@ -274,6 +290,7 @@ export type RevealRoundRandCallbackInput<
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
+  TAccountBoard extends string = string,
   TAccountConfig extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
@@ -287,6 +304,8 @@ export type RevealRoundRandCallbackInput<
   instructionsSysvar?: Address<TAccountInstructionsSysvar>;
   /** Round being settled after Arcium reveals its random value. */
   round: Address<TAccountRound>;
+  /** Board transition gate that is opened by this reveal. */
+  board: Address<TAccountBoard>;
   /** Live config used to resolve Wildcat eligibility at reveal time. */
   config: Address<TAccountConfig>;
   output: RevealRoundRandCallbackInstructionDataArgs["output"];
@@ -300,6 +319,7 @@ export function getRevealRoundRandCallbackInstruction<
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
   TAccountRound extends string,
+  TAccountBoard extends string,
   TAccountConfig extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
@@ -311,6 +331,7 @@ export function getRevealRoundRandCallbackInstruction<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountBoard,
     TAccountConfig
   >,
   config?: { programAddress?: TProgramAddress },
@@ -323,6 +344,7 @@ export function getRevealRoundRandCallbackInstruction<
   TAccountClusterAccount,
   TAccountInstructionsSysvar,
   TAccountRound,
+  TAccountBoard,
   TAccountConfig
 > {
   // Program address.
@@ -343,6 +365,7 @@ export function getRevealRoundRandCallbackInstruction<
       isWritable: false,
     },
     round: { value: input.round ?? null, isWritable: true },
+    board: { value: input.board ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -373,6 +396,7 @@ export function getRevealRoundRandCallbackInstruction<
       getAccountMeta("clusterAccount", accounts.clusterAccount),
       getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("board", accounts.board),
       getAccountMeta("config", accounts.config),
     ],
     data: getRevealRoundRandCallbackInstructionDataEncoder().encode(
@@ -388,6 +412,7 @@ export function getRevealRoundRandCallbackInstruction<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountBoard,
     TAccountConfig
   >);
 }
@@ -409,8 +434,10 @@ export type ParsedRevealRoundRandCallbackInstruction<
     instructionsSysvar: TAccountMetas[5];
     /** Round being settled after Arcium reveals its random value. */
     round: TAccountMetas[6];
+    /** Board transition gate that is opened by this reveal. */
+    board: TAccountMetas[7];
     /** Live config used to resolve Wildcat eligibility at reveal time. */
-    config: TAccountMetas[7];
+    config: TAccountMetas[8];
   };
   data: RevealRoundRandCallbackInstructionData;
 };
@@ -423,12 +450,12 @@ export function parseRevealRoundRandCallbackInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedRevealRoundRandCallbackInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 8) {
+  if (instruction.accounts.length < 9) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 8,
+        expectedAccountMetas: 9,
       },
     );
   }
@@ -448,6 +475,7 @@ export function parseRevealRoundRandCallbackInstruction<
       clusterAccount: getNextAccount(),
       instructionsSysvar: getNextAccount(),
       round: getNextAccount(),
+      board: getNextAccount(),
       config: getNextAccount(),
     },
     data: getRevealRoundRandCallbackInstructionDataDecoder().decode(

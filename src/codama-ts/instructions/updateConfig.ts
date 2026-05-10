@@ -88,6 +88,8 @@ export type UpdateConfigInstructionData = {
   deployTotalFeeBps: Option<bigint>;
   /** Number of slots a round stays open once activated. */
   roundDurationSlots: Option<bigint>;
+  /** Number of slots after reveal before selecting the next playable round. */
+  roundStartDelaySlots: Option<bigint>;
   /** Number of slots a stockpile stays open once activated. */
   stockpileDurationSlots: Option<bigint>;
   /** Minimum stockpile bricks required to join one cycle, in `x10k` units. */
@@ -147,6 +149,8 @@ export type UpdateConfigInstructionDataArgs = {
   deployTotalFeeBps: OptionOrNullable<number | bigint>;
   /** Number of slots a round stays open once activated. */
   roundDurationSlots: OptionOrNullable<number | bigint>;
+  /** Number of slots after reveal before selecting the next playable round. */
+  roundStartDelaySlots: OptionOrNullable<number | bigint>;
   /** Number of slots a stockpile stays open once activated. */
   stockpileDurationSlots: OptionOrNullable<number | bigint>;
   /** Minimum stockpile bricks required to join one cycle, in `x10k` units. */
@@ -207,6 +211,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["deployTotalFeeBps", getOptionEncoder(getU64Encoder())],
       ["roundDurationSlots", getOptionEncoder(getU64Encoder())],
+      ["roundStartDelaySlots", getOptionEncoder(getU64Encoder())],
       ["stockpileDurationSlots", getOptionEncoder(getU64Encoder())],
       ["stockpileMinEntryBricksX10k", getOptionEncoder(getU64Encoder())],
       ["deployAdminFeeBps", getOptionEncoder(getU64Encoder())],
@@ -243,6 +248,7 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["deployTotalFeeBps", getOptionDecoder(getU64Decoder())],
     ["roundDurationSlots", getOptionDecoder(getU64Decoder())],
+    ["roundStartDelaySlots", getOptionDecoder(getU64Decoder())],
     ["stockpileDurationSlots", getOptionDecoder(getU64Decoder())],
     ["stockpileMinEntryBricksX10k", getOptionDecoder(getU64Decoder())],
     ["deployAdminFeeBps", getOptionDecoder(getU64Decoder())],
@@ -293,6 +299,7 @@ export type UpdateConfigAsyncInput<
   board?: Address<TAccountBoard>;
   deployTotalFeeBps: UpdateConfigInstructionDataArgs["deployTotalFeeBps"];
   roundDurationSlots: UpdateConfigInstructionDataArgs["roundDurationSlots"];
+  roundStartDelaySlots: UpdateConfigInstructionDataArgs["roundStartDelaySlots"];
   stockpileDurationSlots: UpdateConfigInstructionDataArgs["stockpileDurationSlots"];
   stockpileMinEntryBricksX10k: UpdateConfigInstructionDataArgs["stockpileMinEntryBricksX10k"];
   deployAdminFeeBps: UpdateConfigInstructionDataArgs["deployAdminFeeBps"];
@@ -392,6 +399,7 @@ export type UpdateConfigInput<
   board: Address<TAccountBoard>;
   deployTotalFeeBps: UpdateConfigInstructionDataArgs["deployTotalFeeBps"];
   roundDurationSlots: UpdateConfigInstructionDataArgs["roundDurationSlots"];
+  roundStartDelaySlots: UpdateConfigInstructionDataArgs["roundStartDelaySlots"];
   stockpileDurationSlots: UpdateConfigInstructionDataArgs["stockpileDurationSlots"];
   stockpileMinEntryBricksX10k: UpdateConfigInstructionDataArgs["stockpileMinEntryBricksX10k"];
   deployAdminFeeBps: UpdateConfigInstructionDataArgs["deployAdminFeeBps"];

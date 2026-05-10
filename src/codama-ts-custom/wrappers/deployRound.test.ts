@@ -46,6 +46,8 @@ function encodeBoardAccount({
       activeStockpileId,
       unresolvedStockpileId,
       waitingRoundId: ROUND_ID,
+      transitionRoundId: null,
+      nextRoundSelectableAfterSlot: null,
       nextRoundId: ROUND_ID + 1n,
       nextStockpileId,
       crankAuthority: address(crankAuthority.toBase58()),

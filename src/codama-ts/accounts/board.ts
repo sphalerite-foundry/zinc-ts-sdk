@@ -69,6 +69,10 @@ export type Board = {
   crankAuthority: Address;
   /** PDA bump seed. */
   bump: number;
+  /** Closed round whose reveal must be visible before the next playable round is selected. */
+  transitionRoundId: Option<bigint>;
+  /** Earliest slot when the next playable round may be selected after reveal. */
+  nextRoundSelectableAfterSlot: Option<bigint>;
 };
 
 export type BoardArgs = {
@@ -88,6 +92,10 @@ export type BoardArgs = {
   crankAuthority: Address;
   /** PDA bump seed. */
   bump: number;
+  /** Closed round whose reveal must be visible before the next playable round is selected. */
+  transitionRoundId: OptionOrNullable<number | bigint>;
+  /** Earliest slot when the next playable round may be selected after reveal. */
+  nextRoundSelectableAfterSlot: OptionOrNullable<number | bigint>;
 };
 
 /** Gets the encoder for {@link BoardArgs} account data. */
@@ -103,6 +111,8 @@ export function getBoardEncoder(): Encoder<BoardArgs> {
       ["nextStockpileId", getU64Encoder()],
       ["crankAuthority", getAddressEncoder()],
       ["bump", getU8Encoder()],
+      ["transitionRoundId", getOptionEncoder(getU64Encoder())],
+      ["nextRoundSelectableAfterSlot", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: BOARD_DISCRIMINATOR }),
   );
@@ -120,6 +130,8 @@ export function getBoardDecoder(): Decoder<Board> {
     ["nextStockpileId", getU64Decoder()],
     ["crankAuthority", getAddressDecoder()],
     ["bump", getU8Decoder()],
+    ["transitionRoundId", getOptionDecoder(getU64Decoder())],
+    ["nextRoundSelectableAfterSlot", getOptionDecoder(getU64Decoder())],
   ]);
 }
 

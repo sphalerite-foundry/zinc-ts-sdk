@@ -137,6 +137,7 @@ import {
   getInitStockpileRandCompDefInstructionAsync,
   getJoinStockpileInstructionAsync,
   getMeltInstructionAsync,
+  getMigrateBoardInstructionAsync,
   getMigrateConfigInstruction,
   getPayoutStockpileExtraInstructionAsync,
   getPayoutStockpileInstructionAsync,
@@ -194,6 +195,7 @@ import {
   parseInitStockpileRandCompDefInstruction,
   parseJoinStockpileInstruction,
   parseMeltInstruction,
+  parseMigrateBoardInstruction,
   parseMigrateConfigInstruction,
   parsePayoutStockpileExtraInstruction,
   parsePayoutStockpileInstruction,
@@ -251,6 +253,7 @@ import {
   type InitStockpileRandCompDefAsyncInput,
   type JoinStockpileAsyncInput,
   type MeltAsyncInput,
+  type MigrateBoardAsyncInput,
   type MigrateConfigInput,
   type ParsedBuybackInstruction,
   type ParsedCancelAutoMinerSessionInstruction,
@@ -290,6 +293,7 @@ import {
   type ParsedInitStockpileRandCompDefInstruction,
   type ParsedJoinStockpileInstruction,
   type ParsedMeltInstruction,
+  type ParsedMigrateBoardInstruction,
   type ParsedMigrateConfigInstruction,
   type ParsedPayoutStockpileExtraInstruction,
   type ParsedPayoutStockpileInstruction,
@@ -661,6 +665,7 @@ export enum ZincInstruction {
   InitStockpileRandCompDef,
   JoinStockpile,
   Melt,
+  MigrateBoard,
   MigrateConfig,
   PayoutStockpile,
   PayoutStockpileExtra,
@@ -1108,6 +1113,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([193, 200, 206, 200, 229, 146, 107, 47]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.MigrateBoard;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([92, 131, 58, 105, 210, 154, 224, 193]),
       ),
       0,
@@ -1437,6 +1453,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.Melt;
     } & ParsedMeltInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.MigrateBoard;
+    } & ParsedMigrateBoardInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.MigrateConfig;
     } & ParsedMigrateConfigInstruction<TProgram>)
   | ({
@@ -1763,6 +1782,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.Melt,
         ...parseMeltInstruction(instruction),
+      };
+    }
+    case ZincInstruction.MigrateBoard: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.MigrateBoard,
+        ...parseMigrateBoardInstruction(instruction),
       };
     }
     case ZincInstruction.MigrateConfig: {
@@ -2115,6 +2141,10 @@ export type ZincPluginInstructions = {
   melt: (
     input: MeltAsyncInput,
   ) => ReturnType<typeof getMeltInstructionAsync> & SelfPlanAndSendFunctions;
+  migrateBoard: (
+    input: MigrateBoardAsyncInput,
+  ) => ReturnType<typeof getMigrateBoardInstructionAsync> &
+    SelfPlanAndSendFunctions;
   migrateConfig: (
     input: MigrateConfigInput,
   ) => ReturnType<typeof getMigrateConfigInstruction> &
@@ -2483,6 +2513,11 @@ export function zincProgram() {
             ),
           melt: (input) =>
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),
+          migrateBoard: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getMigrateBoardInstructionAsync(input),
+            ),
           migrateConfig: (input) =>
             addSelfPlanAndSendFunctions(
               client,
