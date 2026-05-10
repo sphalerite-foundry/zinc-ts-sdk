@@ -144,6 +144,7 @@ import {
   getQueueRoundSettlementInstructionAsync,
   getQueueSettleWinningStakesBatchInstructionAsync,
   getQueueStockpileRevealInstructionAsync,
+  getReloadAutoMinerSessionSolInstructionAsync,
   getRevealRoundRandCallbackInstructionAsync,
   getRevealStockpileRandCallbackInstruction,
   getSelectWildcatWinnerInstructionAsync,
@@ -202,6 +203,7 @@ import {
   parseQueueRoundSettlementInstruction,
   parseQueueSettleWinningStakesBatchInstruction,
   parseQueueStockpileRevealInstruction,
+  parseReloadAutoMinerSessionSolInstruction,
   parseRevealRoundRandCallbackInstruction,
   parseRevealStockpileRandCallbackInstruction,
   parseSelectWildcatWinnerInstruction,
@@ -300,6 +302,7 @@ import {
   type ParsedQueueRoundSettlementInstruction,
   type ParsedQueueSettleWinningStakesBatchInstruction,
   type ParsedQueueStockpileRevealInstruction,
+  type ParsedReloadAutoMinerSessionSolInstruction,
   type ParsedRevealRoundRandCallbackInstruction,
   type ParsedRevealStockpileRandCallbackInstruction,
   type ParsedSelectWildcatWinnerInstruction,
@@ -318,6 +321,7 @@ import {
   type QueueRoundSettlementAsyncInput,
   type QueueSettleWinningStakesBatchAsyncInput,
   type QueueStockpileRevealAsyncInput,
+  type ReloadAutoMinerSessionSolAsyncInput,
   type RevealRoundRandCallbackAsyncInput,
   type RevealStockpileRandCallbackInput,
   type SelectWildcatWinnerAsyncInput,
@@ -672,6 +676,7 @@ export enum ZincInstruction {
   QueueRoundSettlement,
   QueueSettleWinningStakesBatch,
   QueueStockpileReveal,
+  ReloadAutoMinerSessionSol,
   RevealRoundRandCallback,
   RevealStockpileRandCallback,
   SelectWildcatWinner,
@@ -1190,6 +1195,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([26, 170, 147, 196, 38, 148, 159, 234]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.ReloadAutoMinerSessionSol;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([49, 83, 220, 33, 54, 155, 235, 114]),
       ),
       0,
@@ -1473,6 +1489,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.QueueStockpileReveal;
     } & ParsedQueueStockpileRevealInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.ReloadAutoMinerSessionSol;
+    } & ParsedReloadAutoMinerSessionSolInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.RevealRoundRandCallback;
     } & ParsedRevealRoundRandCallbackInstruction<TProgram>)
@@ -1833,6 +1852,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseQueueStockpileRevealInstruction(instruction),
       };
     }
+    case ZincInstruction.ReloadAutoMinerSessionSol: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.ReloadAutoMinerSessionSol,
+        ...parseReloadAutoMinerSessionSolInstruction(instruction),
+      };
+    }
     case ZincInstruction.RevealRoundRandCallback: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2168,6 +2194,10 @@ export type ZincPluginInstructions = {
   queueStockpileReveal: (
     input: QueueStockpileRevealAsyncInput,
   ) => ReturnType<typeof getQueueStockpileRevealInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  reloadAutoMinerSessionSol: (
+    input: ReloadAutoMinerSessionSolAsyncInput,
+  ) => ReturnType<typeof getReloadAutoMinerSessionSolInstructionAsync> &
     SelfPlanAndSendFunctions;
   revealRoundRandCallback: (
     input: RevealRoundRandCallbackAsyncInput,
@@ -2547,6 +2577,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getQueueStockpileRevealInstructionAsync(input),
+            ),
+          reloadAutoMinerSessionSol: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getReloadAutoMinerSessionSolInstructionAsync(input),
             ),
           revealRoundRandCallback: (input) =>
             addSelfPlanAndSendFunctions(

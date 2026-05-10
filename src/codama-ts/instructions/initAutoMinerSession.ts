@@ -12,6 +12,8 @@ import {
   fixEncoderSize,
   getAddressDecoder,
   getAddressEncoder,
+  getBooleanDecoder,
+  getBooleanEncoder,
   getBytesDecoder,
   getBytesEncoder,
   getOptionDecoder,
@@ -113,6 +115,8 @@ export type InitAutoMinerSessionInstructionData = {
   expirySlot: Option<bigint>;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
   crankReimbursementLamports: bigint;
+  /** Whether the crank may reload credited round SOL into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 export type InitAutoMinerSessionInstructionDataArgs = {
@@ -134,6 +138,8 @@ export type InitAutoMinerSessionInstructionDataArgs = {
   expirySlot: OptionOrNullable<number | bigint>;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
   crankReimbursementLamports: number | bigint;
+  /** Whether the crank may reload credited round SOL into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 export function getInitAutoMinerSessionInstructionDataEncoder(): Encoder<InitAutoMinerSessionInstructionDataArgs> {
@@ -149,6 +155,7 @@ export function getInitAutoMinerSessionInstructionDataEncoder(): Encoder<InitAut
       ["initialBudget", getU64Encoder()],
       ["expirySlot", getOptionEncoder(getU64Encoder())],
       ["crankReimbursementLamports", getU64Encoder()],
+      ["autoReloadSolRewards", getBooleanEncoder()],
     ]),
     (value) => ({
       ...value,
@@ -169,6 +176,7 @@ export function getInitAutoMinerSessionInstructionDataDecoder(): Decoder<InitAut
     ["initialBudget", getU64Decoder()],
     ["expirySlot", getOptionDecoder(getU64Decoder())],
     ["crankReimbursementLamports", getU64Decoder()],
+    ["autoReloadSolRewards", getBooleanDecoder()],
   ]);
 }
 
@@ -205,6 +213,7 @@ export type InitAutoMinerSessionAsyncInput<
   initialBudget: InitAutoMinerSessionInstructionDataArgs["initialBudget"];
   expirySlot: InitAutoMinerSessionInstructionDataArgs["expirySlot"];
   crankReimbursementLamports: InitAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
+  autoReloadSolRewards: InitAutoMinerSessionInstructionDataArgs["autoReloadSolRewards"];
 };
 
 export async function getInitAutoMinerSessionInstructionAsync<
@@ -318,6 +327,7 @@ export type InitAutoMinerSessionInput<
   initialBudget: InitAutoMinerSessionInstructionDataArgs["initialBudget"];
   expirySlot: InitAutoMinerSessionInstructionDataArgs["expirySlot"];
   crankReimbursementLamports: InitAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
+  autoReloadSolRewards: InitAutoMinerSessionInstructionDataArgs["autoReloadSolRewards"];
 };
 
 export function getInitAutoMinerSessionInstruction<

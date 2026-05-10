@@ -3,6 +3,7 @@ import { PublicKey, TransactionInstruction } from "@solana/web3.js";
 import {
   getCancelAutoMinerSessionInstructionAsync,
   getInitAutoMinerSessionInstructionAsync,
+  getReloadAutoMinerSessionSolInstructionAsync,
   getTopUpAutoMinerSessionInstructionAsync,
   getUpdateAutoMinerSessionInstructionAsync,
 } from "../../codama-ts";
@@ -37,6 +38,8 @@ export type BuildInitAutoMinerSessionInstruction =
     expirySlot?: number | bigint | null;
     /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
     crankReimbursementLamports: number | bigint;
+    /** Whether credited round SOL rewards can refill the session budget. */
+    autoReloadSolRewards?: boolean;
   };
 
 export type BuildUpdateAutoMinerSessionInstruction =
@@ -53,6 +56,8 @@ export type BuildUpdateAutoMinerSessionInstruction =
     paused: boolean;
     /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
     crankReimbursementLamports: number | bigint;
+    /** Whether credited round SOL rewards can refill the session budget. */
+    autoReloadSolRewards?: boolean;
   };
 
 export type BuildTopUpAutoMinerSessionInstruction = {
@@ -67,6 +72,13 @@ export type BuildCancelAutoMinerSessionInstruction = {
   signer: PublicKey;
 };
 
+export type BuildReloadAutoMinerSessionSolInstruction = {
+  /** Configured crank executing the reward reload. */
+  executor: PublicKey;
+  /** Wallet that owns the session being refilled. */
+  authority: PublicKey;
+};
+
 /** Builds the instruction that creates a player-owned auto-miner session. */
 export async function buildInitAutoMinerSessionInstruction({
   signer,
@@ -79,6 +91,7 @@ export async function buildInitAutoMinerSessionInstruction({
   initialBudget,
   expirySlot = null,
   crankReimbursementLamports,
+  autoReloadSolRewards = false,
 }: BuildInitAutoMinerSessionInstruction): Promise<TransactionInstruction> {
   const instruction = await getInitAutoMinerSessionInstructionAsync({
     authority: toTransactionSigner(signer),
@@ -91,6 +104,7 @@ export async function buildInitAutoMinerSessionInstruction({
     initialBudget,
     expirySlot,
     crankReimbursementLamports,
+    autoReloadSolRewards,
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
@@ -109,6 +123,7 @@ export async function buildUpdateAutoMinerSessionInstruction({
   expirySlot = null,
   paused,
   crankReimbursementLamports,
+  autoReloadSolRewards = false,
 }: BuildUpdateAutoMinerSessionInstruction): Promise<TransactionInstruction> {
   const instruction = await getUpdateAutoMinerSessionInstructionAsync({
     authority: toTransactionSigner(signer),
@@ -121,6 +136,21 @@ export async function buildUpdateAutoMinerSessionInstruction({
     expirySlot,
     paused,
     crankReimbursementLamports,
+    autoReloadSolRewards,
+  });
+  return toTransactionInstruction(
+    instruction as Parameters<typeof toTransactionInstruction>[0],
+  );
+}
+
+/** Builds the instruction that reloads credited SOL into an opted-in session. */
+export async function buildReloadAutoMinerSessionSolInstruction({
+  executor,
+  authority,
+}: BuildReloadAutoMinerSessionSolInstruction): Promise<TransactionInstruction> {
+  const instruction = await getReloadAutoMinerSessionSolInstructionAsync({
+    executor: toTransactionSigner(executor),
+    authority: toAddress(authority),
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],

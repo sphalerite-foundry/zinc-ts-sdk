@@ -51,6 +51,7 @@ export * from "./payoutStockpileExtra";
 export * from "./queueRoundSettlement";
 export * from "./queueSettleWinningStakesBatch";
 export * from "./queueStockpileReveal";
+export * from "./reloadAutoMinerSessionSol";
 export * from "./revealRoundRandCallback";
 export * from "./revealStockpileRandCallback";
 export * from "./selectWildcatWinner";
