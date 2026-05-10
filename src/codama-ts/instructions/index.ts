@@ -44,6 +44,7 @@ export * from "./initStockpileRandCallback";
 export * from "./initStockpileRandCompDef";
 export * from "./joinStockpile";
 export * from "./melt";
+export * from "./migrateBoard";
 export * from "./migrateConfig";
 export * from "./payoutStockpile";
 export * from "./payoutStockpileExtra";

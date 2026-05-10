@@ -17,6 +17,7 @@ export type BuildUpdateConfigInstruction = {
   deployAffiliateBonusBricksX10k?: number | bigint;
   affiliateWithdrawalsEnabled?: boolean;
   roundDurationSlots?: number | bigint;
+  roundStartDelaySlots?: number | bigint;
   stockpileDurationSlots?: number | bigint;
   stockpileMinEntryBricksX10k?: number | bigint;
   curveAdminFeeBps?: number | bigint;
@@ -49,6 +50,7 @@ export async function buildUpdateConfigInstruction({
   deployAffiliateBonusBricksX10k,
   affiliateWithdrawalsEnabled,
   roundDurationSlots,
+  roundStartDelaySlots,
   stockpileDurationSlots,
   stockpileMinEntryBricksX10k,
   curveAdminFeeBps,
@@ -83,6 +85,7 @@ export async function buildUpdateConfigInstruction({
     deployAffiliateBonusBricksX10k: toNullable(deployAffiliateBonusBricksX10k),
     affiliateWithdrawalsEnabled: toNullable(affiliateWithdrawalsEnabled),
     roundDurationSlots: toNullable(roundDurationSlots),
+    roundStartDelaySlots: toNullable(roundStartDelaySlots),
     stockpileDurationSlots: toNullable(stockpileDurationSlots),
     stockpileMinEntryBricksX10k: toNullable(stockpileMinEntryBricksX10k),
     curveAdminFeeBps: toNullable(curveAdminFeeBps),

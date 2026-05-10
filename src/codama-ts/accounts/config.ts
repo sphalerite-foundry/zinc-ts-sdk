@@ -113,6 +113,8 @@ export type Config = {
   stakingBricksPerZincX10k: bigint;
   /** Number of slots over which newly melted staking rewards vest. */
   stakingRewardVestingSlots: bigint;
+  /** Number of slots after reveal before selecting the next playable round. */
+  roundStartDelaySlots: bigint;
 };
 
 export type ConfigArgs = {
@@ -178,6 +180,8 @@ export type ConfigArgs = {
   stakingBricksPerZincX10k: number | bigint;
   /** Number of slots over which newly melted staking rewards vest. */
   stakingRewardVestingSlots: number | bigint;
+  /** Number of slots after reveal before selecting the next playable round. */
+  roundStartDelaySlots: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -216,6 +220,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["stockpileEntryStepBps", getU64Encoder()],
       ["stakingBricksPerZincX10k", getU64Encoder()],
       ["stakingRewardVestingSlots", getU64Encoder()],
+      ["roundStartDelaySlots", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -256,6 +261,7 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["stockpileEntryStepBps", getU64Decoder()],
     ["stakingBricksPerZincX10k", getU64Decoder()],
     ["stakingRewardVestingSlots", getU64Decoder()],
+    ["roundStartDelaySlots", getU64Decoder()],
   ]);
 }
 
@@ -318,5 +324,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 314;
+  return 322;
 }
