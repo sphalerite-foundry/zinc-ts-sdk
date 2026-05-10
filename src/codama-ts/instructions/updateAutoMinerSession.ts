@@ -102,6 +102,8 @@ export type UpdateAutoMinerSessionInstructionData = {
   paused: boolean;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
   crankReimbursementLamports: bigint;
+  /** Whether the crank may reload credited round SOL into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 export type UpdateAutoMinerSessionInstructionDataArgs = {
@@ -123,6 +125,8 @@ export type UpdateAutoMinerSessionInstructionDataArgs = {
   paused: boolean;
   /** Fixed lamport reimbursement paid to the crank after a successful deploy. */
   crankReimbursementLamports: number | bigint;
+  /** Whether the crank may reload credited round SOL into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 export function getUpdateAutoMinerSessionInstructionDataEncoder(): Encoder<UpdateAutoMinerSessionInstructionDataArgs> {
@@ -138,6 +142,7 @@ export function getUpdateAutoMinerSessionInstructionDataEncoder(): Encoder<Updat
       ["expirySlot", getOptionEncoder(getU64Encoder())],
       ["paused", getBooleanEncoder()],
       ["crankReimbursementLamports", getU64Encoder()],
+      ["autoReloadSolRewards", getBooleanEncoder()],
     ]),
     (value) => ({
       ...value,
@@ -158,6 +163,7 @@ export function getUpdateAutoMinerSessionInstructionDataDecoder(): Decoder<Updat
     ["expirySlot", getOptionDecoder(getU64Decoder())],
     ["paused", getBooleanDecoder()],
     ["crankReimbursementLamports", getU64Decoder()],
+    ["autoReloadSolRewards", getBooleanDecoder()],
   ]);
 }
 
@@ -188,6 +194,7 @@ export type UpdateAutoMinerSessionAsyncInput<
   expirySlot: UpdateAutoMinerSessionInstructionDataArgs["expirySlot"];
   paused: UpdateAutoMinerSessionInstructionDataArgs["paused"];
   crankReimbursementLamports: UpdateAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
+  autoReloadSolRewards: UpdateAutoMinerSessionInstructionDataArgs["autoReloadSolRewards"];
 };
 
 export async function getUpdateAutoMinerSessionInstructionAsync<
@@ -270,6 +277,7 @@ export type UpdateAutoMinerSessionInput<
   expirySlot: UpdateAutoMinerSessionInstructionDataArgs["expirySlot"];
   paused: UpdateAutoMinerSessionInstructionDataArgs["paused"];
   crankReimbursementLamports: UpdateAutoMinerSessionInstructionDataArgs["crankReimbursementLamports"];
+  autoReloadSolRewards: UpdateAutoMinerSessionInstructionDataArgs["autoReloadSolRewards"];
 };
 
 export function getUpdateAutoMinerSessionInstruction<

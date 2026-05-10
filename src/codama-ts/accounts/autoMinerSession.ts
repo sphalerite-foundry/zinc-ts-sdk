@@ -86,6 +86,8 @@ export type AutoMinerSession = {
   bump: number;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: Option<bigint>;
+  /** Whether credited round SOL rewards can be reloaded into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 export type AutoMinerSessionArgs = {
@@ -115,6 +117,8 @@ export type AutoMinerSessionArgs = {
   bump: number;
   /** Optional last slot at which the session can still deploy. */
   expirySlot: OptionOrNullable<number | bigint>;
+  /** Whether credited round SOL rewards can be reloaded into the session budget. */
+  autoReloadSolRewards: boolean;
 };
 
 /** Gets the encoder for {@link AutoMinerSessionArgs} account data. */
@@ -135,6 +139,7 @@ export function getAutoMinerSessionEncoder(): Encoder<AutoMinerSessionArgs> {
       ["crankReimbursementLamports", getU64Encoder()],
       ["bump", getU8Encoder()],
       ["expirySlot", getOptionEncoder(getU64Encoder())],
+      ["autoReloadSolRewards", getBooleanEncoder()],
     ]),
     (value) => ({ ...value, discriminator: AUTO_MINER_SESSION_DISCRIMINATOR }),
   );
@@ -157,6 +162,7 @@ export function getAutoMinerSessionDecoder(): Decoder<AutoMinerSession> {
     ["crankReimbursementLamports", getU64Decoder()],
     ["bump", getU8Decoder()],
     ["expirySlot", getOptionDecoder(getU64Decoder())],
+    ["autoReloadSolRewards", getBooleanDecoder()],
   ]);
 }
 
