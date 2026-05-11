@@ -36,24 +36,21 @@ import {
   getAccountMetaFactory,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
-export const MIGRATE_BOARD_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
-  193, 200, 206, 200, 229, 146, 107, 47,
+export const MIGRATE_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
+  155, 234, 231, 146, 236, 158, 162, 30,
 ]);
 
-export function getMigrateBoardDiscriminatorBytes(): ReadonlyUint8Array {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    MIGRATE_BOARD_DISCRIMINATOR,
-  );
+export function getMigrateDiscriminatorBytes(): ReadonlyUint8Array {
+  return fixEncoderSize(getBytesEncoder(), 8).encode(MIGRATE_DISCRIMINATOR);
 }
 
-export type MigrateBoardInstruction<
+export type MigrateInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountBoard extends string | AccountMeta<string> = string,
+  TAccountAccount extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends string | AccountMeta<string> =
     "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
@@ -66,11 +63,11 @@ export type MigrateBoardInstruction<
             AccountSignerMeta<TAccountAdmin>
         : TAccountAdmin,
       TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
+        ? WritableAccount<TAccountConfig>
         : TAccountConfig,
-      TAccountBoard extends string
-        ? WritableAccount<TAccountBoard>
-        : TAccountBoard,
+      TAccountAccount extends string
+        ? WritableAccount<TAccountAccount>
+        : TAccountAccount,
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
@@ -78,146 +75,65 @@ export type MigrateBoardInstruction<
     ]
   >;
 
-export type MigrateBoardInstructionData = { discriminator: ReadonlyUint8Array };
+export type MigrateInstructionData = { discriminator: ReadonlyUint8Array };
 
-export type MigrateBoardInstructionDataArgs = {};
+export type MigrateInstructionDataArgs = {};
 
-export function getMigrateBoardInstructionDataEncoder(): FixedSizeEncoder<MigrateBoardInstructionDataArgs> {
+export function getMigrateInstructionDataEncoder(): FixedSizeEncoder<MigrateInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: MIGRATE_BOARD_DISCRIMINATOR }),
+    (value) => ({ ...value, discriminator: MIGRATE_DISCRIMINATOR }),
   );
 }
 
-export function getMigrateBoardInstructionDataDecoder(): FixedSizeDecoder<MigrateBoardInstructionData> {
+export function getMigrateInstructionDataDecoder(): FixedSizeDecoder<MigrateInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
-export function getMigrateBoardInstructionDataCodec(): FixedSizeCodec<
-  MigrateBoardInstructionDataArgs,
-  MigrateBoardInstructionData
+export function getMigrateInstructionDataCodec(): FixedSizeCodec<
+  MigrateInstructionDataArgs,
+  MigrateInstructionData
 > {
   return combineCodec(
-    getMigrateBoardInstructionDataEncoder(),
-    getMigrateBoardInstructionDataDecoder(),
+    getMigrateInstructionDataEncoder(),
+    getMigrateInstructionDataDecoder(),
   );
 }
 
-export type MigrateBoardAsyncInput<
+export type MigrateInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountBoard extends string = string,
+  TAccountAccount extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   /** Admin signer that pays any rent increase and authorizes the migration. */
   admin: TransactionSigner<TAccountAdmin>;
-  /** Global config containing the admin authority. */
-  config?: Address<TAccountConfig>;
-  board: Address<TAccountBoard>;
-  systemProgram?: Address<TAccountSystemProgram>;
-};
-
-export async function getMigrateBoardInstructionAsync<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TAccountBoard extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
->(
-  input: MigrateBoardAsyncInput<
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountBoard,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
-): Promise<
-  MigrateBoardInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountBoard,
-    TAccountSystemProgram
-  >
-> {
-  // Program address.
-  const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
-
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    board: { value: input.board ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedInstructionAccount
-  >;
-
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await findConfigPda();
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
-
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta("admin", accounts.admin),
-      getAccountMeta("config", accounts.config),
-      getAccountMeta("board", accounts.board),
-      getAccountMeta("systemProgram", accounts.systemProgram),
-    ],
-    data: getMigrateBoardInstructionDataEncoder().encode({}),
-    programAddress,
-  } as MigrateBoardInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountBoard,
-    TAccountSystemProgram
-  >);
-}
-
-export type MigrateBoardInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
-  TAccountBoard extends string = string,
-  TAccountSystemProgram extends string = string,
-> = {
-  /** Admin signer that pays any rent increase and authorizes the migration. */
-  admin: TransactionSigner<TAccountAdmin>;
-  /** Global config containing the admin authority. */
   config: Address<TAccountConfig>;
-  board: Address<TAccountBoard>;
+  account: Address<TAccountAccount>;
   systemProgram?: Address<TAccountSystemProgram>;
 };
 
-export function getMigrateBoardInstruction<
+export function getMigrateInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
-  TAccountBoard extends string,
+  TAccountAccount extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: MigrateBoardInput<
+  input: MigrateInput<
     TAccountAdmin,
     TAccountConfig,
-    TAccountBoard,
+    TAccountAccount,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
-): MigrateBoardInstruction<
+): MigrateInstruction<
   TProgramAddress,
   TAccountAdmin,
   TAccountConfig,
-  TAccountBoard,
+  TAccountAccount,
   TAccountSystemProgram
 > {
   // Program address.
@@ -226,8 +142,8 @@ export function getMigrateBoardInstruction<
   // Original accounts.
   const originalAccounts = {
     admin: { value: input.admin ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    board: { value: input.board ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: true },
+    account: { value: input.account ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
@@ -246,21 +162,21 @@ export function getMigrateBoardInstruction<
     accounts: [
       getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
-      getAccountMeta("board", accounts.board),
+      getAccountMeta("account", accounts.account),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getMigrateBoardInstructionDataEncoder().encode({}),
+    data: getMigrateInstructionDataEncoder().encode({}),
     programAddress,
-  } as MigrateBoardInstruction<
+  } as MigrateInstruction<
     TProgramAddress,
     TAccountAdmin,
     TAccountConfig,
-    TAccountBoard,
+    TAccountAccount,
     TAccountSystemProgram
   >);
 }
 
-export type ParsedMigrateBoardInstruction<
+export type ParsedMigrateInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
@@ -268,22 +184,21 @@ export type ParsedMigrateBoardInstruction<
   accounts: {
     /** Admin signer that pays any rent increase and authorizes the migration. */
     admin: TAccountMetas[0];
-    /** Global config containing the admin authority. */
     config: TAccountMetas[1];
-    board: TAccountMetas[2];
+    account: TAccountMetas[2];
     systemProgram: TAccountMetas[3];
   };
-  data: MigrateBoardInstructionData;
+  data: MigrateInstructionData;
 };
 
-export function parseMigrateBoardInstruction<
+export function parseMigrateInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
-): ParsedMigrateBoardInstruction<TProgram, TAccountMetas> {
+): ParsedMigrateInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
@@ -304,9 +219,9 @@ export function parseMigrateBoardInstruction<
     accounts: {
       admin: getNextAccount(),
       config: getNextAccount(),
-      board: getNextAccount(),
+      account: getNextAccount(),
       systemProgram: getNextAccount(),
     },
-    data: getMigrateBoardInstructionDataDecoder().decode(instruction.data),
+    data: getMigrateInstructionDataDecoder().decode(instruction.data),
   };
 }

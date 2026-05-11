@@ -137,8 +137,7 @@ import {
   getInitStockpileRandCompDefInstructionAsync,
   getJoinStockpileInstructionAsync,
   getMeltInstructionAsync,
-  getMigrateBoardInstructionAsync,
-  getMigrateConfigInstruction,
+  getMigrateInstruction,
   getPayoutStockpileExtraInstructionAsync,
   getPayoutStockpileInstructionAsync,
   getQueueRoundSettlementInstructionAsync,
@@ -196,8 +195,7 @@ import {
   parseInitStockpileRandCompDefInstruction,
   parseJoinStockpileInstruction,
   parseMeltInstruction,
-  parseMigrateBoardInstruction,
-  parseMigrateConfigInstruction,
+  parseMigrateInstruction,
   parsePayoutStockpileExtraInstruction,
   parsePayoutStockpileInstruction,
   parseQueueRoundSettlementInstruction,
@@ -255,8 +253,7 @@ import {
   type InitStockpileRandCompDefAsyncInput,
   type JoinStockpileAsyncInput,
   type MeltAsyncInput,
-  type MigrateBoardAsyncInput,
-  type MigrateConfigInput,
+  type MigrateInput,
   type ParsedBuybackInstruction,
   type ParsedCancelAutoMinerSessionInstruction,
   type ParsedClaimAffiliateInstruction,
@@ -295,8 +292,7 @@ import {
   type ParsedInitStockpileRandCompDefInstruction,
   type ParsedJoinStockpileInstruction,
   type ParsedMeltInstruction,
-  type ParsedMigrateBoardInstruction,
-  type ParsedMigrateConfigInstruction,
+  type ParsedMigrateInstruction,
   type ParsedPayoutStockpileExtraInstruction,
   type ParsedPayoutStockpileInstruction,
   type ParsedQueueRoundSettlementInstruction,
@@ -669,8 +665,7 @@ export enum ZincInstruction {
   InitStockpileRandCompDef,
   JoinStockpile,
   Melt,
-  MigrateBoard,
-  MigrateConfig,
+  Migrate,
   PayoutStockpile,
   PayoutStockpileExtra,
   QueueRoundSettlement,
@@ -1118,23 +1113,12 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([193, 200, 206, 200, 229, 146, 107, 47]),
+        new Uint8Array([155, 234, 231, 146, 236, 158, 162, 30]),
       ),
       0,
     )
   ) {
-    return ZincInstruction.MigrateBoard;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([92, 131, 58, 105, 210, 154, 224, 193]),
-      ),
-      0,
-    )
-  ) {
-    return ZincInstruction.MigrateConfig;
+    return ZincInstruction.Migrate;
   }
   if (
     containsBytes(
@@ -1469,11 +1453,8 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.Melt;
     } & ParsedMeltInstruction<TProgram>)
   | ({
-      instructionType: ZincInstruction.MigrateBoard;
-    } & ParsedMigrateBoardInstruction<TProgram>)
-  | ({
-      instructionType: ZincInstruction.MigrateConfig;
-    } & ParsedMigrateConfigInstruction<TProgram>)
+      instructionType: ZincInstruction.Migrate;
+    } & ParsedMigrateInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.PayoutStockpile;
     } & ParsedPayoutStockpileInstruction<TProgram>)
@@ -1803,18 +1784,11 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseMeltInstruction(instruction),
       };
     }
-    case ZincInstruction.MigrateBoard: {
+    case ZincInstruction.Migrate: {
       assertIsInstructionWithAccounts(instruction);
       return {
-        instructionType: ZincInstruction.MigrateBoard,
-        ...parseMigrateBoardInstruction(instruction),
-      };
-    }
-    case ZincInstruction.MigrateConfig: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: ZincInstruction.MigrateConfig,
-        ...parseMigrateConfigInstruction(instruction),
+        instructionType: ZincInstruction.Migrate,
+        ...parseMigrateInstruction(instruction),
       };
     }
     case ZincInstruction.PayoutStockpile: {
@@ -2167,14 +2141,9 @@ export type ZincPluginInstructions = {
   melt: (
     input: MeltAsyncInput,
   ) => ReturnType<typeof getMeltInstructionAsync> & SelfPlanAndSendFunctions;
-  migrateBoard: (
-    input: MigrateBoardAsyncInput,
-  ) => ReturnType<typeof getMigrateBoardInstructionAsync> &
-    SelfPlanAndSendFunctions;
-  migrateConfig: (
-    input: MigrateConfigInput,
-  ) => ReturnType<typeof getMigrateConfigInstruction> &
-    SelfPlanAndSendFunctions;
+  migrate: (
+    input: MigrateInput,
+  ) => ReturnType<typeof getMigrateInstruction> & SelfPlanAndSendFunctions;
   payoutStockpile: (
     input: PayoutStockpileAsyncInput,
   ) => ReturnType<typeof getPayoutStockpileInstructionAsync> &
@@ -2543,16 +2512,8 @@ export function zincProgram() {
             ),
           melt: (input) =>
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),
-          migrateBoard: (input) =>
-            addSelfPlanAndSendFunctions(
-              client,
-              getMigrateBoardInstructionAsync(input),
-            ),
-          migrateConfig: (input) =>
-            addSelfPlanAndSendFunctions(
-              client,
-              getMigrateConfigInstruction(input),
-            ),
+          migrate: (input) =>
+            addSelfPlanAndSendFunctions(client, getMigrateInstruction(input)),
           payoutStockpile: (input) =>
             addSelfPlanAndSendFunctions(
               client,
