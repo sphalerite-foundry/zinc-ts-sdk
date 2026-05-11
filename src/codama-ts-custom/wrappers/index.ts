@@ -24,6 +24,7 @@ export * from "./initRound";
 export * from "./initRoundRandCompDef";
 export * from "./initSettleWinningStakesBatchCompDef";
 export * from "./joinStockpile";
+export * from "./migrate";
 export * from "./payoutStockpile";
 export * from "./payoutStockpileExtra";
 export * from "./queueStockpileReveal";
