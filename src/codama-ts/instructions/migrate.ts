@@ -112,6 +112,7 @@ export type MigrateInput<
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   account: Address<TAccountAccount>;
+  /** System program used for migration rent top-ups. */
   systemProgram?: Address<TAccountSystemProgram>;
 };
 
@@ -186,6 +187,7 @@ export type ParsedMigrateInstruction<
     admin: TAccountMetas[0];
     config: TAccountMetas[1];
     account: TAccountMetas[2];
+    /** System program used for migration rent top-ups. */
     systemProgram: TAccountMetas[3];
   };
   data: MigrateInstructionData;
