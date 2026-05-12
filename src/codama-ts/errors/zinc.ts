@@ -336,6 +336,8 @@ export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x180e; // 6158
 export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x180f; // 6159
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
 export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x1810; // 6160
+/** RoundNotNextSequential: Ready round is not the next sequential round */
+export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x1811; // 6161
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -419,6 +421,7 @@ export type ZincError =
   | typeof ZINC_ERROR__ROUND_NOT_ACTIVE
   | typeof ZINC_ERROR__ROUND_NOT_CLOSED
   | typeof ZINC_ERROR__ROUND_NOT_DEPLOYABLE
+  | typeof ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL
   | typeof ZINC_ERROR__ROUND_NOT_PENDING_BATCH_SETTLEMENT
   | typeof ZINC_ERROR__ROUND_NOT_PENDING_NO_WINNER_REDIRECT
   | typeof ZINC_ERROR__ROUND_NOT_PENDING_SETTLEMENT
@@ -584,6 +587,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__ROUND_NOT_ACTIVE]: `Round is not active`,
     [ZINC_ERROR__ROUND_NOT_CLOSED]: `Round Not Closed`,
     [ZINC_ERROR__ROUND_NOT_DEPLOYABLE]: `Round is not deployable`,
+    [ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL]: `Ready round is not the next sequential round`,
     [ZINC_ERROR__ROUND_NOT_PENDING_BATCH_SETTLEMENT]: `Round is not pending batch settlement`,
     [ZINC_ERROR__ROUND_NOT_PENDING_NO_WINNER_REDIRECT]: `Round is not pending no-winner redirect`,
     [ZINC_ERROR__ROUND_NOT_PENDING_SETTLEMENT]: `Round is not pending settlement`,
