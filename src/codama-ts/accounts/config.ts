@@ -115,6 +115,8 @@ export type Config = {
   stakingRewardVestingSlots: bigint;
   /** Number of slots after reveal before selecting the next playable round. */
   roundStartDelaySlots: bigint;
+  /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
+  arciumRevealCuPriceMicro: bigint;
 };
 
 export type ConfigArgs = {
@@ -182,6 +184,8 @@ export type ConfigArgs = {
   stakingRewardVestingSlots: number | bigint;
   /** Number of slots after reveal before selecting the next playable round. */
   roundStartDelaySlots: number | bigint;
+  /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
+  arciumRevealCuPriceMicro: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -221,6 +225,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["stakingBricksPerZincX10k", getU64Encoder()],
       ["stakingRewardVestingSlots", getU64Encoder()],
       ["roundStartDelaySlots", getU64Encoder()],
+      ["arciumRevealCuPriceMicro", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -262,6 +267,7 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["stakingBricksPerZincX10k", getU64Decoder()],
     ["stakingRewardVestingSlots", getU64Decoder()],
     ["roundStartDelaySlots", getU64Decoder()],
+    ["arciumRevealCuPriceMicro", getU64Decoder()],
   ]);
 }
 
@@ -324,5 +330,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 322;
+  return 330;
 }
