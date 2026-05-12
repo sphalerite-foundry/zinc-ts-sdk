@@ -38,6 +38,7 @@ export type BuildUpdateConfigInstruction = {
   stockpileEntryStepBps?: number | bigint;
   stakingBricksPerZincX10k?: number | bigint;
   stakingRewardVestingSlots?: number | bigint;
+  arciumRevealCuPriceMicro?: number | bigint;
 };
 
 export async function buildUpdateConfigInstruction({
@@ -71,6 +72,7 @@ export async function buildUpdateConfigInstruction({
   stockpileEntryStepBps,
   stakingBricksPerZincX10k,
   stakingRewardVestingSlots,
+  arciumRevealCuPriceMicro,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -108,6 +110,7 @@ export async function buildUpdateConfigInstruction({
     stockpileEntryStepBps: toNullable(stockpileEntryStepBps),
     stakingBricksPerZincX10k: toNullable(stakingBricksPerZincX10k),
     stakingRewardVestingSlots: toNullable(stakingRewardVestingSlots),
+    arciumRevealCuPriceMicro: toNullable(arciumRevealCuPriceMicro),
     crank: crank ? toAddress(crank) : null,
   });
 
