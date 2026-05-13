@@ -5,6 +5,14 @@
   "type": "module",
   "license": "UNLICENSED",
   "description": "TypeScript SDK for the Zinc protocol",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sphalerite-foundry/zinc-ts-sdk.git"
+  },
+  "homepage": "https://github.com/sphalerite-foundry/zinc-ts-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/sphalerite-foundry/zinc-ts-sdk/issues"
+  },
   "files": [
     "dist"
   ],
