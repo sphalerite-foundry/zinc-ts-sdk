@@ -77,6 +77,10 @@ export type Config = {
   winnerZincShareBps: bigint;
   /** Share of post-skim curve mint that accrues to the stockpile ZINC pot, in basis points. */
   stockpileZincShareBps: bigint;
+  /** No-winner direct-winner ZINC redirect share that accrues to Bonanza, in basis points. */
+  noWinnerDirectWinnerZincBonanzaShareBps: bigint;
+  /** No-winner direct-winner ZINC redirect share that accrues to stockpile, in basis points. */
+  noWinnerDirectWinnerZincStockpileShareBps: bigint;
   /** Minimum gross lamports required to enter a round. */
   minDeployLamports: bigint;
   /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
@@ -146,6 +150,10 @@ export type ConfigArgs = {
   winnerZincShareBps: number | bigint;
   /** Share of post-skim curve mint that accrues to the stockpile ZINC pot, in basis points. */
   stockpileZincShareBps: number | bigint;
+  /** No-winner direct-winner ZINC redirect share that accrues to Bonanza, in basis points. */
+  noWinnerDirectWinnerZincBonanzaShareBps: number | bigint;
+  /** No-winner direct-winner ZINC redirect share that accrues to stockpile, in basis points. */
+  noWinnerDirectWinnerZincStockpileShareBps: number | bigint;
   /** Minimum gross lamports required to enter a round. */
   minDeployLamports: number | bigint;
   /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
@@ -206,6 +214,8 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["curveAdminFeeBps", getU64Encoder()],
       ["winnerZincShareBps", getU64Encoder()],
       ["stockpileZincShareBps", getU64Encoder()],
+      ["noWinnerDirectWinnerZincBonanzaShareBps", getU64Encoder()],
+      ["noWinnerDirectWinnerZincStockpileShareBps", getU64Encoder()],
       ["minDeployLamports", getU64Encoder()],
       ["curveMaxRoundMint", getU64Encoder()],
       ["curveSaturationLamports", getU64Encoder()],
@@ -248,6 +258,8 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["curveAdminFeeBps", getU64Decoder()],
     ["winnerZincShareBps", getU64Decoder()],
     ["stockpileZincShareBps", getU64Decoder()],
+    ["noWinnerDirectWinnerZincBonanzaShareBps", getU64Decoder()],
+    ["noWinnerDirectWinnerZincStockpileShareBps", getU64Decoder()],
     ["minDeployLamports", getU64Decoder()],
     ["curveMaxRoundMint", getU64Decoder()],
     ["curveSaturationLamports", getU64Decoder()],
@@ -330,5 +342,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 330;
+  return 346;
 }

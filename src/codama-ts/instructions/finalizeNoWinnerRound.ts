@@ -172,9 +172,9 @@ export type FinalizeNoWinnerRoundAsyncInput<
   zincMint: Address<TAccountZincMint>;
   /** Round-owned ZINC vault that funds the no-winner redirect. */
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
-  /** Treasury-owned Bonanza vault that receives the 70% redirect share. */
+  /** Treasury-owned Bonanza vault that receives the configured redirect share. */
   bonanzaTokenAccount: Address<TAccountBonanzaTokenAccount>;
-  /** Treasury-owned stockpile ZINC vault that receives the 30% redirect share. */
+  /** Treasury-owned stockpile ZINC vault that receives the configured redirect share. */
   stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
   /** SPL Token program used for the direct-winner redirect transfer. */
   tokenProgram?: Address<TAccountTokenProgram>;
@@ -341,9 +341,9 @@ export type FinalizeNoWinnerRoundInput<
   zincMint: Address<TAccountZincMint>;
   /** Round-owned ZINC vault that funds the no-winner redirect. */
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
-  /** Treasury-owned Bonanza vault that receives the 70% redirect share. */
+  /** Treasury-owned Bonanza vault that receives the configured redirect share. */
   bonanzaTokenAccount: Address<TAccountBonanzaTokenAccount>;
-  /** Treasury-owned stockpile ZINC vault that receives the 30% redirect share. */
+  /** Treasury-owned stockpile ZINC vault that receives the configured redirect share. */
   stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
   /** SPL Token program used for the direct-winner redirect transfer. */
   tokenProgram?: Address<TAccountTokenProgram>;
@@ -489,9 +489,9 @@ export type ParsedFinalizeNoWinnerRoundInstruction<
     zincMint: TAccountMetas[6];
     /** Round-owned ZINC vault that funds the no-winner redirect. */
     roundZincPayoutTokenAccount: TAccountMetas[7];
-    /** Treasury-owned Bonanza vault that receives the 70% redirect share. */
+    /** Treasury-owned Bonanza vault that receives the configured redirect share. */
     bonanzaTokenAccount: TAccountMetas[8];
-    /** Treasury-owned stockpile ZINC vault that receives the 30% redirect share. */
+    /** Treasury-owned stockpile ZINC vault that receives the configured redirect share. */
     stockpileTokenAccount: TAccountMetas[9];
     /** SPL Token program used for the direct-winner redirect transfer. */
     tokenProgram: TAccountMetas[10];

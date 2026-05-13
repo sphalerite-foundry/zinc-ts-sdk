@@ -23,6 +23,8 @@ export type BuildUpdateConfigInstruction = {
   curveAdminFeeBps?: number | bigint;
   winnerZincShareBps?: number | bigint;
   stockpileZincShareBps?: number | bigint;
+  noWinnerDirectWinnerZincBonanzaShareBps?: number | bigint;
+  noWinnerDirectWinnerZincStockpileShareBps?: number | bigint;
   minDeployLamports?: number | bigint;
   curveMaxRoundMint?: number | bigint;
   curveSaturationLamports?: number | bigint;
@@ -57,6 +59,8 @@ export async function buildUpdateConfigInstruction({
   curveAdminFeeBps,
   winnerZincShareBps,
   stockpileZincShareBps,
+  noWinnerDirectWinnerZincBonanzaShareBps,
+  noWinnerDirectWinnerZincStockpileShareBps,
   minDeployLamports,
   curveMaxRoundMint,
   curveSaturationLamports,
@@ -93,6 +97,12 @@ export async function buildUpdateConfigInstruction({
     curveAdminFeeBps: toNullable(curveAdminFeeBps),
     winnerZincShareBps: toNullable(winnerZincShareBps),
     stockpileZincShareBps: toNullable(stockpileZincShareBps),
+    noWinnerDirectWinnerZincBonanzaShareBps: toNullable(
+      noWinnerDirectWinnerZincBonanzaShareBps,
+    ),
+    noWinnerDirectWinnerZincStockpileShareBps: toNullable(
+      noWinnerDirectWinnerZincStockpileShareBps,
+    ),
     minDeployLamports: toNullable(minDeployLamports),
     curveMaxRoundMint: toNullable(curveMaxRoundMint),
     curveSaturationLamports: toNullable(curveSaturationLamports),
