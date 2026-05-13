@@ -108,6 +108,10 @@ export type UpdateConfigInstructionData = {
   winnerZincShareBps: Option<bigint>;
   /** Share of post-skim curve mint that accrues to stockpile ZINC, in basis points. */
   stockpileZincShareBps: Option<bigint>;
+  /** No-winner direct-winner ZINC redirect share that accrues to Bonanza, in basis points. */
+  noWinnerDirectWinnerZincBonanzaShareBps: Option<bigint>;
+  /** No-winner direct-winner ZINC redirect share that accrues to stockpile, in basis points. */
+  noWinnerDirectWinnerZincStockpileShareBps: Option<bigint>;
   /** Minimum gross lamports required to enter one round. */
   minDeployLamports: Option<bigint>;
   /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
@@ -171,6 +175,10 @@ export type UpdateConfigInstructionDataArgs = {
   winnerZincShareBps: OptionOrNullable<number | bigint>;
   /** Share of post-skim curve mint that accrues to stockpile ZINC, in basis points. */
   stockpileZincShareBps: OptionOrNullable<number | bigint>;
+  /** No-winner direct-winner ZINC redirect share that accrues to Bonanza, in basis points. */
+  noWinnerDirectWinnerZincBonanzaShareBps: OptionOrNullable<number | bigint>;
+  /** No-winner direct-winner ZINC redirect share that accrues to stockpile, in basis points. */
+  noWinnerDirectWinnerZincStockpileShareBps: OptionOrNullable<number | bigint>;
   /** Minimum gross lamports required to enter one round. */
   minDeployLamports: OptionOrNullable<number | bigint>;
   /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
@@ -225,6 +233,14 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["curveAdminFeeBps", getOptionEncoder(getU64Encoder())],
       ["winnerZincShareBps", getOptionEncoder(getU64Encoder())],
       ["stockpileZincShareBps", getOptionEncoder(getU64Encoder())],
+      [
+        "noWinnerDirectWinnerZincBonanzaShareBps",
+        getOptionEncoder(getU64Encoder()),
+      ],
+      [
+        "noWinnerDirectWinnerZincStockpileShareBps",
+        getOptionEncoder(getU64Encoder()),
+      ],
       ["minDeployLamports", getOptionEncoder(getU64Encoder())],
       ["curveMaxRoundMint", getOptionEncoder(getU64Encoder())],
       ["curveSaturationLamports", getOptionEncoder(getU64Encoder())],
@@ -263,6 +279,14 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["curveAdminFeeBps", getOptionDecoder(getU64Decoder())],
     ["winnerZincShareBps", getOptionDecoder(getU64Decoder())],
     ["stockpileZincShareBps", getOptionDecoder(getU64Decoder())],
+    [
+      "noWinnerDirectWinnerZincBonanzaShareBps",
+      getOptionDecoder(getU64Decoder()),
+    ],
+    [
+      "noWinnerDirectWinnerZincStockpileShareBps",
+      getOptionDecoder(getU64Decoder()),
+    ],
     ["minDeployLamports", getOptionDecoder(getU64Decoder())],
     ["curveMaxRoundMint", getOptionDecoder(getU64Decoder())],
     ["curveSaturationLamports", getOptionDecoder(getU64Decoder())],
@@ -315,6 +339,8 @@ export type UpdateConfigAsyncInput<
   curveAdminFeeBps: UpdateConfigInstructionDataArgs["curveAdminFeeBps"];
   winnerZincShareBps: UpdateConfigInstructionDataArgs["winnerZincShareBps"];
   stockpileZincShareBps: UpdateConfigInstructionDataArgs["stockpileZincShareBps"];
+  noWinnerDirectWinnerZincBonanzaShareBps: UpdateConfigInstructionDataArgs["noWinnerDirectWinnerZincBonanzaShareBps"];
+  noWinnerDirectWinnerZincStockpileShareBps: UpdateConfigInstructionDataArgs["noWinnerDirectWinnerZincStockpileShareBps"];
   minDeployLamports: UpdateConfigInstructionDataArgs["minDeployLamports"];
   curveMaxRoundMint: UpdateConfigInstructionDataArgs["curveMaxRoundMint"];
   curveSaturationLamports: UpdateConfigInstructionDataArgs["curveSaturationLamports"];
@@ -416,6 +442,8 @@ export type UpdateConfigInput<
   curveAdminFeeBps: UpdateConfigInstructionDataArgs["curveAdminFeeBps"];
   winnerZincShareBps: UpdateConfigInstructionDataArgs["winnerZincShareBps"];
   stockpileZincShareBps: UpdateConfigInstructionDataArgs["stockpileZincShareBps"];
+  noWinnerDirectWinnerZincBonanzaShareBps: UpdateConfigInstructionDataArgs["noWinnerDirectWinnerZincBonanzaShareBps"];
+  noWinnerDirectWinnerZincStockpileShareBps: UpdateConfigInstructionDataArgs["noWinnerDirectWinnerZincStockpileShareBps"];
   minDeployLamports: UpdateConfigInstructionDataArgs["minDeployLamports"];
   curveMaxRoundMint: UpdateConfigInstructionDataArgs["curveMaxRoundMint"];
   curveSaturationLamports: UpdateConfigInstructionDataArgs["curveSaturationLamports"];
