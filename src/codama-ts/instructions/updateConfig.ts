@@ -148,6 +148,8 @@ export type UpdateConfigInstructionData = {
   stakingRewardVestingSlots: Option<bigint>;
   /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
   arciumRevealCuPriceMicro: Option<bigint>;
+  /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
+  stockpileRefillMinEntryBps: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -215,6 +217,8 @@ export type UpdateConfigInstructionDataArgs = {
   stakingRewardVestingSlots: OptionOrNullable<number | bigint>;
   /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
   arciumRevealCuPriceMicro: OptionOrNullable<number | bigint>;
+  /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
+  stockpileRefillMinEntryBps: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -259,6 +263,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["stakingBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
       ["stakingRewardVestingSlots", getOptionEncoder(getU64Encoder())],
       ["arciumRevealCuPriceMicro", getOptionEncoder(getU64Encoder())],
+      ["stockpileRefillMinEntryBps", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -305,6 +310,7 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["stakingBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
     ["stakingRewardVestingSlots", getOptionDecoder(getU64Decoder())],
     ["arciumRevealCuPriceMicro", getOptionDecoder(getU64Decoder())],
+    ["stockpileRefillMinEntryBps", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -359,6 +365,7 @@ export type UpdateConfigAsyncInput<
   stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
   stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
+  stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -462,6 +469,7 @@ export type UpdateConfigInput<
   stakingBricksPerZincX10k: UpdateConfigInstructionDataArgs["stakingBricksPerZincX10k"];
   stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
+  stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
 };
 
 export function getUpdateConfigInstruction<

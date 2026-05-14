@@ -121,6 +121,8 @@ export type Config = {
   roundStartDelaySlots: bigint;
   /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
   arciumRevealCuPriceMicro: bigint;
+  /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
+  stockpileRefillMinEntryBps: bigint;
 };
 
 export type ConfigArgs = {
@@ -194,6 +196,8 @@ export type ConfigArgs = {
   roundStartDelaySlots: number | bigint;
   /** Arcium priority price per CU for round reveal computations, in micro-lamports. */
   arciumRevealCuPriceMicro: number | bigint;
+  /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
+  stockpileRefillMinEntryBps: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -236,6 +240,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["stakingRewardVestingSlots", getU64Encoder()],
       ["roundStartDelaySlots", getU64Encoder()],
       ["arciumRevealCuPriceMicro", getU64Encoder()],
+      ["stockpileRefillMinEntryBps", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -280,6 +285,7 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["stakingRewardVestingSlots", getU64Decoder()],
     ["roundStartDelaySlots", getU64Decoder()],
     ["arciumRevealCuPriceMicro", getU64Decoder()],
+    ["stockpileRefillMinEntryBps", getU64Decoder()],
   ]);
 }
 
@@ -342,5 +348,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 346;
+  return 354;
 }
