@@ -84,6 +84,8 @@ export type Miner = {
   minerIndex: bigint;
   /** Hidden bonus stockpile bricks awarded during settlement, in `x10k` units. */
   hiddenBonusBricksX10k: bigint;
+  /** Auto-miner session PDA that created this miner, or `None` for manual and legacy miners. */
+  autoMinerSession: Option<Address>;
 };
 
 export type MinerArgs = {
@@ -114,6 +116,8 @@ export type MinerArgs = {
   minerIndex: number | bigint;
   /** Hidden bonus stockpile bricks awarded during settlement, in `x10k` units. */
   hiddenBonusBricksX10k: number | bigint;
+  /** Auto-miner session PDA that created this miner, or `None` for manual and legacy miners. */
+  autoMinerSession: OptionOrNullable<Address>;
 };
 
 /** Gets the encoder for {@link MinerArgs} account data. */
@@ -133,6 +137,7 @@ export function getMinerEncoder(): Encoder<MinerArgs> {
       ["winningStake", getOptionEncoder(getU64Encoder())],
       ["minerIndex", getU64Encoder()],
       ["hiddenBonusBricksX10k", getU64Encoder()],
+      ["autoMinerSession", getOptionEncoder(getAddressEncoder())],
     ]),
     (value) => ({ ...value, discriminator: MINER_DISCRIMINATOR }),
   );
@@ -154,6 +159,7 @@ export function getMinerDecoder(): Decoder<Miner> {
     ["winningStake", getOptionDecoder(getU64Decoder())],
     ["minerIndex", getU64Decoder()],
     ["hiddenBonusBricksX10k", getU64Decoder()],
+    ["autoMinerSession", getOptionDecoder(getAddressDecoder())],
   ]);
 }
 
