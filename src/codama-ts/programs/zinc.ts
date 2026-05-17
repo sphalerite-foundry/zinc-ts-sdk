@@ -108,6 +108,7 @@ import {
   getClaimRoundSolInstructionAsync,
   getClaimStakingYieldInstructionAsync,
   getClaimWildcatInstructionAsync,
+  getCloseAutoMinerMinerInstructionAsync,
   getCloseConfigInstructionAsync,
   getCloseMinerInstructionAsync,
   getClosePdaInstructionAsync,
@@ -166,6 +167,7 @@ import {
   parseClaimRoundSolInstruction,
   parseClaimStakingYieldInstruction,
   parseClaimWildcatInstruction,
+  parseCloseAutoMinerMinerInstruction,
   parseCloseConfigInstruction,
   parseCloseMinerInstruction,
   parseClosePdaInstruction,
@@ -224,6 +226,7 @@ import {
   type ClaimRoundSolAsyncInput,
   type ClaimStakingYieldAsyncInput,
   type ClaimWildcatAsyncInput,
+  type CloseAutoMinerMinerAsyncInput,
   type CloseConfigAsyncInput,
   type CloseMinerAsyncInput,
   type ClosePdaAsyncInput,
@@ -263,6 +266,7 @@ import {
   type ParsedClaimRoundSolInstruction,
   type ParsedClaimStakingYieldInstruction,
   type ParsedClaimWildcatInstruction,
+  type ParsedCloseAutoMinerMinerInstruction,
   type ParsedCloseConfigInstruction,
   type ParsedCloseMinerInstruction,
   type ParsedClosePdaInstruction,
@@ -636,6 +640,7 @@ export enum ZincInstruction {
   ClaimRoundSol,
   ClaimStakingYield,
   ClaimWildcat,
+  CloseAutoMinerMiner,
   CloseConfig,
   CloseMiner,
   ClosePda,
@@ -789,6 +794,17 @@ export function identifyZincInstruction(
     )
   ) {
     return ZincInstruction.ClaimWildcat;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([249, 242, 200, 76, 176, 8, 241, 177]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.CloseAutoMinerMiner;
   }
   if (
     containsBytes(
@@ -1366,6 +1382,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.ClaimWildcat;
     } & ParsedClaimWildcatInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.CloseAutoMinerMiner;
+    } & ParsedCloseAutoMinerMinerInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.CloseConfig;
     } & ParsedCloseConfigInstruction<TProgram>)
   | ({
@@ -1579,6 +1598,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.ClaimWildcat,
         ...parseClaimWildcatInstruction(instruction),
+      };
+    }
+    case ZincInstruction.CloseAutoMinerMiner: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.CloseAutoMinerMiner,
+        ...parseCloseAutoMinerMinerInstruction(instruction),
       };
     }
     case ZincInstruction.CloseConfig: {
@@ -2024,6 +2050,10 @@ export type ZincPluginInstructions = {
     input: ClaimWildcatAsyncInput,
   ) => ReturnType<typeof getClaimWildcatInstructionAsync> &
     SelfPlanAndSendFunctions;
+  closeAutoMinerMiner: (
+    input: CloseAutoMinerMinerAsyncInput,
+  ) => ReturnType<typeof getCloseAutoMinerMinerInstructionAsync> &
+    SelfPlanAndSendFunctions;
   closeConfig: (
     input: CloseConfigAsyncInput,
   ) => ReturnType<typeof getCloseConfigInstructionAsync> &
@@ -2348,6 +2378,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getClaimWildcatInstructionAsync(input),
+            ),
+          closeAutoMinerMiner: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getCloseAutoMinerMinerInstructionAsync(input),
             ),
           closeConfig: (input) =>
             addSelfPlanAndSendFunctions(

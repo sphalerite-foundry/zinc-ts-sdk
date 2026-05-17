@@ -15,6 +15,7 @@ export * from "./claimPlayerZincRewards";
 export * from "./claimRoundSol";
 export * from "./claimStakingYield";
 export * from "./claimWildcat";
+export * from "./closeAutoMinerMiner";
 export * from "./closeConfig";
 export * from "./closeMiner";
 export * from "./closePda";
