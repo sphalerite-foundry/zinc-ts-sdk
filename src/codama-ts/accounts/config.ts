@@ -40,6 +40,12 @@ import {
   type MaybeEncodedAccount,
   type ReadonlyUint8Array,
 } from "@solana/kit";
+import {
+  getRoundRandomnessModeDecoder,
+  getRoundRandomnessModeEncoder,
+  type RoundRandomnessMode,
+  type RoundRandomnessModeArgs,
+} from "../types";
 
 export const CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
   155, 12, 170, 224, 30, 250, 204, 130,
@@ -123,6 +129,10 @@ export type Config = {
   arciumRevealCuPriceMicro: bigint;
   /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
   stockpileRefillMinEntryBps: bigint;
+  /** Live randomness reveal path for closed rounds. */
+  roundRandomnessMode: RoundRandomnessMode;
+  /** Number of slots after close used as the blockhash reveal sample delay. */
+  blockhashRevealDelaySlots: bigint;
 };
 
 export type ConfigArgs = {
@@ -198,6 +208,10 @@ export type ConfigArgs = {
   arciumRevealCuPriceMicro: number | bigint;
   /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
   stockpileRefillMinEntryBps: number | bigint;
+  /** Live randomness reveal path for closed rounds. */
+  roundRandomnessMode: RoundRandomnessModeArgs;
+  /** Number of slots after close used as the blockhash reveal sample delay. */
+  blockhashRevealDelaySlots: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -241,6 +255,8 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["roundStartDelaySlots", getU64Encoder()],
       ["arciumRevealCuPriceMicro", getU64Encoder()],
       ["stockpileRefillMinEntryBps", getU64Encoder()],
+      ["roundRandomnessMode", getRoundRandomnessModeEncoder()],
+      ["blockhashRevealDelaySlots", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -286,6 +302,8 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["roundStartDelaySlots", getU64Decoder()],
     ["arciumRevealCuPriceMicro", getU64Decoder()],
     ["stockpileRefillMinEntryBps", getU64Decoder()],
+    ["roundRandomnessMode", getRoundRandomnessModeDecoder()],
+    ["blockhashRevealDelaySlots", getU64Decoder()],
   ]);
 }
 
@@ -348,5 +366,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 354;
+  return 363;
 }

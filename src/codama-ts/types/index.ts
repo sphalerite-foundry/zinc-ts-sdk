@@ -25,6 +25,7 @@ export * from "./output";
 export * from "./parameter";
 export * from "./revealRoundRandOutput";
 export * from "./revealStockpileRandOutput";
+export * from "./roundRandomnessMode";
 export * from "./roundStatus";
 export * from "./roundWildcatEntryRange";
 export * from "./settleWinningStakesBatchOutput";

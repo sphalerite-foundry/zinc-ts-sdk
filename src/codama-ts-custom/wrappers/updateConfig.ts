@@ -1,5 +1,8 @@
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { getUpdateConfigInstructionAsync } from "../../codama-ts";
+import {
+  getUpdateConfigInstructionAsync,
+  type RoundRandomnessModeArgs,
+} from "../../codama-ts";
 import { getBoardAddress, getConfigAddress } from "../pda";
 import {
   toTransactionInstruction,
@@ -42,6 +45,8 @@ export type BuildUpdateConfigInstruction = {
   stakingRewardVestingSlots?: number | bigint;
   arciumRevealCuPriceMicro?: number | bigint;
   stockpileRefillMinEntryBps?: number | bigint;
+  roundRandomnessMode?: RoundRandomnessModeArgs;
+  blockhashRevealDelaySlots?: number | bigint;
 };
 
 export async function buildUpdateConfigInstruction({
@@ -79,6 +84,8 @@ export async function buildUpdateConfigInstruction({
   stakingRewardVestingSlots,
   arciumRevealCuPriceMicro,
   stockpileRefillMinEntryBps,
+  roundRandomnessMode,
+  blockhashRevealDelaySlots,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -124,6 +131,8 @@ export async function buildUpdateConfigInstruction({
     stakingRewardVestingSlots: toNullable(stakingRewardVestingSlots),
     arciumRevealCuPriceMicro: toNullable(arciumRevealCuPriceMicro),
     stockpileRefillMinEntryBps: toNullable(stockpileRefillMinEntryBps),
+    roundRandomnessMode: toNullable(roundRandomnessMode),
+    blockhashRevealDelaySlots: toNullable(blockhashRevealDelaySlots),
     crank: crank ? toAddress(crank) : null,
   });
 

@@ -145,6 +145,7 @@ import {
   getQueueSettleWinningStakesBatchInstructionAsync,
   getQueueStockpileRevealInstructionAsync,
   getReloadAutoMinerSessionSolInstructionAsync,
+  getRevealRoundBlockhashInstructionAsync,
   getRevealRoundRandCallbackInstructionAsync,
   getRevealStockpileRandCallbackInstruction,
   getSelectWildcatWinnerInstructionAsync,
@@ -204,6 +205,7 @@ import {
   parseQueueSettleWinningStakesBatchInstruction,
   parseQueueStockpileRevealInstruction,
   parseReloadAutoMinerSessionSolInstruction,
+  parseRevealRoundBlockhashInstruction,
   parseRevealRoundRandCallbackInstruction,
   parseRevealStockpileRandCallbackInstruction,
   parseSelectWildcatWinnerInstruction,
@@ -303,6 +305,7 @@ import {
   type ParsedQueueSettleWinningStakesBatchInstruction,
   type ParsedQueueStockpileRevealInstruction,
   type ParsedReloadAutoMinerSessionSolInstruction,
+  type ParsedRevealRoundBlockhashInstruction,
   type ParsedRevealRoundRandCallbackInstruction,
   type ParsedRevealStockpileRandCallbackInstruction,
   type ParsedSelectWildcatWinnerInstruction,
@@ -322,6 +325,7 @@ import {
   type QueueSettleWinningStakesBatchAsyncInput,
   type QueueStockpileRevealAsyncInput,
   type ReloadAutoMinerSessionSolAsyncInput,
+  type RevealRoundBlockhashAsyncInput,
   type RevealRoundRandCallbackAsyncInput,
   type RevealStockpileRandCallbackInput,
   type SelectWildcatWinnerAsyncInput,
@@ -677,6 +681,7 @@ export enum ZincInstruction {
   QueueSettleWinningStakesBatch,
   QueueStockpileReveal,
   ReloadAutoMinerSessionSol,
+  RevealRoundBlockhash,
   RevealRoundRandCallback,
   RevealStockpileRandCallback,
   SelectWildcatWinner,
@@ -1206,6 +1211,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([204, 143, 123, 117, 220, 68, 251, 118]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.RevealRoundBlockhash;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([49, 83, 220, 33, 54, 155, 235, 114]),
       ),
       0,
@@ -1492,6 +1508,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.ReloadAutoMinerSessionSol;
     } & ParsedReloadAutoMinerSessionSolInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.RevealRoundBlockhash;
+    } & ParsedRevealRoundBlockhashInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.RevealRoundRandCallback;
     } & ParsedRevealRoundRandCallbackInstruction<TProgram>)
@@ -1859,6 +1878,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseReloadAutoMinerSessionSolInstruction(instruction),
       };
     }
+    case ZincInstruction.RevealRoundBlockhash: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.RevealRoundBlockhash,
+        ...parseRevealRoundBlockhashInstruction(instruction),
+      };
+    }
     case ZincInstruction.RevealRoundRandCallback: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2197,6 +2223,10 @@ export type ZincPluginInstructions = {
   reloadAutoMinerSessionSol: (
     input: ReloadAutoMinerSessionSolAsyncInput,
   ) => ReturnType<typeof getReloadAutoMinerSessionSolInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  revealRoundBlockhash: (
+    input: RevealRoundBlockhashAsyncInput,
+  ) => ReturnType<typeof getRevealRoundBlockhashInstructionAsync> &
     SelfPlanAndSendFunctions;
   revealRoundRandCallback: (
     input: RevealRoundRandCallbackAsyncInput,
@@ -2578,6 +2608,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getReloadAutoMinerSessionSolInstructionAsync(input),
+            ),
+          revealRoundBlockhash: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getRevealRoundBlockhashInstructionAsync(input),
             ),
           revealRoundRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
