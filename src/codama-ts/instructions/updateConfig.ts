@@ -47,6 +47,12 @@ import {
 } from "@solana/program-client-core";
 import { findBoardPda, findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
+import {
+  getRoundRandomnessModeDecoder,
+  getRoundRandomnessModeEncoder,
+  type RoundRandomnessMode,
+  type RoundRandomnessModeArgs,
+} from "../types";
 
 export const UPDATE_CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
   29, 158, 252, 191, 10, 83, 219, 99,
@@ -150,6 +156,10 @@ export type UpdateConfigInstructionData = {
   arciumRevealCuPriceMicro: Option<bigint>;
   /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
   stockpileRefillMinEntryBps: Option<bigint>;
+  /** Live randomness reveal path for closed rounds. */
+  roundRandomnessMode: Option<RoundRandomnessMode>;
+  /** Number of slots after close used as the blockhash reveal sample delay. */
+  blockhashRevealDelaySlots: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -219,6 +229,10 @@ export type UpdateConfigInstructionDataArgs = {
   arciumRevealCuPriceMicro: OptionOrNullable<number | bigint>;
   /** Minimum refill size as a share of current stockpile entry bricks, in basis points. */
   stockpileRefillMinEntryBps: OptionOrNullable<number | bigint>;
+  /** Live randomness reveal path for closed rounds. */
+  roundRandomnessMode: OptionOrNullable<RoundRandomnessModeArgs>;
+  /** Number of slots after close used as the blockhash reveal sample delay. */
+  blockhashRevealDelaySlots: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -264,6 +278,11 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["stakingRewardVestingSlots", getOptionEncoder(getU64Encoder())],
       ["arciumRevealCuPriceMicro", getOptionEncoder(getU64Encoder())],
       ["stockpileRefillMinEntryBps", getOptionEncoder(getU64Encoder())],
+      [
+        "roundRandomnessMode",
+        getOptionEncoder(getRoundRandomnessModeEncoder()),
+      ],
+      ["blockhashRevealDelaySlots", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -311,6 +330,8 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["stakingRewardVestingSlots", getOptionDecoder(getU64Decoder())],
     ["arciumRevealCuPriceMicro", getOptionDecoder(getU64Decoder())],
     ["stockpileRefillMinEntryBps", getOptionDecoder(getU64Decoder())],
+    ["roundRandomnessMode", getOptionDecoder(getRoundRandomnessModeDecoder())],
+    ["blockhashRevealDelaySlots", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -366,6 +387,8 @@ export type UpdateConfigAsyncInput<
   stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
+  roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
+  blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -470,6 +493,8 @@ export type UpdateConfigInput<
   stakingRewardVestingSlots: UpdateConfigInstructionDataArgs["stakingRewardVestingSlots"];
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
+  roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
+  blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
 };
 
 export function getUpdateConfigInstruction<

@@ -123,6 +123,10 @@ export type Round = {
   wildcatSelectionComplete: boolean;
   /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
   wildcatClaimed: boolean;
+  /** Accumulator mixed from every deploy's public and encrypted trace. */
+  blockhashEntropyAccumulator: ReadonlyUint8Array;
+  /** Number of deploy entropy contributions mixed into the accumulator. */
+  blockhashEntropyContributionCount: bigint;
   /** Weighted ticket ranges for settled winners eligible for Wildcat. */
   wildcatEntries: Array<RoundWildcatEntryRange>;
 };
@@ -184,6 +188,10 @@ export type RoundArgs = {
   wildcatSelectionComplete: boolean;
   /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
   wildcatClaimed: boolean;
+  /** Accumulator mixed from every deploy's public and encrypted trace. */
+  blockhashEntropyAccumulator: ReadonlyUint8Array;
+  /** Number of deploy entropy contributions mixed into the accumulator. */
+  blockhashEntropyContributionCount: number | bigint;
   /** Weighted ticket ranges for settled winners eligible for Wildcat. */
   wildcatEntries: Array<RoundWildcatEntryRangeArgs>;
 };
@@ -221,6 +229,8 @@ export function getRoundEncoder(): Encoder<RoundArgs> {
       ["wildcatWinnerPlayer", getOptionEncoder(getAddressEncoder())],
       ["wildcatSelectionComplete", getBooleanEncoder()],
       ["wildcatClaimed", getBooleanEncoder()],
+      ["blockhashEntropyAccumulator", fixEncoderSize(getBytesEncoder(), 32)],
+      ["blockhashEntropyContributionCount", getU64Encoder()],
       ["wildcatEntries", getArrayEncoder(getRoundWildcatEntryRangeEncoder())],
     ]),
     (value) => ({ ...value, discriminator: ROUND_DISCRIMINATOR }),
@@ -259,6 +269,8 @@ export function getRoundDecoder(): Decoder<Round> {
     ["wildcatWinnerPlayer", getOptionDecoder(getAddressDecoder())],
     ["wildcatSelectionComplete", getBooleanDecoder()],
     ["wildcatClaimed", getBooleanDecoder()],
+    ["blockhashEntropyAccumulator", fixDecoderSize(getBytesDecoder(), 32)],
+    ["blockhashEntropyContributionCount", getU64Decoder()],
     ["wildcatEntries", getArrayDecoder(getRoundWildcatEntryRangeDecoder())],
   ]);
 }
