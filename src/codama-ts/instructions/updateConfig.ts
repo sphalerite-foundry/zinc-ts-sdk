@@ -142,7 +142,7 @@ export type UpdateConfigInstructionData = {
   bonanzaHitDivisor: Option<bigint>;
   /** ZINC fee skim for round winner claims, in basis points. */
   roundClaimZincFeeBps: Option<bigint>;
-  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  /** Legacy stockpile ZINC fee kept for serialized config compatibility. */
   stockpileEntryMinZincFee: Option<bigint>;
   /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
   stockpileEntryPotFeeBps: Option<bigint>;
@@ -160,6 +160,8 @@ export type UpdateConfigInstructionData = {
   roundRandomnessMode: Option<RoundRandomnessMode>;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: Option<bigint>;
+  /** Stockpile bricks required per whole ZINC, in `x10k` units. */
+  stockpileBricksPerZincX10k: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -215,7 +217,7 @@ export type UpdateConfigInstructionDataArgs = {
   bonanzaHitDivisor: OptionOrNullable<number | bigint>;
   /** ZINC fee skim for round winner claims, in basis points. */
   roundClaimZincFeeBps: OptionOrNullable<number | bigint>;
-  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  /** Legacy stockpile ZINC fee kept for serialized config compatibility. */
   stockpileEntryMinZincFee: OptionOrNullable<number | bigint>;
   /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
   stockpileEntryPotFeeBps: OptionOrNullable<number | bigint>;
@@ -233,6 +235,8 @@ export type UpdateConfigInstructionDataArgs = {
   roundRandomnessMode: OptionOrNullable<RoundRandomnessModeArgs>;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: OptionOrNullable<number | bigint>;
+  /** Stockpile bricks required per whole ZINC, in `x10k` units. */
+  stockpileBricksPerZincX10k: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -283,6 +287,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
         getOptionEncoder(getRoundRandomnessModeEncoder()),
       ],
       ["blockhashRevealDelaySlots", getOptionEncoder(getU64Encoder())],
+      ["stockpileBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -332,6 +337,7 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["stockpileRefillMinEntryBps", getOptionDecoder(getU64Decoder())],
     ["roundRandomnessMode", getOptionDecoder(getRoundRandomnessModeDecoder())],
     ["blockhashRevealDelaySlots", getOptionDecoder(getU64Decoder())],
+    ["stockpileBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -389,6 +395,7 @@ export type UpdateConfigAsyncInput<
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
+  stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -495,6 +502,7 @@ export type UpdateConfigInput<
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
+  stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
 };
 
 export function getUpdateConfigInstruction<
