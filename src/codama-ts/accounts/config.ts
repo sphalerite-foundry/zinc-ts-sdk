@@ -17,6 +17,8 @@ import {
   fixEncoderSize,
   getAddressDecoder,
   getAddressEncoder,
+  getArrayDecoder,
+  getArrayEncoder,
   getBooleanDecoder,
   getBooleanEncoder,
   getBytesDecoder,
@@ -135,6 +137,10 @@ export type Config = {
   blockhashRevealDelaySlots: bigint;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
   stockpileBricksPerZincX10k: bigint;
+  /** Configured active Stockpile winner ranks. */
+  stockpileWinnerCount: number;
+  /** Ranked Stockpile payout shares in basis points. */
+  stockpileWinnerShareBps: Array<bigint>;
 };
 
 export type ConfigArgs = {
@@ -216,6 +222,10 @@ export type ConfigArgs = {
   blockhashRevealDelaySlots: number | bigint;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
   stockpileBricksPerZincX10k: number | bigint;
+  /** Configured active Stockpile winner ranks. */
+  stockpileWinnerCount: number;
+  /** Ranked Stockpile payout shares in basis points. */
+  stockpileWinnerShareBps: Array<number | bigint>;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -262,6 +272,11 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["roundRandomnessMode", getRoundRandomnessModeEncoder()],
       ["blockhashRevealDelaySlots", getU64Encoder()],
       ["stockpileBricksPerZincX10k", getU64Encoder()],
+      ["stockpileWinnerCount", getU8Encoder()],
+      [
+        "stockpileWinnerShareBps",
+        getArrayEncoder(getU64Encoder(), { size: 5 }),
+      ],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -310,6 +325,8 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["roundRandomnessMode", getRoundRandomnessModeDecoder()],
     ["blockhashRevealDelaySlots", getU64Decoder()],
     ["stockpileBricksPerZincX10k", getU64Decoder()],
+    ["stockpileWinnerCount", getU8Decoder()],
+    ["stockpileWinnerShareBps", getArrayDecoder(getU64Decoder(), { size: 5 })],
   ]);
 }
 
@@ -372,5 +389,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 371;
+  return 412;
 }

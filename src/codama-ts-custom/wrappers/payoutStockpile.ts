@@ -4,6 +4,7 @@ import {
   fetchTreasuryAccount,
   getStockpileAddress,
   getStockpileExtrasAddress,
+  getStockpileWinnersAddress,
   getTreasuryAddress,
 } from "../pda";
 import {
@@ -16,6 +17,7 @@ export type BuildPayoutStockpileInstruction = {
   connection: Connection;
   signer: PublicKey;
   stockpileId: number | bigint;
+  rank?: number;
   winner: PublicKey;
 };
 
@@ -23,9 +25,11 @@ export async function buildPayoutStockpileInstruction({
   connection,
   signer,
   stockpileId,
+  rank = 0,
   winner,
 }: BuildPayoutStockpileInstruction): Promise<TransactionInstruction> {
   const stockpile = getStockpileAddress(stockpileId)[0];
+  const stockpileWinners = getStockpileWinnersAddress(stockpileId)[0];
   const treasury = getTreasuryAddress()[0];
   const treasuryAccount = await fetchTreasuryAccount(connection, treasury);
   const zincMint = new PublicKey(treasuryAccount.data.zincMint);
@@ -33,6 +37,7 @@ export async function buildPayoutStockpileInstruction({
   const instruction = await getPayoutStockpileInstructionAsync({
     signer: toTransactionSigner(signer),
     stockpile: toAddress(stockpile),
+    stockpileWinners: toAddress(stockpileWinners),
     stockpileExtras: toAddress(getStockpileExtrasAddress()[0]),
     zincMint: toAddress(zincMint),
     stockpileTokenAccount: toAddress(
@@ -40,6 +45,7 @@ export async function buildPayoutStockpileInstruction({
     ),
     winner: toAddress(winner),
     winnerZincTokenAccount: toAddress(winnerZincTokenAccount),
+    rank,
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],

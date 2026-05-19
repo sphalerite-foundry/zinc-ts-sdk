@@ -33,6 +33,7 @@ import {
   getAccountMetaFactory,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
+import { findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 import {
   getSignedComputationOutputsRevealStockpileRandOutputDecoder,
@@ -60,7 +61,9 @@ export type RevealStockpileRandCallbackInstruction<
   TAccountClusterAccount extends string | AccountMeta<string> = string,
   TAccountInstructionsSysvar extends string | AccountMeta<string> =
     "Sysvar1nstructions1111111111111111111111111",
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
+  TAccountStockpileWinners extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -84,9 +87,15 @@ export type RevealStockpileRandCallbackInstruction<
       TAccountInstructionsSysvar extends string
         ? ReadonlyAccount<TAccountInstructionsSysvar>
         : TAccountInstructionsSysvar,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountStockpile extends string
         ? WritableAccount<TAccountStockpile>
         : TAccountStockpile,
+      TAccountStockpileWinners extends string
+        ? WritableAccount<TAccountStockpileWinners>
+        : TAccountStockpileWinners,
       ...TRemainingAccounts,
     ]
   >;
@@ -130,14 +139,16 @@ export function getRevealStockpileRandCallbackInstructionDataCodec(): Codec<
   );
 }
 
-export type RevealStockpileRandCallbackInput<
+export type RevealStockpileRandCallbackAsyncInput<
   TAccountArciumProgram extends string = string,
   TAccountCompDefAccount extends string = string,
   TAccountMxeAccount extends string = string,
   TAccountComputationAccount extends string = string,
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
+  TAccountConfig extends string = string,
   TAccountStockpile extends string = string,
+  TAccountStockpileWinners extends string = string,
 > = {
   arciumProgram?: Address<TAccountArciumProgram>;
   /** Computation definition used to verify the callback output. */
@@ -148,40 +159,52 @@ export type RevealStockpileRandCallbackInput<
   /** Arcium cluster state used to verify the signed output. */
   clusterAccount: Address<TAccountClusterAccount>;
   instructionsSysvar?: Address<TAccountInstructionsSysvar>;
+  /** Global config containing ranked Stockpile payout settings. */
+  config?: Address<TAccountConfig>;
   /** Stockpile being settled after Arcium reveals its random value. */
   stockpile: Address<TAccountStockpile>;
+  /** Ranked winner storage being populated from the revealed random value. */
+  stockpileWinners: Address<TAccountStockpileWinners>;
   output: RevealStockpileRandCallbackInstructionDataArgs["output"];
 };
 
-export function getRevealStockpileRandCallbackInstruction<
+export async function getRevealStockpileRandCallbackInstructionAsync<
   TAccountArciumProgram extends string,
   TAccountCompDefAccount extends string,
   TAccountMxeAccount extends string,
   TAccountComputationAccount extends string,
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
+  TAccountConfig extends string,
   TAccountStockpile extends string,
+  TAccountStockpileWinners extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: RevealStockpileRandCallbackInput<
+  input: RevealStockpileRandCallbackAsyncInput<
     TAccountArciumProgram,
     TAccountCompDefAccount,
     TAccountMxeAccount,
     TAccountComputationAccount,
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
-    TAccountStockpile
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileWinners
   >,
   config?: { programAddress?: TProgramAddress },
-): RevealStockpileRandCallbackInstruction<
-  TProgramAddress,
-  TAccountArciumProgram,
-  TAccountCompDefAccount,
-  TAccountMxeAccount,
-  TAccountComputationAccount,
-  TAccountClusterAccount,
-  TAccountInstructionsSysvar,
-  TAccountStockpile
+): Promise<
+  RevealStockpileRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileWinners
+  >
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
@@ -200,7 +223,153 @@ export function getRevealStockpileRandCallbackInstruction<
       value: input.instructionsSysvar ?? null,
       isWritable: false,
     },
+    config: { value: input.config ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
+      isWritable: true,
+    },
+  };
+  const accounts = originalAccounts as Record<
+    keyof typeof originalAccounts,
+    ResolvedInstructionAccount
+  >;
+
+  // Original args.
+  const args = { ...input };
+
+  // Resolve default values.
+  if (!accounts.arciumProgram.value) {
+    accounts.arciumProgram.value =
+      "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ" as Address<"Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ">;
+  }
+  if (!accounts.instructionsSysvar.value) {
+    accounts.instructionsSysvar.value =
+      "Sysvar1nstructions1111111111111111111111111" as Address<"Sysvar1nstructions1111111111111111111111111">;
+  }
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
+
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  return Object.freeze({
+    accounts: [
+      getAccountMeta("arciumProgram", accounts.arciumProgram),
+      getAccountMeta("compDefAccount", accounts.compDefAccount),
+      getAccountMeta("mxeAccount", accounts.mxeAccount),
+      getAccountMeta("computationAccount", accounts.computationAccount),
+      getAccountMeta("clusterAccount", accounts.clusterAccount),
+      getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
+      getAccountMeta("config", accounts.config),
+      getAccountMeta("stockpile", accounts.stockpile),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
+    ],
+    data: getRevealStockpileRandCallbackInstructionDataEncoder().encode(
+      args as RevealStockpileRandCallbackInstructionDataArgs,
+    ),
+    programAddress,
+  } as RevealStockpileRandCallbackInstruction<
+    TProgramAddress,
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileWinners
+  >);
+}
+
+export type RevealStockpileRandCallbackInput<
+  TAccountArciumProgram extends string = string,
+  TAccountCompDefAccount extends string = string,
+  TAccountMxeAccount extends string = string,
+  TAccountComputationAccount extends string = string,
+  TAccountClusterAccount extends string = string,
+  TAccountInstructionsSysvar extends string = string,
+  TAccountConfig extends string = string,
+  TAccountStockpile extends string = string,
+  TAccountStockpileWinners extends string = string,
+> = {
+  arciumProgram?: Address<TAccountArciumProgram>;
+  /** Computation definition used to verify the callback output. */
+  compDefAccount: Address<TAccountCompDefAccount>;
+  /** MXE account backing the encrypted computations for this program. */
+  mxeAccount: Address<TAccountMxeAccount>;
+  computationAccount: Address<TAccountComputationAccount>;
+  /** Arcium cluster state used to verify the signed output. */
+  clusterAccount: Address<TAccountClusterAccount>;
+  instructionsSysvar?: Address<TAccountInstructionsSysvar>;
+  /** Global config containing ranked Stockpile payout settings. */
+  config: Address<TAccountConfig>;
+  /** Stockpile being settled after Arcium reveals its random value. */
+  stockpile: Address<TAccountStockpile>;
+  /** Ranked winner storage being populated from the revealed random value. */
+  stockpileWinners: Address<TAccountStockpileWinners>;
+  output: RevealStockpileRandCallbackInstructionDataArgs["output"];
+};
+
+export function getRevealStockpileRandCallbackInstruction<
+  TAccountArciumProgram extends string,
+  TAccountCompDefAccount extends string,
+  TAccountMxeAccount extends string,
+  TAccountComputationAccount extends string,
+  TAccountClusterAccount extends string,
+  TAccountInstructionsSysvar extends string,
+  TAccountConfig extends string,
+  TAccountStockpile extends string,
+  TAccountStockpileWinners extends string,
+  TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
+>(
+  input: RevealStockpileRandCallbackInput<
+    TAccountArciumProgram,
+    TAccountCompDefAccount,
+    TAccountMxeAccount,
+    TAccountComputationAccount,
+    TAccountClusterAccount,
+    TAccountInstructionsSysvar,
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileWinners
+  >,
+  config?: { programAddress?: TProgramAddress },
+): RevealStockpileRandCallbackInstruction<
+  TProgramAddress,
+  TAccountArciumProgram,
+  TAccountCompDefAccount,
+  TAccountMxeAccount,
+  TAccountComputationAccount,
+  TAccountClusterAccount,
+  TAccountInstructionsSysvar,
+  TAccountConfig,
+  TAccountStockpile,
+  TAccountStockpileWinners
+> {
+  // Program address.
+  const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
+
+  // Original accounts.
+  const originalAccounts = {
+    arciumProgram: { value: input.arciumProgram ?? null, isWritable: false },
+    compDefAccount: { value: input.compDefAccount ?? null, isWritable: false },
+    mxeAccount: { value: input.mxeAccount ?? null, isWritable: false },
+    computationAccount: {
+      value: input.computationAccount ?? null,
+      isWritable: false,
+    },
+    clusterAccount: { value: input.clusterAccount ?? null, isWritable: false },
+    instructionsSysvar: {
+      value: input.instructionsSysvar ?? null,
+      isWritable: false,
+    },
+    config: { value: input.config ?? null, isWritable: false },
+    stockpile: { value: input.stockpile ?? null, isWritable: true },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
+      isWritable: true,
+    },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -229,7 +398,9 @@ export function getRevealStockpileRandCallbackInstruction<
       getAccountMeta("computationAccount", accounts.computationAccount),
       getAccountMeta("clusterAccount", accounts.clusterAccount),
       getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("stockpile", accounts.stockpile),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
     ],
     data: getRevealStockpileRandCallbackInstructionDataEncoder().encode(
       args as RevealStockpileRandCallbackInstructionDataArgs,
@@ -243,7 +414,9 @@ export function getRevealStockpileRandCallbackInstruction<
     TAccountComputationAccount,
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
-    TAccountStockpile
+    TAccountConfig,
+    TAccountStockpile,
+    TAccountStockpileWinners
   >);
 }
 
@@ -262,8 +435,12 @@ export type ParsedRevealStockpileRandCallbackInstruction<
     /** Arcium cluster state used to verify the signed output. */
     clusterAccount: TAccountMetas[4];
     instructionsSysvar: TAccountMetas[5];
+    /** Global config containing ranked Stockpile payout settings. */
+    config: TAccountMetas[6];
     /** Stockpile being settled after Arcium reveals its random value. */
-    stockpile: TAccountMetas[6];
+    stockpile: TAccountMetas[7];
+    /** Ranked winner storage being populated from the revealed random value. */
+    stockpileWinners: TAccountMetas[8];
   };
   data: RevealStockpileRandCallbackInstructionData;
 };
@@ -276,12 +453,12 @@ export function parseRevealStockpileRandCallbackInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedRevealStockpileRandCallbackInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 7) {
+  if (instruction.accounts.length < 9) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 7,
+        expectedAccountMetas: 9,
       },
     );
   }
@@ -300,7 +477,9 @@ export function parseRevealStockpileRandCallbackInstruction<
       computationAccount: getNextAccount(),
       clusterAccount: getNextAccount(),
       instructionsSysvar: getNextAccount(),
+      config: getNextAccount(),
       stockpile: getNextAccount(),
+      stockpileWinners: getNextAccount(),
     },
     data: getRevealStockpileRandCallbackInstructionDataDecoder().decode(
       instruction.data,

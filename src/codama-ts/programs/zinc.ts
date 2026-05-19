@@ -54,6 +54,7 @@ import {
   getStockpileExtrasCodec,
   getStockpileSecretCodec,
   getStockpileSolVaultCodec,
+  getStockpileWinnersCodec,
   getTreasuryCodec,
   type ArciumSignerAccount,
   type ArciumSignerAccountArgs,
@@ -95,6 +96,8 @@ import {
   type StockpileSecretArgs,
   type StockpileSolVault,
   type StockpileSolVaultArgs,
+  type StockpileWinners,
+  type StockpileWinnersArgs,
   type Treasury,
   type TreasuryArgs,
 } from "../accounts";
@@ -147,7 +150,7 @@ import {
   getReloadAutoMinerSessionSolInstructionAsync,
   getRevealRoundBlockhashInstructionAsync,
   getRevealRoundRandCallbackInstructionAsync,
-  getRevealStockpileRandCallbackInstruction,
+  getRevealStockpileRandCallbackInstructionAsync,
   getSelectWildcatWinnerInstructionAsync,
   getSettleWinningStakesBatchCallbackInstructionAsync,
   getStakeInstructionAsync,
@@ -327,7 +330,7 @@ import {
   type ReloadAutoMinerSessionSolAsyncInput,
   type RevealRoundBlockhashAsyncInput,
   type RevealRoundRandCallbackAsyncInput,
-  type RevealStockpileRandCallbackInput,
+  type RevealStockpileRandCallbackAsyncInput,
   type SelectWildcatWinnerAsyncInput,
   type SettleWinningStakesBatchCallbackAsyncInput,
   type StakeAsyncInput,
@@ -390,6 +393,7 @@ export enum ZincAccount {
   StockpileExtras,
   StockpileSecret,
   StockpileSolVault,
+  StockpileWinners,
   Treasury,
 }
 
@@ -616,6 +620,17 @@ export function identifyZincAccount(
     )
   ) {
     return ZincAccount.StockpileSolVault;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([62, 132, 115, 85, 255, 124, 47, 68]),
+      ),
+      0,
+    )
+  ) {
+    return ZincAccount.StockpileWinners;
   }
   if (
     containsBytes(
@@ -2036,6 +2051,8 @@ export type ZincPluginAccounts = {
     SelfFetchFunctions<StockpileSecretArgs, StockpileSecret>;
   stockpileSolVault: ReturnType<typeof getStockpileSolVaultCodec> &
     SelfFetchFunctions<StockpileSolVaultArgs, StockpileSolVault>;
+  stockpileWinners: ReturnType<typeof getStockpileWinnersCodec> &
+    SelfFetchFunctions<StockpileWinnersArgs, StockpileWinners>;
   treasury: ReturnType<typeof getTreasuryCodec> &
     SelfFetchFunctions<TreasuryArgs, Treasury>;
 };
@@ -2233,8 +2250,8 @@ export type ZincPluginInstructions = {
   ) => ReturnType<typeof getRevealRoundRandCallbackInstructionAsync> &
     SelfPlanAndSendFunctions;
   revealStockpileRandCallback: (
-    input: RevealStockpileRandCallbackInput,
-  ) => ReturnType<typeof getRevealStockpileRandCallbackInstruction> &
+    input: RevealStockpileRandCallbackAsyncInput,
+  ) => ReturnType<typeof getRevealStockpileRandCallbackInstructionAsync> &
     SelfPlanAndSendFunctions;
   selectWildcatWinner: (
     input: SelectWildcatWinnerAsyncInput,
@@ -2360,6 +2377,10 @@ export function zincProgram() {
           stockpileSolVault: addSelfFetchFunctions(
             client,
             getStockpileSolVaultCodec(),
+          ),
+          stockpileWinners: addSelfFetchFunctions(
+            client,
+            getStockpileWinnersCodec(),
           ),
           treasury: addSelfFetchFunctions(client, getTreasuryCodec()),
         },
@@ -2622,7 +2643,7 @@ export function zincProgram() {
           revealStockpileRandCallback: (input) =>
             addSelfPlanAndSendFunctions(
               client,
-              getRevealStockpileRandCallbackInstruction(input),
+              getRevealStockpileRandCallbackInstructionAsync(input),
             ),
           selectWildcatWinner: (input) =>
             addSelfPlanAndSendFunctions(

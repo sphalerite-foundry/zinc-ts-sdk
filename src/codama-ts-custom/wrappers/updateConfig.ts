@@ -48,6 +48,8 @@ export type BuildUpdateConfigInstruction = {
   stockpileRefillMinEntryBps?: number | bigint;
   roundRandomnessMode?: RoundRandomnessModeArgs;
   blockhashRevealDelaySlots?: number | bigint;
+  stockpileWinnerCount?: number;
+  stockpileWinnerShareBps?: (number | bigint)[];
 };
 
 export async function buildUpdateConfigInstruction({
@@ -88,6 +90,8 @@ export async function buildUpdateConfigInstruction({
   stockpileRefillMinEntryBps,
   roundRandomnessMode,
   blockhashRevealDelaySlots,
+  stockpileWinnerCount,
+  stockpileWinnerShareBps,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -136,6 +140,8 @@ export async function buildUpdateConfigInstruction({
     stockpileRefillMinEntryBps: toNullable(stockpileRefillMinEntryBps),
     roundRandomnessMode: toNullable(roundRandomnessMode),
     blockhashRevealDelaySlots: toNullable(blockhashRevealDelaySlots),
+    stockpileWinnerCount: toNullable(stockpileWinnerCount),
+    stockpileWinnerShareBps: toNullable(stockpileWinnerShareBps),
     crank: crank ? toAddress(crank) : null,
   });
 

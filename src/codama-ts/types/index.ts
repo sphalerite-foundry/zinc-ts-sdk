@@ -40,6 +40,7 @@ export * from "./signedComputationOutputsSettleWinningStakesBatchOutput";
 export * from "./stockpileEntry";
 export * from "./stockpileExtra";
 export * from "./stockpileStatus";
+export * from "./stockpileWinnerRank";
 export * from "./timestamp";
 export * from "./utilityPubkeys";
 export * from "./zincMintMetadataArgs";
