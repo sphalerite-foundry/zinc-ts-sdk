@@ -310,46 +310,48 @@ export const ZINC_ERROR__INVALID_ROUND_RANDOMNESS_MODE = 0x1801; // 6145
 export const ZINC_ERROR__BLOCKHASH_REVEAL_NOT_READY = 0x1802; // 6146
 /** BlockhashSampleMissing: Blockhash reveal sample slot is missing */
 export const ZINC_ERROR__BLOCKHASH_SAMPLE_MISSING = 0x1803; // 6147
+/** EntropyBlockhashMissing: Entropy blockhash is missing */
+export const ZINC_ERROR__ENTROPY_BLOCKHASH_MISSING = 0x1804; // 6148
 /** ClosePdaCannotCloseConfig: Config must be closed with close_config */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x1804; // 6148
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x1805; // 6149
 /** WrongTreasuryTokenAccount: Wrong treasury token account */
-export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x1805; // 6149
+export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x1806; // 6150
 /** NotAdminOrCrank: Not Admin or Crank */
-export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x1806; // 6150
+export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x1807; // 6151
 /** RoundCleanupIncomplete: Round cleanup is incomplete */
-export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x1807; // 6151
+export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x1808; // 6152
 /** RoundCleanupComplete: Round cleanup is already complete */
-export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x1808; // 6152
+export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x1809; // 6153
 /** BoardRoundStillReferenced: Round is still referenced by the board */
-export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x1809; // 6153
+export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x180a; // 6154
 /** MinerClaimNotTerminal: Miner claim state is not terminal */
-export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x180a; // 6154
+export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x180b; // 6155
 /** OutstandingWinnerClaims: Round still has outstanding winner claims */
-export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x180b; // 6155
+export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x180c; // 6156
 /** WrongRoundSecret: Wrong round secret */
-export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x180c; // 6156
+export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x180d; // 6157
 /** WildcatSelectionNotReady: Wildcat winner selection is not ready */
-export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x180d; // 6157
+export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x180e; // 6158
 /** WildcatSelectionComplete: Wildcat winner selection is already complete */
-export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x180e; // 6158
+export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x180f; // 6159
 /** WildcatWinnerMissing: Wildcat winner is missing */
-export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x180f; // 6159
+export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x1810; // 6160
 /** WildcatClaimNotReady: Wildcat ZINC claim is not ready */
-export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1810; // 6160
+export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1811; // 6161
 /** WildcatAlreadyClaimed: Wildcat ZINC has already been claimed */
-export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1811; // 6161
+export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1812; // 6162
 /** WildcatClaimIncomplete: Wildcat ZINC claim is incomplete */
-export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1812; // 6162
+export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1813; // 6163
 /** WildcatEntryCapacityExceeded: Wildcat entry capacity is exhausted */
-export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x1813; // 6163
+export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x1814; // 6164
 /** InvalidWildcatWinnerZincSharePpm: Wildcat winner ZINC share exceeds one million ppm */
-export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x1814; // 6164
+export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x1815; // 6165
 /** ClosePdaCannotCloseBoard: Board cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x1815; // 6165
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x1816; // 6166
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x1816; // 6166
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x1817; // 6167
 /** RoundNotNextSequential: Ready round is not the next sequential round */
-export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x1817; // 6167
+export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x1818; // 6168
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -382,6 +384,7 @@ export type ZincError =
   | typeof ZINC_ERROR__CURRENT_ROUND_STILL_WAITING_FOR_FIRST_DEPLOY
   | typeof ZINC_ERROR__DEPLOY_BELOW_MINIMUM
   | typeof ZINC_ERROR__EMPTY_DEPLOY
+  | typeof ZINC_ERROR__ENTROPY_BLOCKHASH_MISSING
   | typeof ZINC_ERROR__EVENT_SERIALIZATION_FAILED
   | typeof ZINC_ERROR__INSUFFICIENT_AFFILIATE_PROFILE_LAMPORTS
   | typeof ZINC_ERROR__INSUFFICIENT_BUYBACK_SOL
@@ -554,6 +557,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__CURRENT_ROUND_STILL_WAITING_FOR_FIRST_DEPLOY]: `A round is still waiting for its first deploy`,
     [ZINC_ERROR__DEPLOY_BELOW_MINIMUM]: `Deploy amount is below the minimum`,
     [ZINC_ERROR__EMPTY_DEPLOY]: `Empty Deploy`,
+    [ZINC_ERROR__ENTROPY_BLOCKHASH_MISSING]: `Entropy blockhash is missing`,
     [ZINC_ERROR__EVENT_SERIALIZATION_FAILED]: `Event serialization failed`,
     [ZINC_ERROR__INSUFFICIENT_AFFILIATE_PROFILE_LAMPORTS]: `Affiliate profile does not have enough lamports for the claim`,
     [ZINC_ERROR__INSUFFICIENT_BUYBACK_SOL]: `Insufficient buyback SOL`,
