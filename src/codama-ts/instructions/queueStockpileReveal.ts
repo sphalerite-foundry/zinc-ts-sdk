@@ -57,6 +57,7 @@ export type QueueStockpileRevealInstruction<
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountStockpileSecret extends string | AccountMeta<string> = string,
+  TAccountStockpileWinners extends string | AccountMeta<string> = string,
   TAccountSignPdaAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
   TAccountMempoolAccount extends string | AccountMeta<string> = string,
@@ -93,6 +94,9 @@ export type QueueStockpileRevealInstruction<
       TAccountStockpileSecret extends string
         ? ReadonlyAccount<TAccountStockpileSecret>
         : TAccountStockpileSecret,
+      TAccountStockpileWinners extends string
+        ? ReadonlyAccount<TAccountStockpileWinners>
+        : TAccountStockpileWinners,
       TAccountSignPdaAccount extends string
         ? WritableAccount<TAccountSignPdaAccount>
         : TAccountSignPdaAccount,
@@ -175,6 +179,7 @@ export type QueueStockpileRevealAsyncInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountStockpileSecret extends string = string,
+  TAccountStockpileWinners extends string = string,
   TAccountSignPdaAccount extends string = string,
   TAccountMxeAccount extends string = string,
   TAccountMempoolAccount extends string = string,
@@ -197,6 +202,8 @@ export type QueueStockpileRevealAsyncInput<
   stockpile: Address<TAccountStockpile>;
   /** Encrypted random value previously generated for this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
+  /** Ranked winner storage that will be populated by the reveal callback. */
+  stockpileWinners: Address<TAccountStockpileWinners>;
   /** Arcium signer PDA reused across queued computations. */
   signPdaAccount?: Address<TAccountSignPdaAccount>;
   /** MXE account backing the encrypted computations for this program. */
@@ -223,6 +230,7 @@ export async function getQueueStockpileRevealInstructionAsync<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
+  TAccountStockpileWinners extends string,
   TAccountSignPdaAccount extends string,
   TAccountMxeAccount extends string,
   TAccountMempoolAccount extends string,
@@ -242,6 +250,7 @@ export async function getQueueStockpileRevealInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountStockpileSecret,
+    TAccountStockpileWinners,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
     TAccountMempoolAccount,
@@ -263,6 +272,7 @@ export async function getQueueStockpileRevealInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountStockpileSecret,
+    TAccountStockpileWinners,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
     TAccountMempoolAccount,
@@ -287,6 +297,10 @@ export async function getQueueStockpileRevealInstructionAsync<
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: {
       value: input.stockpileSecret ?? null,
+      isWritable: false,
+    },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
       isWritable: false,
     },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
@@ -347,6 +361,7 @@ export async function getQueueStockpileRevealInstructionAsync<
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("signPdaAccount", accounts.signPdaAccount),
       getAccountMeta("mxeAccount", accounts.mxeAccount),
       getAccountMeta("mempoolAccount", accounts.mempoolAccount),
@@ -370,6 +385,7 @@ export async function getQueueStockpileRevealInstructionAsync<
     TAccountBoard,
     TAccountStockpile,
     TAccountStockpileSecret,
+    TAccountStockpileWinners,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
     TAccountMempoolAccount,
@@ -390,6 +406,7 @@ export type QueueStockpileRevealInput<
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
   TAccountStockpileSecret extends string = string,
+  TAccountStockpileWinners extends string = string,
   TAccountSignPdaAccount extends string = string,
   TAccountMxeAccount extends string = string,
   TAccountMempoolAccount extends string = string,
@@ -412,6 +429,8 @@ export type QueueStockpileRevealInput<
   stockpile: Address<TAccountStockpile>;
   /** Encrypted random value previously generated for this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
+  /** Ranked winner storage that will be populated by the reveal callback. */
+  stockpileWinners: Address<TAccountStockpileWinners>;
   /** Arcium signer PDA reused across queued computations. */
   signPdaAccount: Address<TAccountSignPdaAccount>;
   /** MXE account backing the encrypted computations for this program. */
@@ -438,6 +457,7 @@ export function getQueueStockpileRevealInstruction<
   TAccountBoard extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
+  TAccountStockpileWinners extends string,
   TAccountSignPdaAccount extends string,
   TAccountMxeAccount extends string,
   TAccountMempoolAccount extends string,
@@ -457,6 +477,7 @@ export function getQueueStockpileRevealInstruction<
     TAccountBoard,
     TAccountStockpile,
     TAccountStockpileSecret,
+    TAccountStockpileWinners,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
     TAccountMempoolAccount,
@@ -477,6 +498,7 @@ export function getQueueStockpileRevealInstruction<
   TAccountBoard,
   TAccountStockpile,
   TAccountStockpileSecret,
+  TAccountStockpileWinners,
   TAccountSignPdaAccount,
   TAccountMxeAccount,
   TAccountMempoolAccount,
@@ -500,6 +522,10 @@ export function getQueueStockpileRevealInstruction<
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: {
       value: input.stockpileSecret ?? null,
+      isWritable: false,
+    },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
       isWritable: false,
     },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
@@ -551,6 +577,7 @@ export function getQueueStockpileRevealInstruction<
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("signPdaAccount", accounts.signPdaAccount),
       getAccountMeta("mxeAccount", accounts.mxeAccount),
       getAccountMeta("mempoolAccount", accounts.mempoolAccount),
@@ -574,6 +601,7 @@ export function getQueueStockpileRevealInstruction<
     TAccountBoard,
     TAccountStockpile,
     TAccountStockpileSecret,
+    TAccountStockpileWinners,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
     TAccountMempoolAccount,
@@ -604,23 +632,25 @@ export type ParsedQueueStockpileRevealInstruction<
     stockpile: TAccountMetas[3];
     /** Encrypted random value previously generated for this stockpile. */
     stockpileSecret: TAccountMetas[4];
+    /** Ranked winner storage that will be populated by the reveal callback. */
+    stockpileWinners: TAccountMetas[5];
     /** Arcium signer PDA reused across queued computations. */
-    signPdaAccount: TAccountMetas[5];
+    signPdaAccount: TAccountMetas[6];
     /** MXE account backing the encrypted computations for this program. */
-    mxeAccount: TAccountMetas[6];
-    mempoolAccount: TAccountMetas[7];
-    executingPool: TAccountMetas[8];
-    computationAccount: TAccountMetas[9];
+    mxeAccount: TAccountMetas[7];
+    mempoolAccount: TAccountMetas[8];
+    executingPool: TAccountMetas[9];
+    computationAccount: TAccountMetas[10];
     /** Computation definition for revealing a stockpile random value. */
-    compDefAccount: TAccountMetas[10];
+    compDefAccount: TAccountMetas[11];
     /** Arcium cluster state referenced during queueing. */
-    clusterAccount: TAccountMetas[11];
+    clusterAccount: TAccountMetas[12];
     /** Fee pool used by Arcium for computation costs. */
-    poolAccount: TAccountMetas[12];
+    poolAccount: TAccountMetas[13];
     /** Arcium clock used for computation scheduling. */
-    clockAccount: TAccountMetas[13];
-    systemProgram: TAccountMetas[14];
-    arciumProgram: TAccountMetas[15];
+    clockAccount: TAccountMetas[14];
+    systemProgram: TAccountMetas[15];
+    arciumProgram: TAccountMetas[16];
   };
   data: QueueStockpileRevealInstructionData;
 };
@@ -633,12 +663,12 @@ export function parseQueueStockpileRevealInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedQueueStockpileRevealInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 16) {
+  if (instruction.accounts.length < 17) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 16,
+        expectedAccountMetas: 17,
       },
     );
   }
@@ -656,6 +686,7 @@ export function parseQueueStockpileRevealInstruction<
       board: getNextAccount(),
       stockpile: getNextAccount(),
       stockpileSecret: getNextAccount(),
+      stockpileWinners: getNextAccount(),
       signPdaAccount: getNextAccount(),
       mxeAccount: getNextAccount(),
       mempoolAccount: getNextAccount(),

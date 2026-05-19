@@ -12,6 +12,8 @@ import {
   fixEncoderSize,
   getAddressDecoder,
   getAddressEncoder,
+  getArrayDecoder,
+  getArrayEncoder,
   getBooleanDecoder,
   getBooleanEncoder,
   getBytesDecoder,
@@ -22,6 +24,8 @@ import {
   getStructEncoder,
   getU64Decoder,
   getU64Encoder,
+  getU8Decoder,
+  getU8Encoder,
   SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
   SolanaError,
   transformEncoder,
@@ -162,6 +166,10 @@ export type UpdateConfigInstructionData = {
   blockhashRevealDelaySlots: Option<bigint>;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
   stockpileBricksPerZincX10k: Option<bigint>;
+  /** Configured active Stockpile winner ranks. */
+  stockpileWinnerCount: Option<number>;
+  /** Ranked Stockpile payout shares in basis points. */
+  stockpileWinnerShareBps: Option<Array<bigint>>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -237,6 +245,10 @@ export type UpdateConfigInstructionDataArgs = {
   blockhashRevealDelaySlots: OptionOrNullable<number | bigint>;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
   stockpileBricksPerZincX10k: OptionOrNullable<number | bigint>;
+  /** Configured active Stockpile winner ranks. */
+  stockpileWinnerCount: OptionOrNullable<number>;
+  /** Ranked Stockpile payout shares in basis points. */
+  stockpileWinnerShareBps: OptionOrNullable<Array<number | bigint>>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -288,6 +300,11 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ],
       ["blockhashRevealDelaySlots", getOptionEncoder(getU64Encoder())],
       ["stockpileBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
+      ["stockpileWinnerCount", getOptionEncoder(getU8Encoder())],
+      [
+        "stockpileWinnerShareBps",
+        getOptionEncoder(getArrayEncoder(getU64Encoder(), { size: 5 })),
+      ],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -338,6 +355,11 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["roundRandomnessMode", getOptionDecoder(getRoundRandomnessModeDecoder())],
     ["blockhashRevealDelaySlots", getOptionDecoder(getU64Decoder())],
     ["stockpileBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
+    ["stockpileWinnerCount", getOptionDecoder(getU8Decoder())],
+    [
+      "stockpileWinnerShareBps",
+      getOptionDecoder(getArrayDecoder(getU64Decoder(), { size: 5 })),
+    ],
   ]);
 }
 
@@ -396,6 +418,8 @@ export type UpdateConfigAsyncInput<
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
   stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
+  stockpileWinnerCount: UpdateConfigInstructionDataArgs["stockpileWinnerCount"];
+  stockpileWinnerShareBps: UpdateConfigInstructionDataArgs["stockpileWinnerShareBps"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -503,6 +527,8 @@ export type UpdateConfigInput<
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
   stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
+  stockpileWinnerCount: UpdateConfigInstructionDataArgs["stockpileWinnerCount"];
+  stockpileWinnerShareBps: UpdateConfigInstructionDataArgs["stockpileWinnerShareBps"];
 };
 
 export function getUpdateConfigInstruction<

@@ -26,4 +26,5 @@ export * from "./stockpile";
 export * from "./stockpileExtras";
 export * from "./stockpileSecret";
 export * from "./stockpileSolVault";
+export * from "./stockpileWinners";
 export * from "./treasury";

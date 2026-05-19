@@ -14,6 +14,8 @@ import {
   getBytesEncoder,
   getStructDecoder,
   getStructEncoder,
+  getU8Decoder,
+  getU8Encoder,
   SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
   SolanaError,
   transformEncoder,
@@ -59,6 +61,7 @@ export type PayoutStockpileInstruction<
   TAccountSigner extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
+  TAccountStockpileWinners extends string | AccountMeta<string> = string,
   TAccountStockpileExtras extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
@@ -88,6 +91,9 @@ export type PayoutStockpileInstruction<
       TAccountStockpile extends string
         ? WritableAccount<TAccountStockpile>
         : TAccountStockpile,
+      TAccountStockpileWinners extends string
+        ? WritableAccount<TAccountStockpileWinners>
+        : TAccountStockpileWinners,
       TAccountStockpileExtras extends string
         ? ReadonlyAccount<TAccountStockpileExtras>
         : TAccountStockpileExtras,
@@ -127,13 +133,17 @@ export type PayoutStockpileInstruction<
 
 export type PayoutStockpileInstructionData = {
   discriminator: ReadonlyUint8Array;
+  rank: number;
 };
 
-export type PayoutStockpileInstructionDataArgs = {};
+export type PayoutStockpileInstructionDataArgs = { rank: number };
 
 export function getPayoutStockpileInstructionDataEncoder(): FixedSizeEncoder<PayoutStockpileInstructionDataArgs> {
   return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+    getStructEncoder([
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["rank", getU8Encoder()],
+    ]),
     (value) => ({ ...value, discriminator: PAYOUT_STOCKPILE_DISCRIMINATOR }),
   );
 }
@@ -141,6 +151,7 @@ export function getPayoutStockpileInstructionDataEncoder(): FixedSizeEncoder<Pay
 export function getPayoutStockpileInstructionDataDecoder(): FixedSizeDecoder<PayoutStockpileInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["rank", getU8Decoder()],
   ]);
 }
 
@@ -158,6 +169,7 @@ export type PayoutStockpileAsyncInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
   TAccountStockpile extends string = string,
+  TAccountStockpileWinners extends string = string,
   TAccountStockpileExtras extends string = string,
   TAccountBoard extends string = string,
   TAccountTreasury extends string = string,
@@ -176,6 +188,7 @@ export type PayoutStockpileAsyncInput<
   config?: Address<TAccountConfig>;
   /** Revealed stockpile whose payout is being transferred. */
   stockpile: Address<TAccountStockpile>;
+  stockpileWinners: Address<TAccountStockpileWinners>;
   /** Singleton pending-extras account tied to the unresolved stockpile cycle. */
   stockpileExtras?: Address<TAccountStockpileExtras>;
   /** Board used to enforce that only the unresolved stockpile can be paid. */
@@ -196,12 +209,14 @@ export type PayoutStockpileAsyncInput<
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used if the winner ATA needs to be created. */
   systemProgram?: Address<TAccountSystemProgram>;
+  rank: PayoutStockpileInstructionDataArgs["rank"];
 };
 
 export async function getPayoutStockpileInstructionAsync<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountStockpile extends string,
+  TAccountStockpileWinners extends string,
   TAccountStockpileExtras extends string,
   TAccountBoard extends string,
   TAccountTreasury extends string,
@@ -219,6 +234,7 @@ export async function getPayoutStockpileInstructionAsync<
     TAccountSigner,
     TAccountConfig,
     TAccountStockpile,
+    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountBoard,
     TAccountTreasury,
@@ -238,6 +254,7 @@ export async function getPayoutStockpileInstructionAsync<
     TAccountSigner,
     TAccountConfig,
     TAccountStockpile,
+    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountBoard,
     TAccountTreasury,
@@ -259,6 +276,10 @@ export async function getPayoutStockpileInstructionAsync<
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
+      isWritable: true,
+    },
     stockpileExtras: {
       value: input.stockpileExtras ?? null,
       isWritable: false,
@@ -290,6 +311,9 @@ export async function getPayoutStockpileInstructionAsync<
     keyof typeof originalAccounts,
     ResolvedInstructionAccount
   >;
+
+  // Original args.
+  const args = { ...input };
 
   // Resolve default values.
   if (!accounts.config.value) {
@@ -326,6 +350,7 @@ export async function getPayoutStockpileInstructionAsync<
       getAccountMeta("signer", accounts.signer),
       getAccountMeta("config", accounts.config),
       getAccountMeta("stockpile", accounts.stockpile),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
       getAccountMeta("board", accounts.board),
       getAccountMeta("treasury", accounts.treasury),
@@ -338,13 +363,16 @@ export async function getPayoutStockpileInstructionAsync<
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getPayoutStockpileInstructionDataEncoder().encode({}),
+    data: getPayoutStockpileInstructionDataEncoder().encode(
+      args as PayoutStockpileInstructionDataArgs,
+    ),
     programAddress,
   } as PayoutStockpileInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
     TAccountStockpile,
+    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountBoard,
     TAccountTreasury,
@@ -363,6 +391,7 @@ export type PayoutStockpileInput<
   TAccountSigner extends string = string,
   TAccountConfig extends string = string,
   TAccountStockpile extends string = string,
+  TAccountStockpileWinners extends string = string,
   TAccountStockpileExtras extends string = string,
   TAccountBoard extends string = string,
   TAccountTreasury extends string = string,
@@ -381,6 +410,7 @@ export type PayoutStockpileInput<
   config: Address<TAccountConfig>;
   /** Revealed stockpile whose payout is being transferred. */
   stockpile: Address<TAccountStockpile>;
+  stockpileWinners: Address<TAccountStockpileWinners>;
   /** Singleton pending-extras account tied to the unresolved stockpile cycle. */
   stockpileExtras: Address<TAccountStockpileExtras>;
   /** Board used to enforce that only the unresolved stockpile can be paid. */
@@ -401,12 +431,14 @@ export type PayoutStockpileInput<
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used if the winner ATA needs to be created. */
   systemProgram?: Address<TAccountSystemProgram>;
+  rank: PayoutStockpileInstructionDataArgs["rank"];
 };
 
 export function getPayoutStockpileInstruction<
   TAccountSigner extends string,
   TAccountConfig extends string,
   TAccountStockpile extends string,
+  TAccountStockpileWinners extends string,
   TAccountStockpileExtras extends string,
   TAccountBoard extends string,
   TAccountTreasury extends string,
@@ -424,6 +456,7 @@ export function getPayoutStockpileInstruction<
     TAccountSigner,
     TAccountConfig,
     TAccountStockpile,
+    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountBoard,
     TAccountTreasury,
@@ -442,6 +475,7 @@ export function getPayoutStockpileInstruction<
   TAccountSigner,
   TAccountConfig,
   TAccountStockpile,
+  TAccountStockpileWinners,
   TAccountStockpileExtras,
   TAccountBoard,
   TAccountTreasury,
@@ -462,6 +496,10 @@ export function getPayoutStockpileInstruction<
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
+    stockpileWinners: {
+      value: input.stockpileWinners ?? null,
+      isWritable: true,
+    },
     stockpileExtras: {
       value: input.stockpileExtras ?? null,
       isWritable: false,
@@ -494,6 +532,9 @@ export function getPayoutStockpileInstruction<
     ResolvedInstructionAccount
   >;
 
+  // Original args.
+  const args = { ...input };
+
   // Resolve default values.
   if (!accounts.associatedTokenProgram.value) {
     accounts.associatedTokenProgram.value =
@@ -514,6 +555,7 @@ export function getPayoutStockpileInstruction<
       getAccountMeta("signer", accounts.signer),
       getAccountMeta("config", accounts.config),
       getAccountMeta("stockpile", accounts.stockpile),
+      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
       getAccountMeta("board", accounts.board),
       getAccountMeta("treasury", accounts.treasury),
@@ -526,13 +568,16 @@ export function getPayoutStockpileInstruction<
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getPayoutStockpileInstructionDataEncoder().encode({}),
+    data: getPayoutStockpileInstructionDataEncoder().encode(
+      args as PayoutStockpileInstructionDataArgs,
+    ),
     programAddress,
   } as PayoutStockpileInstruction<
     TProgramAddress,
     TAccountSigner,
     TAccountConfig,
     TAccountStockpile,
+    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountBoard,
     TAccountTreasury,
@@ -559,26 +604,27 @@ export type ParsedPayoutStockpileInstruction<
     config: TAccountMetas[1];
     /** Revealed stockpile whose payout is being transferred. */
     stockpile: TAccountMetas[2];
+    stockpileWinners: TAccountMetas[3];
     /** Singleton pending-extras account tied to the unresolved stockpile cycle. */
-    stockpileExtras: TAccountMetas[3];
+    stockpileExtras: TAccountMetas[4];
     /** Board used to enforce that only the unresolved stockpile can be paid. */
-    board: TAccountMetas[4];
+    board: TAccountMetas[5];
     /** Treasury PDA that owns the stockpile SOL and ZINC payout inventory. */
-    treasury: TAccountMetas[5];
+    treasury: TAccountMetas[6];
     /** Program-owned lamport vault that funds stockpile SOL payouts. */
-    stockpileSolVault: TAccountMetas[6];
+    stockpileSolVault: TAccountMetas[7];
     /** Protocol ZINC mint used for stockpile payouts. */
-    zincMint: TAccountMetas[7];
+    zincMint: TAccountMetas[8];
     /** Dedicated stockpile vault that funds ZINC stockpile payouts. */
-    stockpileTokenAccount: TAccountMetas[8];
-    winner: TAccountMetas[9];
-    winnerZincTokenAccount: TAccountMetas[10];
+    stockpileTokenAccount: TAccountMetas[9];
+    winner: TAccountMetas[10];
+    winnerZincTokenAccount: TAccountMetas[11];
     /** Associated Token Program used to create the winner ATA on demand. */
-    associatedTokenProgram: TAccountMetas[11];
+    associatedTokenProgram: TAccountMetas[12];
     /** SPL Token Program that owns the ZINC mint and token accounts. */
-    tokenProgram: TAccountMetas[12];
+    tokenProgram: TAccountMetas[13];
     /** System Program used if the winner ATA needs to be created. */
-    systemProgram: TAccountMetas[13];
+    systemProgram: TAccountMetas[14];
   };
   data: PayoutStockpileInstructionData;
 };
@@ -591,12 +637,12 @@ export function parsePayoutStockpileInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedPayoutStockpileInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 14) {
+  if (instruction.accounts.length < 15) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 14,
+        expectedAccountMetas: 15,
       },
     );
   }
@@ -612,6 +658,7 @@ export function parsePayoutStockpileInstruction<
       signer: getNextAccount(),
       config: getNextAccount(),
       stockpile: getNextAccount(),
+      stockpileWinners: getNextAccount(),
       stockpileExtras: getNextAccount(),
       board: getNextAccount(),
       treasury: getNextAccount(),

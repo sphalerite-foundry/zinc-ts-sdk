@@ -3,6 +3,7 @@ import { getPayoutStockpileExtraInstructionAsync } from "../../codama-ts/instruc
 import {
   getStockpileAddress,
   getStockpileExtrasAddress,
+  getStockpileWinnersAddress,
   getTreasuryAddress,
 } from "../pda";
 import {
@@ -14,6 +15,7 @@ import { getClassicAtaAddress, toAddress } from "./shared";
 export type BuildPayoutStockpileExtraInstruction = {
   signer: PublicKey;
   stockpileId: number | bigint;
+  rank?: number;
   winner: PublicKey;
   extraMint: PublicKey;
   extraIndex: number;
@@ -22,11 +24,13 @@ export type BuildPayoutStockpileExtraInstruction = {
 export async function buildPayoutStockpileExtraInstruction({
   signer,
   stockpileId,
+  rank = 0,
   winner,
   extraMint,
   extraIndex,
 }: BuildPayoutStockpileExtraInstruction): Promise<TransactionInstruction> {
   const stockpile = getStockpileAddress(stockpileId)[0];
+  const stockpileWinners = getStockpileWinnersAddress(stockpileId)[0];
   const stockpileExtras = getStockpileExtrasAddress()[0];
   const treasury = getTreasuryAddress()[0];
   const stockpileExtraTokenAccount = getClassicAtaAddress(treasury, extraMint);
@@ -34,6 +38,7 @@ export async function buildPayoutStockpileExtraInstruction({
   const instruction = await getPayoutStockpileExtraInstructionAsync({
     signer: toTransactionSigner(signer),
     stockpile: toAddress(stockpile),
+    stockpileWinners: toAddress(stockpileWinners),
     stockpileExtras: toAddress(stockpileExtras),
     treasury: toAddress(treasury),
     extraMint: toAddress(extraMint),
@@ -41,6 +46,7 @@ export async function buildPayoutStockpileExtraInstruction({
     winner: toAddress(winner),
     winnerExtraTokenAccount: toAddress(winnerExtraTokenAccount),
     extraIndex,
+    rank,
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],

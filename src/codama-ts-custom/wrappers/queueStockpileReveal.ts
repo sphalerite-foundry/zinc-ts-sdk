@@ -12,7 +12,11 @@ import {
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { getQueueStockpileRevealInstructionAsync } from "../../codama-ts/instructions";
 import { REVEAL_STOCKPILE_RAND_CIRCUIT, ZINC_PROGRAM_ID } from "../constants";
-import { getStockpileAddress, getStockpileSecretAddress } from "../pda";
+import {
+  getStockpileAddress,
+  getStockpileSecretAddress,
+  getStockpileWinnersAddress,
+} from "../pda";
 import {
   toTransactionInstruction,
   toTransactionSigner,
@@ -40,6 +44,7 @@ export async function buildQueueStockpileRevealInstruction({
 }: BuildQueueStockpileRevealInstruction): Promise<TransactionInstruction> {
   const stockpile = getStockpileAddress(stockpileId)[0];
   const stockpileSecret = getStockpileSecretAddress(stockpileId)[0];
+  const stockpileWinners = getStockpileWinnersAddress(stockpileId)[0];
   const clusterOffset = resolveArciumClusterOffset(arciumClusterOffset);
   const computationOffsetBn = new BN(BigInt(computationOffset).toString());
   const mxeAccount = getMXEAccAddress(ZINC_PROGRAM_ID);
@@ -58,6 +63,7 @@ export async function buildQueueStockpileRevealInstruction({
     signer: toTransactionSigner(signer),
     stockpile: toAddress(stockpile),
     stockpileSecret: toAddress(stockpileSecret),
+    stockpileWinners: toAddress(stockpileWinners),
     mxeAccount: toAddress(mxeAccount),
     mempoolAccount: toAddress(mempoolAccount),
     executingPool: toAddress(executingPool),
