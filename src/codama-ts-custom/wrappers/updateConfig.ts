@@ -39,6 +39,7 @@ export type BuildUpdateConfigInstruction = {
   bonanzaHitDivisor?: number | bigint;
   roundClaimZincFeeBps?: number | bigint;
   stockpileEntryMinZincFee?: number | bigint;
+  stockpileBricksPerZincX10k?: number | bigint;
   stockpileEntryPotFeeBps?: number | bigint;
   stockpileEntryStepBps?: number | bigint;
   stakingBricksPerZincX10k?: number | bigint;
@@ -78,6 +79,7 @@ export async function buildUpdateConfigInstruction({
   bonanzaHitDivisor,
   roundClaimZincFeeBps,
   stockpileEntryMinZincFee,
+  stockpileBricksPerZincX10k,
   stockpileEntryPotFeeBps,
   stockpileEntryStepBps,
   stakingBricksPerZincX10k,
@@ -125,6 +127,7 @@ export async function buildUpdateConfigInstruction({
     bonanzaHitDivisor: toNullable(bonanzaHitDivisor),
     roundClaimZincFeeBps: toNullable(roundClaimZincFeeBps),
     stockpileEntryMinZincFee: toNullable(stockpileEntryMinZincFee),
+    stockpileBricksPerZincX10k: toNullable(stockpileBricksPerZincX10k),
     stockpileEntryPotFeeBps: toNullable(stockpileEntryPotFeeBps),
     stockpileEntryStepBps: toNullable(stockpileEntryStepBps),
     stakingBricksPerZincX10k: toNullable(stakingBricksPerZincX10k),

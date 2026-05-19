@@ -113,7 +113,7 @@ export type Config = {
   bonanzaHitDivisor: bigint;
   /** ZINC fee skim for round winner claims, in basis points. */
   roundClaimZincFeeBps: bigint;
-  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  /** Legacy stockpile ZINC fee kept for serialized config compatibility. */
   stockpileEntryMinZincFee: bigint;
   /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
   stockpileEntryPotFeeBps: bigint;
@@ -133,6 +133,8 @@ export type Config = {
   roundRandomnessMode: RoundRandomnessMode;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: bigint;
+  /** Stockpile bricks required per whole ZINC, in `x10k` units. */
+  stockpileBricksPerZincX10k: bigint;
 };
 
 export type ConfigArgs = {
@@ -192,7 +194,7 @@ export type ConfigArgs = {
   bonanzaHitDivisor: number | bigint;
   /** ZINC fee skim for round winner claims, in basis points. */
   roundClaimZincFeeBps: number | bigint;
-  /** Minimum ZINC fee required to enter one stockpile cycle, in mint base units. */
+  /** Legacy stockpile ZINC fee kept for serialized config compatibility. */
   stockpileEntryMinZincFee: number | bigint;
   /** Stockpile entry fee as a share of the live stockpile ZINC pot, in basis points. */
   stockpileEntryPotFeeBps: number | bigint;
@@ -212,6 +214,8 @@ export type ConfigArgs = {
   roundRandomnessMode: RoundRandomnessModeArgs;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: number | bigint;
+  /** Stockpile bricks required per whole ZINC, in `x10k` units. */
+  stockpileBricksPerZincX10k: number | bigint;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -257,6 +261,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["stockpileRefillMinEntryBps", getU64Encoder()],
       ["roundRandomnessMode", getRoundRandomnessModeEncoder()],
       ["blockhashRevealDelaySlots", getU64Encoder()],
+      ["stockpileBricksPerZincX10k", getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -304,6 +309,7 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["stockpileRefillMinEntryBps", getU64Decoder()],
     ["roundRandomnessMode", getRoundRandomnessModeDecoder()],
     ["blockhashRevealDelaySlots", getU64Decoder()],
+    ["stockpileBricksPerZincX10k", getU64Decoder()],
   ]);
 }
 
@@ -366,5 +372,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 363;
+  return 371;
 }
