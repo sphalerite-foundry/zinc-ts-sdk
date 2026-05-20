@@ -224,144 +224,146 @@ export const ZINC_ERROR__WRONG_METEORA_EVENT_AUTHORITY = 0x17d6; // 6102
 export const ZINC_ERROR__METEORA_INSTRUCTION_SERIALIZATION_FAILED = 0x17d7; // 6103
 /** BuybackPoolSeedExceedsSupplyCap: LP seed ZINC exceeds the configured supply cap */
 export const ZINC_ERROR__BUYBACK_POOL_SEED_EXCEEDS_SUPPLY_CAP = 0x17d8; // 6104
+/** LpInventoryMintExceedsSupplyCap: LP inventory mint exceeds the configured supply cap */
+export const ZINC_ERROR__LP_INVENTORY_MINT_EXCEEDS_SUPPLY_CAP = 0x17d9; // 6105
 /** BuybackPoolSeedContributionMismatch: Meteora pool did not consume the exact requested LP seed amounts */
-export const ZINC_ERROR__BUYBACK_POOL_SEED_CONTRIBUTION_MISMATCH = 0x17d9; // 6105
+export const ZINC_ERROR__BUYBACK_POOL_SEED_CONTRIBUTION_MISMATCH = 0x17da; // 6106
 /** BuybackInputMismatch: Buyback swap did not spend the exact requested WSOL amount */
-export const ZINC_ERROR__BUYBACK_INPUT_MISMATCH = 0x17da; // 6106
+export const ZINC_ERROR__BUYBACK_INPUT_MISMATCH = 0x17db; // 6107
 /** BuybackSlippageExceeded: Buyback output was below the requested minimum */
-export const ZINC_ERROR__BUYBACK_SLIPPAGE_EXCEEDED = 0x17db; // 6107
+export const ZINC_ERROR__BUYBACK_SLIPPAGE_EXCEEDED = 0x17dc; // 6108
 /** BuybackTreasuryLamportsChanged: Treasury lamports changed during buyback swap */
-export const ZINC_ERROR__BUYBACK_TREASURY_LAMPORTS_CHANGED = 0x17dc; // 6108
+export const ZINC_ERROR__BUYBACK_TREASURY_LAMPORTS_CHANGED = 0x17dd; // 6109
 /** BuybackMintSupplyChanged: ZINC mint supply changed during buyback swap */
-export const ZINC_ERROR__BUYBACK_MINT_SUPPLY_CHANGED = 0x17dd; // 6109
+export const ZINC_ERROR__BUYBACK_MINT_SUPPLY_CHANGED = 0x17de; // 6110
 /** WrongStakingTokenAccount: Wrong staking token account */
-export const ZINC_ERROR__WRONG_STAKING_TOKEN_ACCOUNT = 0x17de; // 6110
+export const ZINC_ERROR__WRONG_STAKING_TOKEN_ACCOUNT = 0x17df; // 6111
 /** WrongStakingRewardTokenAccount: Wrong staking reward token account */
-export const ZINC_ERROR__WRONG_STAKING_REWARD_TOKEN_ACCOUNT = 0x17df; // 6111
+export const ZINC_ERROR__WRONG_STAKING_REWARD_TOKEN_ACCOUNT = 0x17e0; // 6112
 /** WrongRoundZincRewardTokenAccount: Wrong round ZINC reward token account */
-export const ZINC_ERROR__WRONG_ROUND_ZINC_REWARD_TOKEN_ACCOUNT = 0x17e0; // 6112
+export const ZINC_ERROR__WRONG_ROUND_ZINC_REWARD_TOKEN_ACCOUNT = 0x17e1; // 6113
 /** WrongStakePosition: Wrong stake position */
-export const ZINC_ERROR__WRONG_STAKE_POSITION = 0x17e1; // 6113
+export const ZINC_ERROR__WRONG_STAKE_POSITION = 0x17e2; // 6114
 /** AmountMustBeGreaterThanZero: Amount must be greater than zero */
-export const ZINC_ERROR__AMOUNT_MUST_BE_GREATER_THAN_ZERO = 0x17e2; // 6114
+export const ZINC_ERROR__AMOUNT_MUST_BE_GREATER_THAN_ZERO = 0x17e3; // 6115
 /** NoStakingRewards: No staking rewards are claimable */
-export const ZINC_ERROR__NO_STAKING_REWARDS = 0x17e3; // 6115
+export const ZINC_ERROR__NO_STAKING_REWARDS = 0x17e4; // 6116
 /** NoRoundZincRewards: No round ZINC rewards are claimable */
-export const ZINC_ERROR__NO_ROUND_ZINC_REWARDS = 0x17e4; // 6116
+export const ZINC_ERROR__NO_ROUND_ZINC_REWARDS = 0x17e5; // 6117
 /** NoRoundSolRewards: No round SOL rewards are claimable */
-export const ZINC_ERROR__NO_ROUND_SOL_REWARDS = 0x17e5; // 6117
+export const ZINC_ERROR__NO_ROUND_SOL_REWARDS = 0x17e6; // 6118
 /** InsufficientStakedBalance: Insufficient staked balance */
-export const ZINC_ERROR__INSUFFICIENT_STAKED_BALANCE = 0x17e6; // 6118
+export const ZINC_ERROR__INSUFFICIENT_STAKED_BALANCE = 0x17e7; // 6119
 /** UnsupportedAccountVersion: Unsupported account version */
-export const ZINC_ERROR__UNSUPPORTED_ACCOUNT_VERSION = 0x17e7; // 6119
+export const ZINC_ERROR__UNSUPPORTED_ACCOUNT_VERSION = 0x17e8; // 6120
 /** StockpileEntryBelowMinimum: Stockpile entry is below the minimum */
-export const ZINC_ERROR__STOCKPILE_ENTRY_BELOW_MINIMUM = 0x17e8; // 6120
+export const ZINC_ERROR__STOCKPILE_ENTRY_BELOW_MINIMUM = 0x17e9; // 6121
 /** StockpileExtrasFull: Stockpile has reached the maximum number of extras */
-export const ZINC_ERROR__STOCKPILE_EXTRAS_FULL = 0x17e9; // 6121
+export const ZINC_ERROR__STOCKPILE_EXTRAS_FULL = 0x17ea; // 6122
 /** InvalidStockpileExtraAmount: Stockpile extra amount must be greater than zero */
-export const ZINC_ERROR__INVALID_STOCKPILE_EXTRA_AMOUNT = 0x17ea; // 6122
+export const ZINC_ERROR__INVALID_STOCKPILE_EXTRA_AMOUNT = 0x17eb; // 6123
 /** UnsupportedStockpileExtraMint: Unsupported stockpile extra mint */
-export const ZINC_ERROR__UNSUPPORTED_STOCKPILE_EXTRA_MINT = 0x17eb; // 6123
+export const ZINC_ERROR__UNSUPPORTED_STOCKPILE_EXTRA_MINT = 0x17ec; // 6124
 /** StockpileExtrasAlreadyRolled: Stockpile extras already rolled to a newer stockpile */
-export const ZINC_ERROR__STOCKPILE_EXTRAS_ALREADY_ROLLED = 0x17ec; // 6124
+export const ZINC_ERROR__STOCKPILE_EXTRAS_ALREADY_ROLLED = 0x17ed; // 6125
 /** StockpileExtraMissing: Stockpile extra is missing */
-export const ZINC_ERROR__STOCKPILE_EXTRA_MISSING = 0x17ed; // 6125
+export const ZINC_ERROR__STOCKPILE_EXTRA_MISSING = 0x17ee; // 6126
 /** StockpileExtraAlreadyPaid: Stockpile extra is already paid */
-export const ZINC_ERROR__STOCKPILE_EXTRA_ALREADY_PAID = 0x17ee; // 6126
+export const ZINC_ERROR__STOCKPILE_EXTRA_ALREADY_PAID = 0x17ef; // 6127
 /** WrongStockpileExtraTokenAccount: Wrong stockpile extra token account */
-export const ZINC_ERROR__WRONG_STOCKPILE_EXTRA_TOKEN_ACCOUNT = 0x17ef; // 6127
+export const ZINC_ERROR__WRONG_STOCKPILE_EXTRA_TOKEN_ACCOUNT = 0x17f0; // 6128
 /** WrongWinnerStockpileExtraTokenAccount: Wrong winner stockpile extra token account */
-export const ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT = 0x17f0; // 6128
+export const ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT = 0x17f1; // 6129
 /** InsufficientTreasuryLamports: Treasury does not have enough lamports to reimburse round creation */
-export const ZINC_ERROR__INSUFFICIENT_TREASURY_LAMPORTS = 0x17f1; // 6129
+export const ZINC_ERROR__INSUFFICIENT_TREASURY_LAMPORTS = 0x17f2; // 6130
 /** WrongAffiliate: Wrong affiliate account */
-export const ZINC_ERROR__WRONG_AFFILIATE = 0x17f2; // 6130
+export const ZINC_ERROR__WRONG_AFFILIATE = 0x17f3; // 6131
 /** AffiliateSelfReferral: Affiliate cannot be the player */
-export const ZINC_ERROR__AFFILIATE_SELF_REFERRAL = 0x17f3; // 6131
+export const ZINC_ERROR__AFFILIATE_SELF_REFERRAL = 0x17f4; // 6132
 /** AffiliateBindingImmutable: Affiliate binding is immutable after the first deploy */
-export const ZINC_ERROR__AFFILIATE_BINDING_IMMUTABLE = 0x17f4; // 6132
+export const ZINC_ERROR__AFFILIATE_BINDING_IMMUTABLE = 0x17f5; // 6133
 /** InvalidDeployFeeBps: Deploy fee schedule is invalid */
-export const ZINC_ERROR__INVALID_DEPLOY_FEE_BPS = 0x17f5; // 6133
+export const ZINC_ERROR__INVALID_DEPLOY_FEE_BPS = 0x17f6; // 6134
 /** InvalidCurveZincShareBps: Curve ZINC share schedule is invalid */
-export const ZINC_ERROR__INVALID_CURVE_ZINC_SHARE_BPS = 0x17f6; // 6134
+export const ZINC_ERROR__INVALID_CURVE_ZINC_SHARE_BPS = 0x17f7; // 6135
 /** InvalidCurveParameter: Curve parameter is invalid */
-export const ZINC_ERROR__INVALID_CURVE_PARAMETER = 0x17f7; // 6135
+export const ZINC_ERROR__INVALID_CURVE_PARAMETER = 0x17f8; // 6136
 /** MissingAffiliateAccounts: Missing affiliate accounts */
-export const ZINC_ERROR__MISSING_AFFILIATE_ACCOUNTS = 0x17f8; // 6136
+export const ZINC_ERROR__MISSING_AFFILIATE_ACCOUNTS = 0x17f9; // 6137
 /** NoAffiliateBalance: No affiliate balance is claimable */
-export const ZINC_ERROR__NO_AFFILIATE_BALANCE = 0x17f9; // 6137
+export const ZINC_ERROR__NO_AFFILIATE_BALANCE = 0x17fa; // 6138
 /** AffiliateWithdrawalsDisabled: Affiliate withdrawals are disabled */
-export const ZINC_ERROR__AFFILIATE_WITHDRAWALS_DISABLED = 0x17fa; // 6138
+export const ZINC_ERROR__AFFILIATE_WITHDRAWALS_DISABLED = 0x17fb; // 6139
 /** InsufficientAffiliateProfileLamports: Affiliate profile does not have enough lamports for the claim */
-export const ZINC_ERROR__INSUFFICIENT_AFFILIATE_PROFILE_LAMPORTS = 0x17fb; // 6139
+export const ZINC_ERROR__INSUFFICIENT_AFFILIATE_PROFILE_LAMPORTS = 0x17fc; // 6140
 /** InsufficientPlayerProfileLamports: Player profile does not have enough lamports for the claim */
-export const ZINC_ERROR__INSUFFICIENT_PLAYER_PROFILE_LAMPORTS = 0x17fc; // 6140
+export const ZINC_ERROR__INSUFFICIENT_PLAYER_PROFILE_LAMPORTS = 0x17fd; // 6141
 /** AutoMinerSessionPaused: Auto-miner session is paused */
-export const ZINC_ERROR__AUTO_MINER_SESSION_PAUSED = 0x17fd; // 6141
+export const ZINC_ERROR__AUTO_MINER_SESSION_PAUSED = 0x17fe; // 6142
 /** AutoMinerSessionExpired: Auto-miner session has expired */
-export const ZINC_ERROR__AUTO_MINER_SESSION_EXPIRED = 0x17fe; // 6142
+export const ZINC_ERROR__AUTO_MINER_SESSION_EXPIRED = 0x17ff; // 6143
 /** AutoMinerInsufficientBudget: Auto-miner session budget is insufficient */
-export const ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET = 0x17ff; // 6143
+export const ZINC_ERROR__AUTO_MINER_INSUFFICIENT_BUDGET = 0x1800; // 6144
 /** AutoMinerAuthorityInsufficientLamports: Auto-miner authority lamports are insufficient */
-export const ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS = 0x1800; // 6144
+export const ZINC_ERROR__AUTO_MINER_AUTHORITY_INSUFFICIENT_LAMPORTS = 0x1801; // 6145
 /** InvalidAutoMinerEncryptedPattern: Auto-miner encrypted tile pattern is invalid */
-export const ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN = 0x1801; // 6145
+export const ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN = 0x1802; // 6146
 /** AutoMinerAutoReloadDisabled: Auto-miner SOL reward reload is disabled */
-export const ZINC_ERROR__AUTO_MINER_AUTO_RELOAD_DISABLED = 0x1802; // 6146
+export const ZINC_ERROR__AUTO_MINER_AUTO_RELOAD_DISABLED = 0x1803; // 6147
 /** AutoMinerSessionMismatch: Auto-miner session mismatch */
-export const ZINC_ERROR__AUTO_MINER_SESSION_MISMATCH = 0x1803; // 6147
+export const ZINC_ERROR__AUTO_MINER_SESSION_MISMATCH = 0x1804; // 6148
 /** InvalidStockpileDuration: Stockpile duration must be greater than zero */
-export const ZINC_ERROR__INVALID_STOCKPILE_DURATION = 0x1804; // 6148
+export const ZINC_ERROR__INVALID_STOCKPILE_DURATION = 0x1805; // 6149
 /** InvalidBlockhashRevealDelay: Blockhash reveal delay must be greater than zero */
-export const ZINC_ERROR__INVALID_BLOCKHASH_REVEAL_DELAY = 0x1805; // 6149
+export const ZINC_ERROR__INVALID_BLOCKHASH_REVEAL_DELAY = 0x1806; // 6150
 /** InvalidRoundRandomnessMode: Round randomness mode does not allow this reveal path */
-export const ZINC_ERROR__INVALID_ROUND_RANDOMNESS_MODE = 0x1806; // 6150
+export const ZINC_ERROR__INVALID_ROUND_RANDOMNESS_MODE = 0x1807; // 6151
 /** BlockhashRevealNotReady: Blockhash reveal sample slot is not ready */
-export const ZINC_ERROR__BLOCKHASH_REVEAL_NOT_READY = 0x1807; // 6151
+export const ZINC_ERROR__BLOCKHASH_REVEAL_NOT_READY = 0x1808; // 6152
 /** BlockhashSampleMissing: Blockhash reveal sample slot is missing */
-export const ZINC_ERROR__BLOCKHASH_SAMPLE_MISSING = 0x1808; // 6152
+export const ZINC_ERROR__BLOCKHASH_SAMPLE_MISSING = 0x1809; // 6153
 /** EntropyBlockhashMissing: Entropy blockhash is missing */
-export const ZINC_ERROR__ENTROPY_BLOCKHASH_MISSING = 0x1809; // 6153
+export const ZINC_ERROR__ENTROPY_BLOCKHASH_MISSING = 0x180a; // 6154
 /** ClosePdaCannotCloseConfig: Config must be closed with close_config */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x180a; // 6154
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_CONFIG = 0x180b; // 6155
 /** WrongTreasuryTokenAccount: Wrong treasury token account */
-export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x180b; // 6155
+export const ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT = 0x180c; // 6156
 /** NotAdminOrCrank: Not Admin or Crank */
-export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x180c; // 6156
+export const ZINC_ERROR__NOT_ADMIN_OR_CRANK = 0x180d; // 6157
 /** RoundCleanupIncomplete: Round cleanup is incomplete */
-export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x180d; // 6157
+export const ZINC_ERROR__ROUND_CLEANUP_INCOMPLETE = 0x180e; // 6158
 /** RoundCleanupComplete: Round cleanup is already complete */
-export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x180e; // 6158
+export const ZINC_ERROR__ROUND_CLEANUP_COMPLETE = 0x180f; // 6159
 /** BoardRoundStillReferenced: Round is still referenced by the board */
-export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x180f; // 6159
+export const ZINC_ERROR__BOARD_ROUND_STILL_REFERENCED = 0x1810; // 6160
 /** MinerClaimNotTerminal: Miner claim state is not terminal */
-export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x1810; // 6160
+export const ZINC_ERROR__MINER_CLAIM_NOT_TERMINAL = 0x1811; // 6161
 /** OutstandingWinnerClaims: Round still has outstanding winner claims */
-export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x1811; // 6161
+export const ZINC_ERROR__OUTSTANDING_WINNER_CLAIMS = 0x1812; // 6162
 /** WrongRoundSecret: Wrong round secret */
-export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x1812; // 6162
+export const ZINC_ERROR__WRONG_ROUND_SECRET = 0x1813; // 6163
 /** WildcatSelectionNotReady: Wildcat winner selection is not ready */
-export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x1813; // 6163
+export const ZINC_ERROR__WILDCAT_SELECTION_NOT_READY = 0x1814; // 6164
 /** WildcatSelectionComplete: Wildcat winner selection is already complete */
-export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x1814; // 6164
+export const ZINC_ERROR__WILDCAT_SELECTION_COMPLETE = 0x1815; // 6165
 /** WildcatWinnerMissing: Wildcat winner is missing */
-export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x1815; // 6165
+export const ZINC_ERROR__WILDCAT_WINNER_MISSING = 0x1816; // 6166
 /** WildcatClaimNotReady: Wildcat ZINC claim is not ready */
-export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1816; // 6166
+export const ZINC_ERROR__WILDCAT_CLAIM_NOT_READY = 0x1817; // 6167
 /** WildcatAlreadyClaimed: Wildcat ZINC has already been claimed */
-export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1817; // 6167
+export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1818; // 6168
 /** WildcatClaimIncomplete: Wildcat ZINC claim is incomplete */
-export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1818; // 6168
+export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x1819; // 6169
 /** WildcatEntryCapacityExceeded: Wildcat entry capacity is exhausted */
-export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x1819; // 6169
+export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x181a; // 6170
 /** InvalidWildcatWinnerZincSharePpm: Wildcat winner ZINC share exceeds one million ppm */
-export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x181a; // 6170
+export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x181b; // 6171
 /** ClosePdaCannotCloseBoard: Board cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x181b; // 6171
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x181c; // 6172
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x181c; // 6172
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x181d; // 6173
 /** RoundNotNextSequential: Ready round is not the next sequential round */
-export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x181d; // 6173
+export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x181e; // 6174
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -421,6 +423,7 @@ export type ZincError =
   | typeof ZINC_ERROR__INVALID_STOCKPILE_WINNER_RANK
   | typeof ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM
   | typeof ZINC_ERROR__INVALID_ZINC_MINT_METADATA
+  | typeof ZINC_ERROR__LP_INVENTORY_MINT_EXCEEDS_SUPPLY_CAP
   | typeof ZINC_ERROR__METEORA_INSTRUCTION_SERIALIZATION_FAILED
   | typeof ZINC_ERROR__MINER_ACCOUNT_MISMATCH
   | typeof ZINC_ERROR__MINER_ALREADY_SETTLED
@@ -599,6 +602,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__INVALID_STOCKPILE_WINNER_RANK]: `Invalid stockpile winner rank`,
     [ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM]: `Wildcat winner ZINC share exceeds one million ppm`,
     [ZINC_ERROR__INVALID_ZINC_MINT_METADATA]: `Invalid ZINC mint metadata`,
+    [ZINC_ERROR__LP_INVENTORY_MINT_EXCEEDS_SUPPLY_CAP]: `LP inventory mint exceeds the configured supply cap`,
     [ZINC_ERROR__METEORA_INSTRUCTION_SERIALIZATION_FAILED]: `Meteora instruction data serialization failed`,
     [ZINC_ERROR__MINER_ACCOUNT_MISMATCH]: `Miner account mismatch`,
     [ZINC_ERROR__MINER_ALREADY_SETTLED]: `Miner is already settled`,

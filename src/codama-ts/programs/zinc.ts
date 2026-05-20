@@ -143,6 +143,7 @@ import {
   getJoinStockpileInstructionAsync,
   getMeltInstructionAsync,
   getMigrateInstruction,
+  getMintLpInventoryInstructionAsync,
   getPayoutStockpileExtraInstructionAsync,
   getPayoutStockpileInstructionAsync,
   getQueueRoundSettlementInstructionAsync,
@@ -204,6 +205,7 @@ import {
   parseJoinStockpileInstruction,
   parseMeltInstruction,
   parseMigrateInstruction,
+  parseMintLpInventoryInstruction,
   parsePayoutStockpileExtraInstruction,
   parsePayoutStockpileInstruction,
   parseQueueRoundSettlementInstruction,
@@ -265,6 +267,7 @@ import {
   type JoinStockpileAsyncInput,
   type MeltAsyncInput,
   type MigrateInput,
+  type MintLpInventoryAsyncInput,
   type ParsedBuybackInstruction,
   type ParsedCancelAutoMinerSessionInstruction,
   type ParsedClaimAffiliateInstruction,
@@ -306,6 +309,7 @@ import {
   type ParsedJoinStockpileInstruction,
   type ParsedMeltInstruction,
   type ParsedMigrateInstruction,
+  type ParsedMintLpInventoryInstruction,
   type ParsedPayoutStockpileExtraInstruction,
   type ParsedPayoutStockpileInstruction,
   type ParsedQueueRoundSettlementInstruction,
@@ -695,6 +699,7 @@ export enum ZincInstruction {
   JoinStockpile,
   Melt,
   Migrate,
+  MintLpInventory,
   PayoutStockpile,
   PayoutStockpileExtra,
   QueueRoundSettlement,
@@ -1176,6 +1181,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([238, 136, 140, 159, 213, 187, 214, 12]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.MintLpInventory;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([150, 118, 163, 66, 221, 25, 36, 185]),
       ),
       0,
@@ -1524,6 +1540,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.Migrate;
     } & ParsedMigrateInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.MintLpInventory;
+    } & ParsedMintLpInventoryInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.PayoutStockpile;
     } & ParsedPayoutStockpileInstruction<TProgram>)
@@ -1875,6 +1894,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.Migrate,
         ...parseMigrateInstruction(instruction),
+      };
+    }
+    case ZincInstruction.MintLpInventory: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.MintLpInventory,
+        ...parseMintLpInventoryInstruction(instruction),
       };
     }
     case ZincInstruction.PayoutStockpile: {
@@ -2247,6 +2273,10 @@ export type ZincPluginInstructions = {
   migrate: (
     input: MigrateInput,
   ) => ReturnType<typeof getMigrateInstruction> & SelfPlanAndSendFunctions;
+  mintLpInventory: (
+    input: MintLpInventoryAsyncInput,
+  ) => ReturnType<typeof getMintLpInventoryInstructionAsync> &
+    SelfPlanAndSendFunctions;
   payoutStockpile: (
     input: PayoutStockpileAsyncInput,
   ) => ReturnType<typeof getPayoutStockpileInstructionAsync> &
@@ -2638,6 +2668,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),
           migrate: (input) =>
             addSelfPlanAndSendFunctions(client, getMigrateInstruction(input)),
+          mintLpInventory: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getMintLpInventoryInstructionAsync(input),
+            ),
           payoutStockpile: (input) =>
             addSelfPlanAndSendFunctions(
               client,

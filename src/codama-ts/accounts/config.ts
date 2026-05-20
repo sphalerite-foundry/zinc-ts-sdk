@@ -91,13 +91,13 @@ export type Config = {
   noWinnerDirectWinnerZincStockpileShareBps: bigint;
   /** Minimum gross lamports required to enter a round. */
   minDeployLamports: bigint;
-  /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
+  /** Launch-time maximum mint for one round before ZINC factoring. */
   curveMaxRoundMint: bigint;
   /** SOL factoring lamports where the deploy curve reaches about `1 - e^-1` of `curve_max_round_mint`. */
   curveSaturationLamports: bigint;
   /** ZINC factoring amount that halves scarcity emissions, in base units. */
   curveHistoryMinted: bigint;
-  /** Min target ZINC support lamports required for one emitted token. */
+  /** Legacy min target ZINC support lamports retained for config compatibility. */
   curveTargetSupportLamportsPerZinc: bigint;
   /** Maximum cumulative ZINC the close-round mint path may mint, in base units. */
   curveMaxSupply: bigint;
@@ -176,13 +176,13 @@ export type ConfigArgs = {
   noWinnerDirectWinnerZincStockpileShareBps: number | bigint;
   /** Minimum gross lamports required to enter a round. */
   minDeployLamports: number | bigint;
-  /** Launch-time maximum mint for one round before ZINC factoring and support caps. */
+  /** Launch-time maximum mint for one round before ZINC factoring. */
   curveMaxRoundMint: number | bigint;
   /** SOL factoring lamports where the deploy curve reaches about `1 - e^-1` of `curve_max_round_mint`. */
   curveSaturationLamports: number | bigint;
   /** ZINC factoring amount that halves scarcity emissions, in base units. */
   curveHistoryMinted: number | bigint;
-  /** Min target ZINC support lamports required for one emitted token. */
+  /** Legacy min target ZINC support lamports retained for config compatibility. */
   curveTargetSupportLamportsPerZinc: number | bigint;
   /** Maximum cumulative ZINC the close-round mint path may mint, in base units. */
   curveMaxSupply: number | bigint;

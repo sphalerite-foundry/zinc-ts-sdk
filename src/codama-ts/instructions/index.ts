@@ -47,6 +47,7 @@ export * from "./initStockpileWinners";
 export * from "./joinStockpile";
 export * from "./melt";
 export * from "./migrate";
+export * from "./mintLpInventory";
 export * from "./payoutStockpile";
 export * from "./payoutStockpileExtra";
 export * from "./queueRoundSettlement";
