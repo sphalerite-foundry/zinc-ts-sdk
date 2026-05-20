@@ -139,6 +139,7 @@ import {
   getInitStockpileInstructionAsync,
   getInitStockpileRandCallbackInstructionAsync,
   getInitStockpileRandCompDefInstructionAsync,
+  getInitStockpileWinnersInstructionAsync,
   getJoinStockpileInstructionAsync,
   getMeltInstructionAsync,
   getMigrateInstruction,
@@ -199,6 +200,7 @@ import {
   parseInitStockpileInstruction,
   parseInitStockpileRandCallbackInstruction,
   parseInitStockpileRandCompDefInstruction,
+  parseInitStockpileWinnersInstruction,
   parseJoinStockpileInstruction,
   parseMeltInstruction,
   parseMigrateInstruction,
@@ -259,6 +261,7 @@ import {
   type InitStockpileAsyncInput,
   type InitStockpileRandCallbackAsyncInput,
   type InitStockpileRandCompDefAsyncInput,
+  type InitStockpileWinnersAsyncInput,
   type JoinStockpileAsyncInput,
   type MeltAsyncInput,
   type MigrateInput,
@@ -299,6 +302,7 @@ import {
   type ParsedInitStockpileInstruction,
   type ParsedInitStockpileRandCallbackInstruction,
   type ParsedInitStockpileRandCompDefInstruction,
+  type ParsedInitStockpileWinnersInstruction,
   type ParsedJoinStockpileInstruction,
   type ParsedMeltInstruction,
   type ParsedMigrateInstruction,
@@ -687,6 +691,7 @@ export enum ZincInstruction {
   InitStockpile,
   InitStockpileRandCallback,
   InitStockpileRandCompDef,
+  InitStockpileWinners,
   JoinStockpile,
   Melt,
   Migrate,
@@ -1127,6 +1132,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([174, 106, 84, 155, 219, 146, 37, 247]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.InitStockpileWinners;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([62, 217, 82, 43, 3, 79, 57, 242]),
       ),
       0,
@@ -1497,6 +1513,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.InitStockpileRandCompDef;
     } & ParsedInitStockpileRandCompDefInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.InitStockpileWinners;
+    } & ParsedInitStockpileWinnersInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.JoinStockpile;
     } & ParsedJoinStockpileInstruction<TProgram>)
   | ({
@@ -1828,6 +1847,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.InitStockpileRandCompDef,
         ...parseInitStockpileRandCompDefInstruction(instruction),
+      };
+    }
+    case ZincInstruction.InitStockpileWinners: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.InitStockpileWinners,
+        ...parseInitStockpileWinnersInstruction(instruction),
       };
     }
     case ZincInstruction.JoinStockpile: {
@@ -2206,6 +2232,10 @@ export type ZincPluginInstructions = {
   initStockpileRandCompDef: (
     input: MakeOptional<InitStockpileRandCompDefAsyncInput, "payer">,
   ) => ReturnType<typeof getInitStockpileRandCompDefInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  initStockpileWinners: (
+    input: MakeOptional<InitStockpileWinnersAsyncInput, "payer">,
+  ) => ReturnType<typeof getInitStockpileWinnersInstructionAsync> &
     SelfPlanAndSendFunctions;
   joinStockpile: (
     input: JoinStockpileAsyncInput,
@@ -2587,6 +2617,14 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getInitStockpileRandCompDefInstructionAsync({
+                ...input,
+                payer: input.payer ?? client.payer,
+              }),
+            ),
+          initStockpileWinners: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getInitStockpileWinnersInstructionAsync({
                 ...input,
                 payer: input.payer ?? client.payer,
               }),
