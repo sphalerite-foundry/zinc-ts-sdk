@@ -67,7 +67,6 @@ export type InitStockpileInstruction<
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
   TAccountStockpileSecret extends string | AccountMeta<string> = string,
-  TAccountStockpileWinners extends string | AccountMeta<string> = string,
   TAccountStockpileExtras extends string | AccountMeta<string> = string,
   TAccountSignPdaAccount extends string | AccountMeta<string> = string,
   TAccountMxeAccount extends string | AccountMeta<string> = string,
@@ -117,9 +116,6 @@ export type InitStockpileInstruction<
       TAccountStockpileSecret extends string
         ? WritableAccount<TAccountStockpileSecret>
         : TAccountStockpileSecret,
-      TAccountStockpileWinners extends string
-        ? WritableAccount<TAccountStockpileWinners>
-        : TAccountStockpileWinners,
       TAccountStockpileExtras extends string
         ? WritableAccount<TAccountStockpileExtras>
         : TAccountStockpileExtras,
@@ -216,7 +212,6 @@ export type InitStockpileAsyncInput<
   TAccountZincMint extends string = string,
   TAccountStockpile extends string = string,
   TAccountStockpileSecret extends string = string,
-  TAccountStockpileWinners extends string = string,
   TAccountStockpileExtras extends string = string,
   TAccountSignPdaAccount extends string = string,
   TAccountMxeAccount extends string = string,
@@ -247,8 +242,6 @@ export type InitStockpileAsyncInput<
   stockpile: Address<TAccountStockpile>;
   /** Secret storage for the encrypted random value tied to this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
-  /** Ranked winner storage for this stockpile cycle. */
-  stockpileWinners: Address<TAccountStockpileWinners>;
   stockpileExtras?: Address<TAccountStockpileExtras>;
   /** Arcium signer PDA reused across queued computations. */
   signPdaAccount?: Address<TAccountSignPdaAccount>;
@@ -284,7 +277,6 @@ export async function getInitStockpileInstructionAsync<
   TAccountZincMint extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
-  TAccountStockpileWinners extends string,
   TAccountStockpileExtras extends string,
   TAccountSignPdaAccount extends string,
   TAccountMxeAccount extends string,
@@ -311,7 +303,6 @@ export async function getInitStockpileInstructionAsync<
     TAccountZincMint,
     TAccountStockpile,
     TAccountStockpileSecret,
-    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
@@ -340,7 +331,6 @@ export async function getInitStockpileInstructionAsync<
     TAccountZincMint,
     TAccountStockpile,
     TAccountStockpileSecret,
-    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
@@ -371,10 +361,6 @@ export async function getInitStockpileInstructionAsync<
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
-    stockpileWinners: {
-      value: input.stockpileWinners ?? null,
-      isWritable: true,
-    },
     stockpileExtras: { value: input.stockpileExtras ?? null, isWritable: true },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
     mxeAccount: { value: input.mxeAccount ?? null, isWritable: false },
@@ -487,7 +473,7 @@ export async function getInitStockpileInstructionAsync<
       args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as unknown as InitStockpileInstruction<
+  } as InitStockpileInstruction<
     TProgramAddress,
     TAccountPayer,
     TAccountConfig,
@@ -496,7 +482,6 @@ export async function getInitStockpileInstructionAsync<
     TAccountZincMint,
     TAccountStockpile,
     TAccountStockpileSecret,
-    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
@@ -524,7 +509,6 @@ export type InitStockpileInput<
   TAccountZincMint extends string = string,
   TAccountStockpile extends string = string,
   TAccountStockpileSecret extends string = string,
-  TAccountStockpileWinners extends string = string,
   TAccountStockpileExtras extends string = string,
   TAccountSignPdaAccount extends string = string,
   TAccountMxeAccount extends string = string,
@@ -555,8 +539,6 @@ export type InitStockpileInput<
   stockpile: Address<TAccountStockpile>;
   /** Secret storage for the encrypted random value tied to this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
-  /** Ranked winner storage for this stockpile cycle. */
-  stockpileWinners: Address<TAccountStockpileWinners>;
   stockpileExtras: Address<TAccountStockpileExtras>;
   /** Arcium signer PDA reused across queued computations. */
   signPdaAccount: Address<TAccountSignPdaAccount>;
@@ -592,7 +574,6 @@ export function getInitStockpileInstruction<
   TAccountZincMint extends string,
   TAccountStockpile extends string,
   TAccountStockpileSecret extends string,
-  TAccountStockpileWinners extends string,
   TAccountStockpileExtras extends string,
   TAccountSignPdaAccount extends string,
   TAccountMxeAccount extends string,
@@ -619,7 +600,6 @@ export function getInitStockpileInstruction<
     TAccountZincMint,
     TAccountStockpile,
     TAccountStockpileSecret,
-    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
@@ -647,7 +627,6 @@ export function getInitStockpileInstruction<
   TAccountZincMint,
   TAccountStockpile,
   TAccountStockpileSecret,
-  TAccountStockpileWinners,
   TAccountStockpileExtras,
   TAccountSignPdaAccount,
   TAccountMxeAccount,
@@ -677,10 +656,6 @@ export function getInitStockpileInstruction<
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
-    stockpileWinners: {
-      value: input.stockpileWinners ?? null,
-      isWritable: true,
-    },
     stockpileExtras: { value: input.stockpileExtras ?? null, isWritable: true },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
     mxeAccount: { value: input.mxeAccount ?? null, isWritable: false },
@@ -775,7 +750,7 @@ export function getInitStockpileInstruction<
       args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as unknown as InitStockpileInstruction<
+  } as InitStockpileInstruction<
     TProgramAddress,
     TAccountPayer,
     TAccountConfig,
@@ -784,7 +759,6 @@ export function getInitStockpileInstruction<
     TAccountZincMint,
     TAccountStockpile,
     TAccountStockpileSecret,
-    TAccountStockpileWinners,
     TAccountStockpileExtras,
     TAccountSignPdaAccount,
     TAccountMxeAccount,
@@ -823,32 +797,30 @@ export type ParsedInitStockpileInstruction<
     stockpile: TAccountMetas[5];
     /** Secret storage for the encrypted random value tied to this stockpile. */
     stockpileSecret: TAccountMetas[6];
-    /** Ranked winner storage for this stockpile cycle. */
-    stockpileWinners: TAccountMetas[7];
-    stockpileExtras: TAccountMetas[8];
+    stockpileExtras: TAccountMetas[7];
     /** Arcium signer PDA reused across queued computations. */
-    signPdaAccount: TAccountMetas[9];
+    signPdaAccount: TAccountMetas[8];
     /** MXE account backing the encrypted computations for this program. */
-    mxeAccount: TAccountMetas[10];
-    mempoolAccount: TAccountMetas[11];
-    executingPool: TAccountMetas[12];
-    computationAccount: TAccountMetas[13];
+    mxeAccount: TAccountMetas[9];
+    mempoolAccount: TAccountMetas[10];
+    executingPool: TAccountMetas[11];
+    computationAccount: TAccountMetas[12];
     /** Computation definition for encrypted stockpile entropy generation. */
-    compDefAccount: TAccountMetas[14];
+    compDefAccount: TAccountMetas[13];
     /** Arcium cluster state referenced during queueing. */
-    clusterAccount: TAccountMetas[15];
+    clusterAccount: TAccountMetas[14];
     /** Fee pool used by Arcium for computation costs. */
-    poolAccount: TAccountMetas[16];
+    poolAccount: TAccountMetas[15];
     /** Arcium clock used for computation scheduling. */
-    clockAccount: TAccountMetas[17];
-    stockpileSolVault: TAccountMetas[18];
-    stockpileTokenAccount: TAccountMetas[19];
+    clockAccount: TAccountMetas[16];
+    stockpileSolVault: TAccountMetas[17];
+    stockpileTokenAccount: TAccountMetas[18];
     /** SPL Token program used to initialize the stockpile token vault if needed. */
-    tokenProgram: TAccountMetas[20];
-    systemProgram: TAccountMetas[21];
-    arciumProgram: TAccountMetas[22];
+    tokenProgram: TAccountMetas[19];
+    systemProgram: TAccountMetas[20];
+    arciumProgram: TAccountMetas[21];
     /** SPL Associated Token program used to recreate legacy treasury ATA custody. */
-    associatedTokenProgram: TAccountMetas[23];
+    associatedTokenProgram: TAccountMetas[22];
   };
   data: InitStockpileInstructionData;
 };
@@ -861,12 +833,12 @@ export function parseInitStockpileInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitStockpileInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 24) {
+  if (instruction.accounts.length < 23) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 24,
+        expectedAccountMetas: 23,
       },
     );
   }
@@ -886,7 +858,6 @@ export function parseInitStockpileInstruction<
       zincMint: getNextAccount(),
       stockpile: getNextAccount(),
       stockpileSecret: getNextAccount(),
-      stockpileWinners: getNextAccount(),
       stockpileExtras: getNextAccount(),
       signPdaAccount: getNextAccount(),
       mxeAccount: getNextAccount(),

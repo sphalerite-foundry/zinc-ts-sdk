@@ -19,7 +19,6 @@ import {
   getStockpileExtrasAddress,
   getStockpileSecretAddress,
   getStockpileSolVaultAddress,
-  getStockpileWinnersAddress,
   getTreasuryAddress,
 } from "../pda";
 import {
@@ -65,7 +64,6 @@ export async function buildInitStockpileInstruction({
   const treasuryAccount = await fetchTreasuryAccount(connection, treasury);
   const stockpile = getStockpileAddress(resolvedStockpileId)[0];
   const stockpileSecret = getStockpileSecretAddress(resolvedStockpileId)[0];
-  const stockpileWinners = getStockpileWinnersAddress(resolvedStockpileId)[0];
   const stockpileExtras = getStockpileExtrasAddress()[0];
   const mxeAccount = getMXEAccAddress(ZINC_PROGRAM_ID);
   const mempoolAccount = getMempoolAccAddress(clusterOffset);
@@ -85,7 +83,6 @@ export async function buildInitStockpileInstruction({
     zincMint: treasuryAccount.data.zincMint,
     stockpile: toAddress(stockpile),
     stockpileSecret: toAddress(stockpileSecret),
-    stockpileWinners: toAddress(stockpileWinners),
     stockpileExtras: toAddress(stockpileExtras),
     mxeAccount: toAddress(mxeAccount),
     mempoolAccount: toAddress(mempoolAccount),

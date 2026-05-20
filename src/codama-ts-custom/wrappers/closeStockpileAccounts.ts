@@ -5,6 +5,7 @@ import {
   getConfigAddress,
   getStockpileAddress,
   getStockpileSecretAddress,
+  getStockpileWinnersAddress,
 } from "../pda";
 import {
   toTransactionInstruction,
@@ -35,6 +36,7 @@ export function buildCloseStockpileAccountsInstruction({
     stockpileSecret: toAddress(
       stockpileSecret ?? getStockpileSecretAddress(stockpileId)[0],
     ),
+    stockpileWinners: toAddress(getStockpileWinnersAddress(stockpileId)[0]),
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],

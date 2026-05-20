@@ -43,6 +43,7 @@ export * from "./initSettleWinningStakesBatchCompDef";
 export * from "./initStockpile";
 export * from "./initStockpileRandCallback";
 export * from "./initStockpileRandCompDef";
+export * from "./initStockpileWinners";
 export * from "./joinStockpile";
 export * from "./melt";
 export * from "./migrate";

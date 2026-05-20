@@ -39,32 +39,33 @@ import {
 import { findBoardPda, findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
-export const CLOSE_STOCKPILE_ACCOUNTS_DISCRIMINATOR: ReadonlyUint8Array =
-  new Uint8Array([27, 1, 160, 18, 86, 108, 220, 239]);
+export const INIT_STOCKPILE_WINNERS_DISCRIMINATOR: ReadonlyUint8Array =
+  new Uint8Array([174, 106, 84, 155, 219, 146, 37, 247]);
 
-export function getCloseStockpileAccountsDiscriminatorBytes(): ReadonlyUint8Array {
+export function getInitStockpileWinnersDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CLOSE_STOCKPILE_ACCOUNTS_DISCRIMINATOR,
+    INIT_STOCKPILE_WINNERS_DISCRIMINATOR,
   );
 }
 
-export type CloseStockpileAccountsInstruction<
+export type InitStockpileWinnersInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountPayer extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountStockpile extends string | AccountMeta<string> = string,
-  TAccountStockpileSecret extends string | AccountMeta<string> = string,
   TAccountStockpileWinners extends string | AccountMeta<string> = string,
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
     [
-      TAccountSigner extends string
-        ? WritableSignerAccount<TAccountSigner> &
-            AccountSignerMeta<TAccountSigner>
-        : TAccountSigner,
+      TAccountPayer extends string
+        ? WritableSignerAccount<TAccountPayer> &
+            AccountSignerMeta<TAccountPayer>
+        : TAccountPayer,
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
@@ -72,98 +73,99 @@ export type CloseStockpileAccountsInstruction<
         ? ReadonlyAccount<TAccountBoard>
         : TAccountBoard,
       TAccountStockpile extends string
-        ? WritableAccount<TAccountStockpile>
+        ? ReadonlyAccount<TAccountStockpile>
         : TAccountStockpile,
-      TAccountStockpileSecret extends string
-        ? WritableAccount<TAccountStockpileSecret>
-        : TAccountStockpileSecret,
       TAccountStockpileWinners extends string
         ? WritableAccount<TAccountStockpileWinners>
         : TAccountStockpileWinners,
+      TAccountSystemProgram extends string
+        ? ReadonlyAccount<TAccountSystemProgram>
+        : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
 
-export type CloseStockpileAccountsInstructionData = {
+export type InitStockpileWinnersInstructionData = {
   discriminator: ReadonlyUint8Array;
 };
 
-export type CloseStockpileAccountsInstructionDataArgs = {};
+export type InitStockpileWinnersInstructionDataArgs = {};
 
-export function getCloseStockpileAccountsInstructionDataEncoder(): FixedSizeEncoder<CloseStockpileAccountsInstructionDataArgs> {
+export function getInitStockpileWinnersInstructionDataEncoder(): FixedSizeEncoder<InitStockpileWinnersInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
     (value) => ({
       ...value,
-      discriminator: CLOSE_STOCKPILE_ACCOUNTS_DISCRIMINATOR,
+      discriminator: INIT_STOCKPILE_WINNERS_DISCRIMINATOR,
     }),
   );
 }
 
-export function getCloseStockpileAccountsInstructionDataDecoder(): FixedSizeDecoder<CloseStockpileAccountsInstructionData> {
+export function getInitStockpileWinnersInstructionDataDecoder(): FixedSizeDecoder<InitStockpileWinnersInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
-export function getCloseStockpileAccountsInstructionDataCodec(): FixedSizeCodec<
-  CloseStockpileAccountsInstructionDataArgs,
-  CloseStockpileAccountsInstructionData
+export function getInitStockpileWinnersInstructionDataCodec(): FixedSizeCodec<
+  InitStockpileWinnersInstructionDataArgs,
+  InitStockpileWinnersInstructionData
 > {
   return combineCodec(
-    getCloseStockpileAccountsInstructionDataEncoder(),
-    getCloseStockpileAccountsInstructionDataDecoder(),
+    getInitStockpileWinnersInstructionDataEncoder(),
+    getInitStockpileWinnersInstructionDataDecoder(),
   );
 }
 
-export type CloseStockpileAccountsAsyncInput<
-  TAccountSigner extends string = string,
+export type InitStockpileWinnersAsyncInput<
+  TAccountPayer extends string = string,
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
-  TAccountStockpileSecret extends string = string,
   TAccountStockpileWinners extends string = string,
+  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to submit cleanup transactions. */
-  signer: TransactionSigner<TAccountSigner>;
+  /** Crank payer that funds ranked winner storage. */
+  payer: TransactionSigner<TAccountPayer>;
   /** Global config containing the crank authority. */
   config?: Address<TAccountConfig>;
-  /** Board account used to ensure no live stockpile pointer remains. */
+  /** Board authority source and unresolved stockpile pointer. */
   board?: Address<TAccountBoard>;
-  /** Paid stockpile cycle account being closed to the crank signer. */
+  /** Stockpile cycle that will own the ranked winners account. */
   stockpile: Address<TAccountStockpile>;
-  /** Matching stockpile-secret account being closed to the crank signer. */
-  stockpileSecret: Address<TAccountStockpileSecret>;
+  /** Ranked winner storage for the stockpile cycle. */
   stockpileWinners: Address<TAccountStockpileWinners>;
+  /** System program used to allocate the ranked winners account. */
+  systemProgram?: Address<TAccountSystemProgram>;
 };
 
-export async function getCloseStockpileAccountsInstructionAsync<
-  TAccountSigner extends string,
+export async function getInitStockpileWinnersInstructionAsync<
+  TAccountPayer extends string,
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountStockpile extends string,
-  TAccountStockpileSecret extends string,
   TAccountStockpileWinners extends string,
+  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: CloseStockpileAccountsAsyncInput<
-    TAccountSigner,
+  input: InitStockpileWinnersAsyncInput<
+    TAccountPayer,
     TAccountConfig,
     TAccountBoard,
     TAccountStockpile,
-    TAccountStockpileSecret,
-    TAccountStockpileWinners
+    TAccountStockpileWinners,
+    TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
-  CloseStockpileAccountsInstruction<
+  InitStockpileWinnersInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountPayer,
     TAccountConfig,
     TAccountBoard,
     TAccountStockpile,
-    TAccountStockpileSecret,
-    TAccountStockpileWinners
+    TAccountStockpileWinners,
+    TAccountSystemProgram
   >
 > {
   // Program address.
@@ -171,15 +173,15 @@ export async function getCloseStockpileAccountsInstructionAsync<
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    payer: { value: input.payer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
-    stockpile: { value: input.stockpile ?? null, isWritable: true },
-    stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
+    stockpile: { value: input.stockpile ?? null, isWritable: false },
     stockpileWinners: {
       value: input.stockpileWinners ?? null,
       isWritable: true,
     },
+    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -193,150 +195,162 @@ export async function getCloseStockpileAccountsInstructionAsync<
   if (!accounts.board.value) {
     accounts.board.value = await findBoardPda();
   }
+  if (!accounts.systemProgram.value) {
+    accounts.systemProgram.value =
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("payer", accounts.payer),
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
-      getAccountMeta("stockpileSecret", accounts.stockpileSecret),
       getAccountMeta("stockpileWinners", accounts.stockpileWinners),
+      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getCloseStockpileAccountsInstructionDataEncoder().encode({}),
+    data: getInitStockpileWinnersInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseStockpileAccountsInstruction<
+  } as InitStockpileWinnersInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountPayer,
     TAccountConfig,
     TAccountBoard,
     TAccountStockpile,
-    TAccountStockpileSecret,
-    TAccountStockpileWinners
+    TAccountStockpileWinners,
+    TAccountSystemProgram
   >);
 }
 
-export type CloseStockpileAccountsInput<
-  TAccountSigner extends string = string,
+export type InitStockpileWinnersInput<
+  TAccountPayer extends string = string,
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountStockpile extends string = string,
-  TAccountStockpileSecret extends string = string,
   TAccountStockpileWinners extends string = string,
+  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to submit cleanup transactions. */
-  signer: TransactionSigner<TAccountSigner>;
+  /** Crank payer that funds ranked winner storage. */
+  payer: TransactionSigner<TAccountPayer>;
   /** Global config containing the crank authority. */
   config: Address<TAccountConfig>;
-  /** Board account used to ensure no live stockpile pointer remains. */
+  /** Board authority source and unresolved stockpile pointer. */
   board: Address<TAccountBoard>;
-  /** Paid stockpile cycle account being closed to the crank signer. */
+  /** Stockpile cycle that will own the ranked winners account. */
   stockpile: Address<TAccountStockpile>;
-  /** Matching stockpile-secret account being closed to the crank signer. */
-  stockpileSecret: Address<TAccountStockpileSecret>;
+  /** Ranked winner storage for the stockpile cycle. */
   stockpileWinners: Address<TAccountStockpileWinners>;
+  /** System program used to allocate the ranked winners account. */
+  systemProgram?: Address<TAccountSystemProgram>;
 };
 
-export function getCloseStockpileAccountsInstruction<
-  TAccountSigner extends string,
+export function getInitStockpileWinnersInstruction<
+  TAccountPayer extends string,
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountStockpile extends string,
-  TAccountStockpileSecret extends string,
   TAccountStockpileWinners extends string,
+  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: CloseStockpileAccountsInput<
-    TAccountSigner,
+  input: InitStockpileWinnersInput<
+    TAccountPayer,
     TAccountConfig,
     TAccountBoard,
     TAccountStockpile,
-    TAccountStockpileSecret,
-    TAccountStockpileWinners
+    TAccountStockpileWinners,
+    TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
-): CloseStockpileAccountsInstruction<
+): InitStockpileWinnersInstruction<
   TProgramAddress,
-  TAccountSigner,
+  TAccountPayer,
   TAccountConfig,
   TAccountBoard,
   TAccountStockpile,
-  TAccountStockpileSecret,
-  TAccountStockpileWinners
+  TAccountStockpileWinners,
+  TAccountSystemProgram
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    payer: { value: input.payer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
-    stockpile: { value: input.stockpile ?? null, isWritable: true },
-    stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
+    stockpile: { value: input.stockpile ?? null, isWritable: false },
     stockpileWinners: {
       value: input.stockpileWinners ?? null,
       isWritable: true,
     },
+    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
     ResolvedInstructionAccount
   >;
 
+  // Resolve default values.
+  if (!accounts.systemProgram.value) {
+    accounts.systemProgram.value =
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+  }
+
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("payer", accounts.payer),
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("stockpile", accounts.stockpile),
-      getAccountMeta("stockpileSecret", accounts.stockpileSecret),
       getAccountMeta("stockpileWinners", accounts.stockpileWinners),
+      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getCloseStockpileAccountsInstructionDataEncoder().encode({}),
+    data: getInitStockpileWinnersInstructionDataEncoder().encode({}),
     programAddress,
-  } as CloseStockpileAccountsInstruction<
+  } as InitStockpileWinnersInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountPayer,
     TAccountConfig,
     TAccountBoard,
     TAccountStockpile,
-    TAccountStockpileSecret,
-    TAccountStockpileWinners
+    TAccountStockpileWinners,
+    TAccountSystemProgram
   >);
 }
 
-export type ParsedCloseStockpileAccountsInstruction<
+export type ParsedInitStockpileWinnersInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    /** Crank signer authorized to submit cleanup transactions. */
-    signer: TAccountMetas[0];
+    /** Crank payer that funds ranked winner storage. */
+    payer: TAccountMetas[0];
     /** Global config containing the crank authority. */
     config: TAccountMetas[1];
-    /** Board account used to ensure no live stockpile pointer remains. */
+    /** Board authority source and unresolved stockpile pointer. */
     board: TAccountMetas[2];
-    /** Paid stockpile cycle account being closed to the crank signer. */
+    /** Stockpile cycle that will own the ranked winners account. */
     stockpile: TAccountMetas[3];
-    /** Matching stockpile-secret account being closed to the crank signer. */
-    stockpileSecret: TAccountMetas[4];
-    stockpileWinners: TAccountMetas[5];
+    /** Ranked winner storage for the stockpile cycle. */
+    stockpileWinners: TAccountMetas[4];
+    /** System program used to allocate the ranked winners account. */
+    systemProgram: TAccountMetas[5];
   };
-  data: CloseStockpileAccountsInstructionData;
+  data: InitStockpileWinnersInstructionData;
 };
 
-export function parseCloseStockpileAccountsInstruction<
+export function parseInitStockpileWinnersInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
-): ParsedCloseStockpileAccountsInstruction<TProgram, TAccountMetas> {
+): ParsedInitStockpileWinnersInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
@@ -355,14 +369,14 @@ export function parseCloseStockpileAccountsInstruction<
   return {
     programAddress: instruction.programAddress,
     accounts: {
-      signer: getNextAccount(),
+      payer: getNextAccount(),
       config: getNextAccount(),
       board: getNextAccount(),
       stockpile: getNextAccount(),
-      stockpileSecret: getNextAccount(),
       stockpileWinners: getNextAccount(),
+      systemProgram: getNextAccount(),
     },
-    data: getCloseStockpileAccountsInstructionDataDecoder().decode(
+    data: getInitStockpileWinnersInstructionDataDecoder().decode(
       instruction.data,
     ),
   };
