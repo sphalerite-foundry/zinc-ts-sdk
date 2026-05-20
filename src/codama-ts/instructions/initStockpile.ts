@@ -466,7 +466,6 @@ export async function getInitStockpileInstructionAsync<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
-      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
       getAccountMeta("signPdaAccount", accounts.signPdaAccount),
       getAccountMeta("mxeAccount", accounts.mxeAccount),
@@ -488,7 +487,7 @@ export async function getInitStockpileInstructionAsync<
       args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileInstruction<
+  } as unknown as InitStockpileInstruction<
     TProgramAddress,
     TAccountPayer,
     TAccountConfig,
@@ -755,7 +754,6 @@ export function getInitStockpileInstruction<
       getAccountMeta("zincMint", accounts.zincMint),
       getAccountMeta("stockpile", accounts.stockpile),
       getAccountMeta("stockpileSecret", accounts.stockpileSecret),
-      getAccountMeta("stockpileWinners", accounts.stockpileWinners),
       getAccountMeta("stockpileExtras", accounts.stockpileExtras),
       getAccountMeta("signPdaAccount", accounts.signPdaAccount),
       getAccountMeta("mxeAccount", accounts.mxeAccount),
@@ -777,7 +775,7 @@ export function getInitStockpileInstruction<
       args as InitStockpileInstructionDataArgs,
     ),
     programAddress,
-  } as InitStockpileInstruction<
+  } as unknown as InitStockpileInstruction<
     TProgramAddress,
     TAccountPayer,
     TAccountConfig,
