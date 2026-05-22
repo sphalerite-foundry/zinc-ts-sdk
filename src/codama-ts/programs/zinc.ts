@@ -39,13 +39,8 @@ import {
   getBoardCodec,
   getBuybackPoolCodec,
   getBuybackSolVaultCodec,
-  getClockAccountCodec,
-  getClusterCodec,
-  getComputationDefinitionAccountCodec,
   getConfigCodec,
-  getFeePoolCodec,
   getMinerCodec,
-  getMXEAccountCodec,
   getPlayerProfileCodec,
   getRoundCodec,
   getRoundSecretCodec,
@@ -66,20 +61,10 @@ import {
   type BuybackPoolArgs,
   type BuybackSolVault,
   type BuybackSolVaultArgs,
-  type ClockAccount,
-  type ClockAccountArgs,
-  type Cluster,
-  type ClusterArgs,
-  type ComputationDefinitionAccount,
-  type ComputationDefinitionAccountArgs,
   type Config,
   type ConfigArgs,
-  type FeePool,
-  type FeePoolArgs,
   type Miner,
   type MinerArgs,
-  type MXEAccount,
-  type MXEAccountArgs,
   type PlayerProfile,
   type PlayerProfileArgs,
   type Round,
@@ -382,12 +367,7 @@ export enum ZincAccount {
   Board,
   BuybackPool,
   BuybackSolVault,
-  ClockAccount,
-  Cluster,
-  ComputationDefinitionAccount,
   Config,
-  FeePool,
-  MXEAccount,
   Miner,
   PlayerProfile,
   Round,
@@ -464,67 +444,12 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([152, 171, 158, 195, 75, 61, 51, 8]),
-      ),
-      0,
-    )
-  ) {
-    return ZincAccount.ClockAccount;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([236, 225, 118, 228, 173, 106, 18, 60]),
-      ),
-      0,
-    )
-  ) {
-    return ZincAccount.Cluster;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([245, 176, 217, 221, 253, 104, 172, 200]),
-      ),
-      0,
-    )
-  ) {
-    return ZincAccount.ComputationDefinitionAccount;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([155, 12, 170, 224, 30, 250, 204, 130]),
       ),
       0,
     )
   ) {
     return ZincAccount.Config;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([172, 38, 77, 146, 148, 5, 51, 242]),
-      ),
-      0,
-    )
-  ) {
-    return ZincAccount.FeePool;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([103, 26, 85, 250, 179, 159, 17, 117]),
-      ),
-      0,
-    )
-  ) {
-    return ZincAccount.MXEAccount;
   }
   if (
     containsBytes(
@@ -2042,23 +1967,8 @@ export type ZincPluginAccounts = {
     SelfFetchFunctions<BuybackPoolArgs, BuybackPool>;
   buybackSolVault: ReturnType<typeof getBuybackSolVaultCodec> &
     SelfFetchFunctions<BuybackSolVaultArgs, BuybackSolVault>;
-  clockAccount: ReturnType<typeof getClockAccountCodec> &
-    SelfFetchFunctions<ClockAccountArgs, ClockAccount>;
-  cluster: ReturnType<typeof getClusterCodec> &
-    SelfFetchFunctions<ClusterArgs, Cluster>;
-  computationDefinitionAccount: ReturnType<
-    typeof getComputationDefinitionAccountCodec
-  > &
-    SelfFetchFunctions<
-      ComputationDefinitionAccountArgs,
-      ComputationDefinitionAccount
-    >;
   config: ReturnType<typeof getConfigCodec> &
     SelfFetchFunctions<ConfigArgs, Config>;
-  feePool: ReturnType<typeof getFeePoolCodec> &
-    SelfFetchFunctions<FeePoolArgs, FeePool>;
-  mXEAccount: ReturnType<typeof getMXEAccountCodec> &
-    SelfFetchFunctions<MXEAccountArgs, MXEAccount>;
   miner: ReturnType<typeof getMinerCodec> &
     SelfFetchFunctions<MinerArgs, Miner>;
   playerProfile: ReturnType<typeof getPlayerProfileCodec> &
@@ -2381,15 +2291,7 @@ export function zincProgram() {
             client,
             getBuybackSolVaultCodec(),
           ),
-          clockAccount: addSelfFetchFunctions(client, getClockAccountCodec()),
-          cluster: addSelfFetchFunctions(client, getClusterCodec()),
-          computationDefinitionAccount: addSelfFetchFunctions(
-            client,
-            getComputationDefinitionAccountCodec(),
-          ),
           config: addSelfFetchFunctions(client, getConfigCodec()),
-          feePool: addSelfFetchFunctions(client, getFeePoolCodec()),
-          mXEAccount: addSelfFetchFunctions(client, getMXEAccountCodec()),
           miner: addSelfFetchFunctions(client, getMinerCodec()),
           playerProfile: addSelfFetchFunctions(client, getPlayerProfileCodec()),
           round: addSelfFetchFunctions(client, getRoundCodec()),
