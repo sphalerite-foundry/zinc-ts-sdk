@@ -223,8 +223,8 @@ export type DeployRoundFromAutoSessionAsyncInput<
   stockpileSolVault?: Address<TAccountStockpileSolVault>;
   /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
   buybackSolVault?: Address<TAccountBuybackSolVault>;
-  /** Current stockpile account required by deploy account wiring. */
-  stockpile: Address<TAccountStockpile>;
+  /** Active stockpile account, omitted when no cycle is currently joinable. */
+  stockpile?: Address<TAccountStockpile>;
   affiliate?: Address<TAccountAffiliate>;
   affiliateProfile?: Address<TAccountAffiliateProfile>;
   /** System program used for PDA-funded transfers. */
@@ -447,8 +447,8 @@ export type DeployRoundFromAutoSessionInput<
   stockpileSolVault: Address<TAccountStockpileSolVault>;
   /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
   buybackSolVault: Address<TAccountBuybackSolVault>;
-  /** Current stockpile account required by deploy account wiring. */
-  stockpile: Address<TAccountStockpile>;
+  /** Active stockpile account, omitted when no cycle is currently joinable. */
+  stockpile?: Address<TAccountStockpile>;
   affiliate?: Address<TAccountAffiliate>;
   affiliateProfile?: Address<TAccountAffiliateProfile>;
   /** System program used for PDA-funded transfers. */
@@ -626,8 +626,8 @@ export type ParsedDeployRoundFromAutoSessionInstruction<
     stockpileSolVault: TAccountMetas[9];
     /** Program-owned lamport vault that accumulates buyback SOL across deploys. */
     buybackSolVault: TAccountMetas[10];
-    /** Current stockpile account required by deploy account wiring. */
-    stockpile: TAccountMetas[11];
+    /** Active stockpile account, omitted when no cycle is currently joinable. */
+    stockpile?: TAccountMetas[11] | undefined;
     affiliate?: TAccountMetas[12] | undefined;
     affiliateProfile?: TAccountMetas[13] | undefined;
     /** System program used for PDA-funded transfers. */
@@ -679,7 +679,7 @@ export function parseDeployRoundFromAutoSessionInstruction<
       treasury: getNextAccount(),
       stockpileSolVault: getNextAccount(),
       buybackSolVault: getNextAccount(),
-      stockpile: getNextAccount(),
+      stockpile: getNextOptionalAccount(),
       affiliate: getNextOptionalAccount(),
       affiliateProfile: getNextOptionalAccount(),
       systemProgram: getNextAccount(),

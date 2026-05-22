@@ -6,7 +6,6 @@ import {
   toTransactionSigner,
 } from "../utils/sol-helpers";
 import { toAddress, unwrapOption } from "./shared";
-import { resolveRoundStockpileId } from "./roundStockpile";
 import {
   fetchBoardAccount,
   fetchPlayerProfileAccount,
@@ -77,15 +76,9 @@ export async function buildDeployRoundInstruction({
     ? getPlayerProfileAddress(effectiveAffiliate)[0]
     : null;
   const activeStockpileId = unwrapOption(boardAccount.data.activeStockpileId);
-  const unresolvedStockpileId = unwrapOption(
-    boardAccount.data.unresolvedStockpileId,
-  );
-  const stockpileId = resolveRoundStockpileId({
-    activeStockpileId,
-    unresolvedStockpileId,
-    nextStockpileId: boardAccount.data.nextStockpileId,
-  });
-  const stockpile = getStockpileAddress(stockpileId)[0];
+  const stockpile = activeStockpileId
+    ? getStockpileAddress(activeStockpileId)[0]
+    : null;
   const instruction = await getDeployRoundInstructionAsync({
     signer: toTransactionSigner(signer),
     round: toAddress(round),
@@ -94,7 +87,7 @@ export async function buildDeployRoundInstruction({
     playerProfile: toAddress(playerProfile),
     board: toAddress(board),
     treasury: toAddress(treasury),
-    stockpile: toAddress(stockpile),
+    stockpile: stockpile ? toAddress(stockpile) : undefined,
     affiliate: effectiveAffiliate ? toAddress(effectiveAffiliate) : undefined,
     affiliateProfile: affiliateProfile
       ? toAddress(affiliateProfile)
