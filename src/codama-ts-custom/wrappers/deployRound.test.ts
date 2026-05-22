@@ -12,7 +12,6 @@ import {
   getBoardAddress,
   getPlayerProfileAddress,
   getRoundAddress,
-  getStockpileAddress,
 } from "../pda";
 import { ZINC_PROGRAM_ID } from "../constants";
 import { buildDeployRoundInstruction } from "./deployRound";
@@ -257,7 +256,7 @@ test("buildDeployRoundInstruction derives the requested round account", async ()
   );
 });
 
-test("buildDeployRoundInstruction falls back to the latest initialized stockpile between cycles", async () => {
+test("buildDeployRoundInstruction omits stockpile when no cycle is active", async () => {
   const signer = Keypair.generate().publicKey;
   const instruction = await buildInstructionWithAffiliateState({
     signer,
@@ -270,22 +269,23 @@ test("buildDeployRoundInstruction falls back to the latest initialized stockpile
 
   assert.equal(
     instruction.keys[9]?.pubkey.toBase58(),
-    getStockpileAddress(3n)[0].toBase58(),
+    ZINC_PROGRAM_ID.toBase58(),
   );
 });
 
-test("buildDeployRoundInstruction rejects deploy before any stockpile exists", async () => {
+test("buildDeployRoundInstruction omits stockpile before any cycle exists", async () => {
   const signer = Keypair.generate().publicKey;
+  const instruction = await buildInstructionWithAffiliateState({
+    signer,
+    storedAffiliate: null,
+    requestedAffiliate: null,
+    activeStockpileId: null,
+    unresolvedStockpileId: null,
+    nextStockpileId: 0n,
+  });
 
-  await assert.rejects(
-    buildInstructionWithAffiliateState({
-      signer,
-      storedAffiliate: null,
-      requestedAffiliate: null,
-      activeStockpileId: null,
-      unresolvedStockpileId: null,
-      nextStockpileId: 0n,
-    }),
-    /no initialized stockpile account/,
+  assert.equal(
+    instruction.keys[9]?.pubkey.toBase58(),
+    ZINC_PROGRAM_ID.toBase58(),
   );
 });
