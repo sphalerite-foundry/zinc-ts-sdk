@@ -42,7 +42,6 @@ import {
   findBoardPda,
   findConfigPda,
   findSignPdaAccountPda,
-  findStockpileExtrasPda,
   findStockpileSolVaultPda,
   findTreasuryPda,
 } from "../pdas";
@@ -87,8 +86,6 @@ export type InitStockpileInstruction<
     "11111111111111111111111111111111",
   TAccountArciumProgram extends string | AccountMeta<string> =
     "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ",
-  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
-    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -117,7 +114,7 @@ export type InitStockpileInstruction<
         ? WritableAccount<TAccountStockpileSecret>
         : TAccountStockpileSecret,
       TAccountStockpileExtras extends string
-        ? WritableAccount<TAccountStockpileExtras>
+        ? ReadonlyAccount<TAccountStockpileExtras>
         : TAccountStockpileExtras,
       TAccountSignPdaAccount extends string
         ? WritableAccount<TAccountSignPdaAccount>
@@ -161,9 +158,6 @@ export type InitStockpileInstruction<
       TAccountArciumProgram extends string
         ? ReadonlyAccount<TAccountArciumProgram>
         : TAccountArciumProgram,
-      TAccountAssociatedTokenProgram extends string
-        ? ReadonlyAccount<TAccountAssociatedTokenProgram>
-        : TAccountAssociatedTokenProgram,
       ...TRemainingAccounts,
     ]
   >;
@@ -227,7 +221,6 @@ export type InitStockpileAsyncInput<
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string,
 > = {
   /** Pays for the stockpile accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -242,7 +235,7 @@ export type InitStockpileAsyncInput<
   stockpile: Address<TAccountStockpile>;
   /** Secret storage for the encrypted random value tied to this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
-  stockpileExtras?: Address<TAccountStockpileExtras>;
+  stockpileExtras: Address<TAccountStockpileExtras>;
   /** Arcium signer PDA reused across queued computations. */
   signPdaAccount?: Address<TAccountSignPdaAccount>;
   /** MXE account backing the encrypted computations for this program. */
@@ -264,8 +257,6 @@ export type InitStockpileAsyncInput<
   tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
   arciumProgram?: Address<TAccountArciumProgram>;
-  /** SPL Associated Token program used to recreate legacy treasury ATA custody. */
-  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
   computationOffset: InitStockpileInstructionDataArgs["computationOffset"];
 };
 
@@ -292,7 +283,6 @@ export async function getInitStockpileInstructionAsync<
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TAccountAssociatedTokenProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileAsyncInput<
@@ -317,8 +307,7 @@ export async function getInitStockpileInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram,
     TAccountSystemProgram,
-    TAccountArciumProgram,
-    TAccountAssociatedTokenProgram
+    TAccountArciumProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
@@ -345,8 +334,7 @@ export async function getInitStockpileInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram,
     TAccountSystemProgram,
-    TAccountArciumProgram,
-    TAccountAssociatedTokenProgram
+    TAccountArciumProgram
   >
 > {
   // Program address.
@@ -361,7 +349,10 @@ export async function getInitStockpileInstructionAsync<
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
-    stockpileExtras: { value: input.stockpileExtras ?? null, isWritable: true },
+    stockpileExtras: {
+      value: input.stockpileExtras ?? null,
+      isWritable: true,
+    },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
     mxeAccount: { value: input.mxeAccount ?? null, isWritable: false },
     mempoolAccount: { value: input.mempoolAccount ?? null, isWritable: true },
@@ -385,10 +376,6 @@ export async function getInitStockpileInstructionAsync<
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
     arciumProgram: { value: input.arciumProgram ?? null, isWritable: false },
-    associatedTokenProgram: {
-      value: input.associatedTokenProgram ?? null,
-      isWritable: false,
-    },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -407,9 +394,6 @@ export async function getInitStockpileInstructionAsync<
   }
   if (!accounts.treasury.value) {
     accounts.treasury.value = await findTreasuryPda();
-  }
-  if (!accounts.stockpileExtras.value) {
-    accounts.stockpileExtras.value = await findStockpileExtrasPda();
   }
   if (!accounts.signPdaAccount.value) {
     accounts.signPdaAccount.value = await findSignPdaAccountPda();
@@ -437,10 +421,6 @@ export async function getInitStockpileInstructionAsync<
     accounts.arciumProgram.value =
       "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ" as Address<"Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ">;
   }
-  if (!accounts.associatedTokenProgram.value) {
-    accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
-  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
@@ -467,7 +447,6 @@ export async function getInitStockpileInstructionAsync<
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
       getAccountMeta("arciumProgram", accounts.arciumProgram),
-      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
     ],
     data: getInitStockpileInstructionDataEncoder().encode(
       args as InitStockpileInstructionDataArgs,
@@ -496,8 +475,7 @@ export async function getInitStockpileInstructionAsync<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram,
     TAccountSystemProgram,
-    TAccountArciumProgram,
-    TAccountAssociatedTokenProgram
+    TAccountArciumProgram
   >);
 }
 
@@ -524,7 +502,6 @@ export type InitStockpileInput<
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
   TAccountArciumProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string,
 > = {
   /** Pays for the stockpile accounts and Arcium queue transaction. */
   payer: TransactionSigner<TAccountPayer>;
@@ -561,8 +538,6 @@ export type InitStockpileInput<
   tokenProgram?: Address<TAccountTokenProgram>;
   systemProgram?: Address<TAccountSystemProgram>;
   arciumProgram?: Address<TAccountArciumProgram>;
-  /** SPL Associated Token program used to recreate legacy treasury ATA custody. */
-  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
   computationOffset: InitStockpileInstructionDataArgs["computationOffset"];
 };
 
@@ -589,7 +564,6 @@ export function getInitStockpileInstruction<
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TAccountArciumProgram extends string,
-  TAccountAssociatedTokenProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: InitStockpileInput<
@@ -614,8 +588,7 @@ export function getInitStockpileInstruction<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram,
     TAccountSystemProgram,
-    TAccountArciumProgram,
-    TAccountAssociatedTokenProgram
+    TAccountArciumProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): InitStockpileInstruction<
@@ -641,8 +614,7 @@ export function getInitStockpileInstruction<
   TAccountStockpileTokenAccount,
   TAccountTokenProgram,
   TAccountSystemProgram,
-  TAccountArciumProgram,
-  TAccountAssociatedTokenProgram
+  TAccountArciumProgram
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
@@ -656,7 +628,10 @@ export function getInitStockpileInstruction<
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     stockpile: { value: input.stockpile ?? null, isWritable: true },
     stockpileSecret: { value: input.stockpileSecret ?? null, isWritable: true },
-    stockpileExtras: { value: input.stockpileExtras ?? null, isWritable: true },
+    stockpileExtras: {
+      value: input.stockpileExtras ?? null,
+      isWritable: true,
+    },
     signPdaAccount: { value: input.signPdaAccount ?? null, isWritable: true },
     mxeAccount: { value: input.mxeAccount ?? null, isWritable: false },
     mempoolAccount: { value: input.mempoolAccount ?? null, isWritable: true },
@@ -680,10 +655,6 @@ export function getInitStockpileInstruction<
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
     arciumProgram: { value: input.arciumProgram ?? null, isWritable: false },
-    associatedTokenProgram: {
-      value: input.associatedTokenProgram ?? null,
-      isWritable: false,
-    },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -714,10 +685,6 @@ export function getInitStockpileInstruction<
     accounts.arciumProgram.value =
       "Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ" as Address<"Arcj82pX7HxYKLR92qvgZUAd7vGS1k4hQvAFcPATFdEQ">;
   }
-  if (!accounts.associatedTokenProgram.value) {
-    accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
-  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
@@ -744,7 +711,6 @@ export function getInitStockpileInstruction<
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
       getAccountMeta("arciumProgram", accounts.arciumProgram),
-      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
     ],
     data: getInitStockpileInstructionDataEncoder().encode(
       args as InitStockpileInstructionDataArgs,
@@ -773,8 +739,7 @@ export function getInitStockpileInstruction<
     TAccountStockpileTokenAccount,
     TAccountTokenProgram,
     TAccountSystemProgram,
-    TAccountArciumProgram,
-    TAccountAssociatedTokenProgram
+    TAccountArciumProgram
   >);
 }
 
@@ -819,8 +784,6 @@ export type ParsedInitStockpileInstruction<
     tokenProgram: TAccountMetas[19];
     systemProgram: TAccountMetas[20];
     arciumProgram: TAccountMetas[21];
-    /** SPL Associated Token program used to recreate legacy treasury ATA custody. */
-    associatedTokenProgram: TAccountMetas[22];
   };
   data: InitStockpileInstructionData;
 };
@@ -833,12 +796,12 @@ export function parseInitStockpileInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitStockpileInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 23) {
+  if (instruction.accounts.length < 22) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 23,
+        expectedAccountMetas: 22,
       },
     );
   }
@@ -873,7 +836,6 @@ export function parseInitStockpileInstruction<
       tokenProgram: getNextAccount(),
       systemProgram: getNextAccount(),
       arciumProgram: getNextAccount(),
-      associatedTokenProgram: getNextAccount(),
     },
     data: getInitStockpileInstructionDataDecoder().decode(instruction.data),
   };

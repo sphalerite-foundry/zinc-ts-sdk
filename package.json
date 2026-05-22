@@ -52,7 +52,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@arcium-hq/client": "0.9.7",
+    "@arcium-hq/client": "0.10.2",
     "@solana/kit": "^6.8.0",
     "@solana/program-client-core": "^6.8.0",
     "@solana/spl-token": "^0.4.14",

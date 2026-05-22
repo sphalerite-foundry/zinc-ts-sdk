@@ -80,7 +80,7 @@ export async function buildInitStockpileInstruction({
   const instruction = await getInitStockpileInstructionAsync({
     payer: toTransactionSigner(payer),
     treasury: toAddress(treasury),
-    zincMint: treasuryAccount.data.zincMint,
+    zincMint: toAddress(new PublicKey(treasuryAccount.data.zincMint)),
     stockpile: toAddress(stockpile),
     stockpileSecret: toAddress(stockpileSecret),
     stockpileExtras: toAddress(stockpileExtras),
@@ -97,16 +97,16 @@ export async function buildInitStockpileInstruction({
   const transactionInstruction = toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
   );
-  if (
-    !transactionInstruction.keys.some(({ pubkey }) =>
-      pubkey.equals(ASSOCIATED_TOKEN_PROGRAM_ID),
-    )
-  ) {
-    transactionInstruction.keys.push({
-      pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
-      isSigner: false,
-      isWritable: false,
-    });
+  const stockpileExtrasMeta = transactionInstruction.keys.find((account) =>
+    account.pubkey.equals(stockpileExtras),
+  );
+  if (stockpileExtrasMeta) {
+    stockpileExtrasMeta.isWritable = true;
   }
+  transactionInstruction.keys.push({
+    pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+    isSigner: false,
+    isWritable: false,
+  });
   return transactionInstruction;
 }
