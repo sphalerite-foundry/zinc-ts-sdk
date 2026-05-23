@@ -33,15 +33,15 @@ export type SettleWinningStakesBatchOutputStruct0Args = {
 
 export function getSettleWinningStakesBatchOutputStruct0Encoder(): FixedSizeEncoder<SettleWinningStakesBatchOutputStruct0Args> {
   return getStructEncoder([
-    ["field0", getArrayEncoder(getU64Encoder(), { size: 8 })],
-    ["field1", getArrayEncoder(getU128Encoder(), { size: 8 })],
+    ["field0", getArrayEncoder(getU64Encoder(), { size: 4 })],
+    ["field1", getArrayEncoder(getU128Encoder(), { size: 4 })],
   ]);
 }
 
 export function getSettleWinningStakesBatchOutputStruct0Decoder(): FixedSizeDecoder<SettleWinningStakesBatchOutputStruct0> {
   return getStructDecoder([
-    ["field0", getArrayDecoder(getU64Decoder(), { size: 8 })],
-    ["field1", getArrayDecoder(getU128Decoder(), { size: 8 })],
+    ["field0", getArrayDecoder(getU64Decoder(), { size: 4 })],
+    ["field1", getArrayDecoder(getU128Decoder(), { size: 4 })],
   ]);
 }
 
