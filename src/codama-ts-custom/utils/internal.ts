@@ -17,6 +17,8 @@ export type DecodedMxeAccount = {
   data: MXEAccount;
 };
 
+const ARCIUM_ACCOUNT_DISCRIMINATOR_SIZE = 8;
+
 export async function fetchDecodedBoard(
   connection: Connection,
   programId: PublicKey,
@@ -49,6 +51,8 @@ export async function fetchDecodedMxeAccount(
 
   return {
     address: mxeAddress,
-    data: getMXEAccountDecoder().decode(accountInfo.data),
+    data: getMXEAccountDecoder().decode(
+      accountInfo.data.slice(ARCIUM_ACCOUNT_DISCRIMINATOR_SIZE),
+    ),
   };
 }

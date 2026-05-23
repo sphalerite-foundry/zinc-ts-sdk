@@ -12,6 +12,7 @@ import {
   getBoardAddress,
   getPlayerProfileAddress,
   getRoundAddress,
+  getStockpileAddress,
 } from "../pda";
 import { ZINC_PROGRAM_ID } from "../constants";
 import { buildDeployRoundInstruction } from "./deployRound";
@@ -253,6 +254,21 @@ test("buildDeployRoundInstruction derives the requested round account", async ()
   assert.equal(
     instruction.keys[4]?.pubkey.toBase58(),
     getPlayerProfileAddress(signer)[0].toBase58(),
+  );
+});
+
+test("buildDeployRoundInstruction includes active stockpile zero", async () => {
+  const signer = Keypair.generate().publicKey;
+  const instruction = await buildInstructionWithAffiliateState({
+    signer,
+    storedAffiliate: null,
+    requestedAffiliate: null,
+    activeStockpileId: 0n,
+  });
+
+  assert.equal(
+    instruction.keys[9]?.pubkey.toBase58(),
+    getStockpileAddress(0n)[0].toBase58(),
   );
 });
 

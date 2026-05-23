@@ -76,9 +76,10 @@ export async function buildDeployRoundInstruction({
     ? getPlayerProfileAddress(effectiveAffiliate)[0]
     : null;
   const activeStockpileId = unwrapOption(boardAccount.data.activeStockpileId);
-  const stockpile = activeStockpileId
-    ? getStockpileAddress(activeStockpileId)[0]
-    : null;
+  const stockpile =
+    activeStockpileId != null
+      ? getStockpileAddress(activeStockpileId)[0]
+      : null;
   const instruction = await getDeployRoundInstructionAsync({
     signer: toTransactionSigner(signer),
     round: toAddress(round),
