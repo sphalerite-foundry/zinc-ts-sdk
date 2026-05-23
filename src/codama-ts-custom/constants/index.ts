@@ -37,7 +37,7 @@ export const REVEAL_ROUND_RAND_CIRCUIT = "reveal_round_rand";
 export const REVEAL_STOCKPILE_RAND_CIRCUIT = "reveal_stockpile_rand";
 export const SETTLE_WINNING_STAKES_BATCH_CIRCUIT =
   "settle_winning_stakes_batch";
-export const SETTLE_WINNING_STAKES_BATCH_SIZE = 8;
+export const SETTLE_WINNING_STAKES_BATCH_SIZE = 4;
 export const ZINC_PROGRAM_ID = new PublicKey(ZINC_PROGRAM_ADDRESS);
 export const WSOL_MINT_ADDRESS = new PublicKey(
   "So11111111111111111111111111111111111111112",
