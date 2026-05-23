@@ -17,6 +17,7 @@ export * from "./depositStockpileExtra";
 export * from "./initBoard";
 export * from "./initConfig";
 export * from "./initStockpile";
+export * from "./initStockpileWinners";
 export * from "./initStockpileRandCompDef";
 export * from "./initRevealStockpileRandCompDef";
 export * from "./initRevealRoundRandCompDef";
