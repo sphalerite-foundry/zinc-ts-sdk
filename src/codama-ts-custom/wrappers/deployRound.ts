@@ -1,6 +1,9 @@
 import { type ReadonlyUint8Array } from "@solana/kit";
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { getDeployRoundInstructionAsync } from "../../codama-ts";
+import {
+  getDeployRoundInstructionAsync,
+  type ZkMaskAttestationArgsArgs,
+} from "../../codama-ts";
 import {
   toTransactionInstruction,
   toTransactionSigner,
@@ -28,6 +31,8 @@ export type BuildDeployRoundInstruction = {
   maskEncryptionKey: ReadonlyUint8Array;
   maskNonce: number | bigint;
   maskCiphertext: ReadonlyUint8Array;
+  /** Optional reusable ZK mask attestation required by ZK-capable config modes. */
+  zkMaskAttestation?: ZkMaskAttestationArgsArgs | null;
 };
 
 /** Builds one deploy-round instruction while preserving immutable affiliate binding semantics. */
@@ -40,6 +45,7 @@ export async function buildDeployRoundInstruction({
   maskEncryptionKey,
   maskNonce,
   maskCiphertext,
+  zkMaskAttestation = null,
 }: BuildDeployRoundInstruction): Promise<TransactionInstruction> {
   const boardAccount = await fetchBoardAccount(connection);
   const config = getConfigAddress()[0];
@@ -97,6 +103,7 @@ export async function buildDeployRoundInstruction({
     maskEncryptionKey,
     maskNonce,
     maskCiphertext,
+    zkMaskAttestation,
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],

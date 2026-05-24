@@ -8,6 +8,7 @@ export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
 const TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
 );
+export const DEFAULT_ARCIUM_CLUSTER_OFFSET = 10000;
 
 /** Converts one `PublicKey` into the codama `Address` wire format. */
 export function toAddress(pubkey: PublicKey): Address {
@@ -43,9 +44,10 @@ export function resolveArciumClusterOffset(
     return arciumClusterOffset;
   }
 
-  const rawClusterOffset = process.env.ARCIUM_CLUSTER_OFFSET;
+  const rawClusterOffset =
+    process.env.ARCIUM_CLUSTER_OFFSET ?? process.env.CLUSTER_OFFSET;
   if (!rawClusterOffset) {
-    return 0;
+    return DEFAULT_ARCIUM_CLUSTER_OFFSET;
   }
 
   const parsedClusterOffset = Number(rawClusterOffset);

@@ -138,6 +138,7 @@ import {
   getRevealRoundRandCallbackInstructionAsync,
   getRevealStockpileRandCallbackInstructionAsync,
   getSelectWildcatWinnerInstructionAsync,
+  getSettlePrivateZkSingleInstructionAsync,
   getSettleWinningStakesBatchCallbackInstructionAsync,
   getStakeInstructionAsync,
   getTopUpAutoMinerSessionInstructionAsync,
@@ -199,6 +200,7 @@ import {
   parseRevealRoundRandCallbackInstruction,
   parseRevealStockpileRandCallbackInstruction,
   parseSelectWildcatWinnerInstruction,
+  parseSettlePrivateZkSingleInstruction,
   parseSettleWinningStakesBatchCallbackInstruction,
   parseStakeInstruction,
   parseTopUpAutoMinerSessionInstruction,
@@ -301,6 +303,7 @@ import {
   type ParsedRevealRoundRandCallbackInstruction,
   type ParsedRevealStockpileRandCallbackInstruction,
   type ParsedSelectWildcatWinnerInstruction,
+  type ParsedSettlePrivateZkSingleInstruction,
   type ParsedSettleWinningStakesBatchCallbackInstruction,
   type ParsedStakeInstruction,
   type ParsedTopUpAutoMinerSessionInstruction,
@@ -321,6 +324,7 @@ import {
   type RevealRoundRandCallbackAsyncInput,
   type RevealStockpileRandCallbackAsyncInput,
   type SelectWildcatWinnerAsyncInput,
+  type SettlePrivateZkSingleAsyncInput,
   type SettleWinningStakesBatchCallbackAsyncInput,
   type StakeAsyncInput,
   type TopUpAutoMinerSessionAsyncInput,
@@ -630,6 +634,7 @@ export enum ZincInstruction {
   RevealRoundRandCallback,
   RevealStockpileRandCallback,
   SelectWildcatWinner,
+  SettlePrivateZkSingle,
   SettleWinningStakesBatchCallback,
   Stake,
   TopUpAutoMinerSession,
@@ -1211,6 +1216,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([185, 159, 15, 71, 10, 199, 38, 132]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.SettlePrivateZkSingle;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([207, 13, 75, 112, 225, 218, 12, 200]),
       ),
       0,
@@ -1479,6 +1495,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.SelectWildcatWinner;
     } & ParsedSelectWildcatWinnerInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.SettlePrivateZkSingle;
+    } & ParsedSettlePrivateZkSingleInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.SettleWinningStakesBatchCallback;
     } & ParsedSettleWinningStakesBatchCallbackInstruction<TProgram>)
@@ -1872,6 +1891,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseSelectWildcatWinnerInstruction(instruction),
       };
     }
+    case ZincInstruction.SettlePrivateZkSingle: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.SettlePrivateZkSingle,
+        ...parseSettlePrivateZkSingleInstruction(instruction),
+      };
+    }
     case ZincInstruction.SettleWinningStakesBatchCallback: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2196,6 +2222,10 @@ export type ZincPluginInstructions = {
   selectWildcatWinner: (
     input: SelectWildcatWinnerAsyncInput,
   ) => ReturnType<typeof getSelectWildcatWinnerInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  settlePrivateZkSingle: (
+    input: SettlePrivateZkSingleAsyncInput,
+  ) => ReturnType<typeof getSettlePrivateZkSingleInstructionAsync> &
     SelfPlanAndSendFunctions;
   settleWinningStakesBatchCallback: (
     input: SettleWinningStakesBatchCallbackAsyncInput,
@@ -2589,6 +2619,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getSelectWildcatWinnerInstructionAsync(input),
+            ),
+          settlePrivateZkSingle: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getSettlePrivateZkSingleInstructionAsync(input),
             ),
           settleWinningStakesBatchCallback: (input) =>
             addSelfPlanAndSendFunctions(

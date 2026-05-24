@@ -12,6 +12,8 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getOptionDecoder,
+  getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
   getU128Decoder,
@@ -22,12 +24,14 @@ import {
   type AccountMeta,
   type AccountSignerMeta,
   type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+  type Codec,
+  type Decoder,
+  type Encoder,
   type Instruction,
   type InstructionWithAccounts,
   type InstructionWithData,
+  type Option,
+  type OptionOrNullable,
   type ReadonlyAccount,
   type ReadonlyUint8Array,
   type TransactionSigner,
@@ -49,6 +53,12 @@ import {
   findTreasuryPda,
 } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
+import {
+  getZkMaskAttestationArgsDecoder,
+  getZkMaskAttestationArgsEncoder,
+  type ZkMaskAttestationArgs,
+  type ZkMaskAttestationArgsArgs,
+} from "../types";
 
 export const DEPLOY_ROUND_FROM_AUTO_SESSION_DISCRIMINATOR: ReadonlyUint8Array =
   new Uint8Array([71, 122, 22, 191, 113, 52, 245, 81]);
@@ -140,6 +150,8 @@ export type DeployRoundFromAutoSessionInstructionData = {
   maskNonce: bigint;
   /** Ciphertext limbs for the encrypted hidden tile mask payload. */
   maskCiphertext: ReadonlyUint8Array;
+  /** Optional private-ZK mask attestation required by ZK-capable settlement modes. */
+  zkMaskAttestation: Option<ZkMaskAttestationArgs>;
 };
 
 export type DeployRoundFromAutoSessionInstructionDataArgs = {
@@ -149,15 +161,21 @@ export type DeployRoundFromAutoSessionInstructionDataArgs = {
   maskNonce: number | bigint;
   /** Ciphertext limbs for the encrypted hidden tile mask payload. */
   maskCiphertext: ReadonlyUint8Array;
+  /** Optional private-ZK mask attestation required by ZK-capable settlement modes. */
+  zkMaskAttestation: OptionOrNullable<ZkMaskAttestationArgsArgs>;
 };
 
-export function getDeployRoundFromAutoSessionInstructionDataEncoder(): FixedSizeEncoder<DeployRoundFromAutoSessionInstructionDataArgs> {
+export function getDeployRoundFromAutoSessionInstructionDataEncoder(): Encoder<DeployRoundFromAutoSessionInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
       ["maskEncryptionKey", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskNonce", getU128Encoder()],
       ["maskCiphertext", fixEncoderSize(getBytesEncoder(), 64)],
+      [
+        "zkMaskAttestation",
+        getOptionEncoder(getZkMaskAttestationArgsEncoder()),
+      ],
     ]),
     (value) => ({
       ...value,
@@ -166,16 +184,17 @@ export function getDeployRoundFromAutoSessionInstructionDataEncoder(): FixedSize
   );
 }
 
-export function getDeployRoundFromAutoSessionInstructionDataDecoder(): FixedSizeDecoder<DeployRoundFromAutoSessionInstructionData> {
+export function getDeployRoundFromAutoSessionInstructionDataDecoder(): Decoder<DeployRoundFromAutoSessionInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["maskEncryptionKey", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskNonce", getU128Decoder()],
     ["maskCiphertext", fixDecoderSize(getBytesDecoder(), 64)],
+    ["zkMaskAttestation", getOptionDecoder(getZkMaskAttestationArgsDecoder())],
   ]);
 }
 
-export function getDeployRoundFromAutoSessionInstructionDataCodec(): FixedSizeCodec<
+export function getDeployRoundFromAutoSessionInstructionDataCodec(): Codec<
   DeployRoundFromAutoSessionInstructionDataArgs,
   DeployRoundFromAutoSessionInstructionData
 > {
@@ -232,6 +251,7 @@ export type DeployRoundFromAutoSessionAsyncInput<
   maskEncryptionKey: DeployRoundFromAutoSessionInstructionDataArgs["maskEncryptionKey"];
   maskNonce: DeployRoundFromAutoSessionInstructionDataArgs["maskNonce"];
   maskCiphertext: DeployRoundFromAutoSessionInstructionDataArgs["maskCiphertext"];
+  zkMaskAttestation: DeployRoundFromAutoSessionInstructionDataArgs["zkMaskAttestation"];
 };
 
 export async function getDeployRoundFromAutoSessionInstructionAsync<
@@ -456,6 +476,7 @@ export type DeployRoundFromAutoSessionInput<
   maskEncryptionKey: DeployRoundFromAutoSessionInstructionDataArgs["maskEncryptionKey"];
   maskNonce: DeployRoundFromAutoSessionInstructionDataArgs["maskNonce"];
   maskCiphertext: DeployRoundFromAutoSessionInstructionDataArgs["maskCiphertext"];
+  zkMaskAttestation: DeployRoundFromAutoSessionInstructionDataArgs["zkMaskAttestation"];
 };
 
 export function getDeployRoundFromAutoSessionInstruction<

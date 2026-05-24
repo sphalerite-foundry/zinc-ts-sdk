@@ -12,6 +12,8 @@ import {
   fixEncoderSize,
   getBytesDecoder,
   getBytesEncoder,
+  getOptionDecoder,
+  getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
   getU128Decoder,
@@ -24,12 +26,14 @@ import {
   type AccountMeta,
   type AccountSignerMeta,
   type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+  type Codec,
+  type Decoder,
+  type Encoder,
   type Instruction,
   type InstructionWithAccounts,
   type InstructionWithData,
+  type Option,
+  type OptionOrNullable,
   type ReadonlyAccount,
   type ReadonlyUint8Array,
   type TransactionSigner,
@@ -50,6 +54,12 @@ import {
   findTreasuryPda,
 } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
+import {
+  getZkMaskAttestationArgsDecoder,
+  getZkMaskAttestationArgsEncoder,
+  type ZkMaskAttestationArgs,
+  type ZkMaskAttestationArgsArgs,
+} from "../types";
 
 export const DEPLOY_ROUND_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
   30, 1, 160, 127, 39, 199, 134, 0,
@@ -136,6 +146,8 @@ export type DeployRoundInstructionData = {
   maskNonce: bigint;
   /** Ciphertext limbs for the encrypted hidden tile mask payload. */
   maskCiphertext: ReadonlyUint8Array;
+  /** Optional private-ZK mask attestation required by ZK-capable settlement modes. */
+  zkMaskAttestation: Option<ZkMaskAttestationArgs>;
 };
 
 export type DeployRoundInstructionDataArgs = {
@@ -147,9 +159,11 @@ export type DeployRoundInstructionDataArgs = {
   maskNonce: number | bigint;
   /** Ciphertext limbs for the encrypted hidden tile mask payload. */
   maskCiphertext: ReadonlyUint8Array;
+  /** Optional private-ZK mask attestation required by ZK-capable settlement modes. */
+  zkMaskAttestation: OptionOrNullable<ZkMaskAttestationArgsArgs>;
 };
 
-export function getDeployRoundInstructionDataEncoder(): FixedSizeEncoder<DeployRoundInstructionDataArgs> {
+export function getDeployRoundInstructionDataEncoder(): Encoder<DeployRoundInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
@@ -157,22 +171,27 @@ export function getDeployRoundInstructionDataEncoder(): FixedSizeEncoder<DeployR
       ["maskEncryptionKey", fixEncoderSize(getBytesEncoder(), 32)],
       ["maskNonce", getU128Encoder()],
       ["maskCiphertext", fixEncoderSize(getBytesEncoder(), 64)],
+      [
+        "zkMaskAttestation",
+        getOptionEncoder(getZkMaskAttestationArgsEncoder()),
+      ],
     ]),
     (value) => ({ ...value, discriminator: DEPLOY_ROUND_DISCRIMINATOR }),
   );
 }
 
-export function getDeployRoundInstructionDataDecoder(): FixedSizeDecoder<DeployRoundInstructionData> {
+export function getDeployRoundInstructionDataDecoder(): Decoder<DeployRoundInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["totalAmount", getU64Decoder()],
     ["maskEncryptionKey", fixDecoderSize(getBytesDecoder(), 32)],
     ["maskNonce", getU128Decoder()],
     ["maskCiphertext", fixDecoderSize(getBytesDecoder(), 64)],
+    ["zkMaskAttestation", getOptionDecoder(getZkMaskAttestationArgsDecoder())],
   ]);
 }
 
-export function getDeployRoundInstructionDataCodec(): FixedSizeCodec<
+export function getDeployRoundInstructionDataCodec(): Codec<
   DeployRoundInstructionDataArgs,
   DeployRoundInstructionData
 > {
@@ -219,6 +238,7 @@ export type DeployRoundAsyncInput<
   maskEncryptionKey: DeployRoundInstructionDataArgs["maskEncryptionKey"];
   maskNonce: DeployRoundInstructionDataArgs["maskNonce"];
   maskCiphertext: DeployRoundInstructionDataArgs["maskCiphertext"];
+  zkMaskAttestation: DeployRoundInstructionDataArgs["zkMaskAttestation"];
 };
 
 export async function getDeployRoundInstructionAsync<
@@ -409,6 +429,7 @@ export type DeployRoundInput<
   maskEncryptionKey: DeployRoundInstructionDataArgs["maskEncryptionKey"];
   maskNonce: DeployRoundInstructionDataArgs["maskNonce"];
   maskCiphertext: DeployRoundInstructionDataArgs["maskCiphertext"];
+  zkMaskAttestation: DeployRoundInstructionDataArgs["zkMaskAttestation"];
 };
 
 export function getDeployRoundInstruction<

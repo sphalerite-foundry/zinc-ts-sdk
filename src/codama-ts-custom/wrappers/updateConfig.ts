@@ -1,7 +1,9 @@
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { type ReadonlyUint8Array } from "@solana/kit";
 import {
   getUpdateConfigInstructionAsync,
   type RoundRandomnessModeArgs,
+  type SettlementCapabilityArgs,
 } from "../../codama-ts";
 import { getBoardAddress, getConfigAddress } from "../pda";
 import {
@@ -47,9 +49,14 @@ export type BuildUpdateConfigInstruction = {
   arciumRevealCuPriceMicro?: number | bigint;
   stockpileRefillMinEntryBps?: number | bigint;
   roundRandomnessMode?: RoundRandomnessModeArgs;
+  settlementCapability?: SettlementCapabilityArgs;
   blockhashRevealDelaySlots?: number | bigint;
   stockpileWinnerCount?: number;
   stockpileWinnerShareBps?: (number | bigint)[];
+  zkMaskServerBabyjubPubkeyX?: ReadonlyUint8Array;
+  zkMaskServerBabyjubPubkeyY?: ReadonlyUint8Array;
+  zkMaskServerKeyVersion?: number | bigint;
+  zkMaskCircuitVersion?: number | bigint;
 };
 
 export async function buildUpdateConfigInstruction({
@@ -89,9 +96,14 @@ export async function buildUpdateConfigInstruction({
   arciumRevealCuPriceMicro,
   stockpileRefillMinEntryBps,
   roundRandomnessMode,
+  settlementCapability,
   blockhashRevealDelaySlots,
   stockpileWinnerCount,
   stockpileWinnerShareBps,
+  zkMaskServerBabyjubPubkeyX,
+  zkMaskServerBabyjubPubkeyY,
+  zkMaskServerKeyVersion,
+  zkMaskCircuitVersion,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -139,9 +151,14 @@ export async function buildUpdateConfigInstruction({
     arciumRevealCuPriceMicro: toNullable(arciumRevealCuPriceMicro),
     stockpileRefillMinEntryBps: toNullable(stockpileRefillMinEntryBps),
     roundRandomnessMode: toNullable(roundRandomnessMode),
+    settlementCapability: toNullable(settlementCapability),
     blockhashRevealDelaySlots: toNullable(blockhashRevealDelaySlots),
     stockpileWinnerCount: toNullable(stockpileWinnerCount),
     stockpileWinnerShareBps: toNullable(stockpileWinnerShareBps),
+    zkMaskServerBabyjubPubkeyX: toNullable(zkMaskServerBabyjubPubkeyX),
+    zkMaskServerBabyjubPubkeyY: toNullable(zkMaskServerBabyjubPubkeyY),
+    zkMaskServerKeyVersion: toNullable(zkMaskServerKeyVersion),
+    zkMaskCircuitVersion: toNullable(zkMaskCircuitVersion),
     crank: crank ? toAddress(crank) : null,
   });
 

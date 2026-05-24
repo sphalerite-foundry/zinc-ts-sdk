@@ -54,8 +54,12 @@ import { ZINC_PROGRAM_ADDRESS } from "../programs";
 import {
   getRoundRandomnessModeDecoder,
   getRoundRandomnessModeEncoder,
+  getSettlementCapabilityDecoder,
+  getSettlementCapabilityEncoder,
   type RoundRandomnessMode,
   type RoundRandomnessModeArgs,
+  type SettlementCapability,
+  type SettlementCapabilityArgs,
 } from "../types";
 
 export const UPDATE_CONFIG_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
@@ -162,6 +166,8 @@ export type UpdateConfigInstructionData = {
   stockpileRefillMinEntryBps: Option<bigint>;
   /** Live randomness reveal path for closed rounds. */
   roundRandomnessMode: Option<RoundRandomnessMode>;
+  /** Live settlement capability selected by the operator. */
+  settlementCapability: Option<SettlementCapability>;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: Option<bigint>;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
@@ -170,6 +176,14 @@ export type UpdateConfigInstructionData = {
   stockpileWinnerCount: Option<number>;
   /** Ranked Stockpile payout shares in basis points. */
   stockpileWinnerShareBps: Option<Array<bigint>>;
+  /** Server BabyJub public key X field element bytes accepted for ZK mask attestations. */
+  zkMaskServerBabyjubPubkeyX: Option<ReadonlyUint8Array>;
+  /** Server BabyJub public key Y field element bytes accepted for ZK mask attestations. */
+  zkMaskServerBabyjubPubkeyY: Option<ReadonlyUint8Array>;
+  /** Accepted server key version for ZK mask attestations. */
+  zkMaskServerKeyVersion: Option<bigint>;
+  /** Accepted circuit version for ZK mask attestations. */
+  zkMaskCircuitVersion: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -241,6 +255,8 @@ export type UpdateConfigInstructionDataArgs = {
   stockpileRefillMinEntryBps: OptionOrNullable<number | bigint>;
   /** Live randomness reveal path for closed rounds. */
   roundRandomnessMode: OptionOrNullable<RoundRandomnessModeArgs>;
+  /** Live settlement capability selected by the operator. */
+  settlementCapability: OptionOrNullable<SettlementCapabilityArgs>;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: OptionOrNullable<number | bigint>;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
@@ -249,6 +265,14 @@ export type UpdateConfigInstructionDataArgs = {
   stockpileWinnerCount: OptionOrNullable<number>;
   /** Ranked Stockpile payout shares in basis points. */
   stockpileWinnerShareBps: OptionOrNullable<Array<number | bigint>>;
+  /** Server BabyJub public key X field element bytes accepted for ZK mask attestations. */
+  zkMaskServerBabyjubPubkeyX: OptionOrNullable<ReadonlyUint8Array>;
+  /** Server BabyJub public key Y field element bytes accepted for ZK mask attestations. */
+  zkMaskServerBabyjubPubkeyY: OptionOrNullable<ReadonlyUint8Array>;
+  /** Accepted server key version for ZK mask attestations. */
+  zkMaskServerKeyVersion: OptionOrNullable<number | bigint>;
+  /** Accepted circuit version for ZK mask attestations. */
+  zkMaskCircuitVersion: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -298,6 +322,10 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
         "roundRandomnessMode",
         getOptionEncoder(getRoundRandomnessModeEncoder()),
       ],
+      [
+        "settlementCapability",
+        getOptionEncoder(getSettlementCapabilityEncoder()),
+      ],
       ["blockhashRevealDelaySlots", getOptionEncoder(getU64Encoder())],
       ["stockpileBricksPerZincX10k", getOptionEncoder(getU64Encoder())],
       ["stockpileWinnerCount", getOptionEncoder(getU8Encoder())],
@@ -305,6 +333,16 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
         "stockpileWinnerShareBps",
         getOptionEncoder(getArrayEncoder(getU64Encoder(), { size: 5 })),
       ],
+      [
+        "zkMaskServerBabyjubPubkeyX",
+        getOptionEncoder(fixEncoderSize(getBytesEncoder(), 32)),
+      ],
+      [
+        "zkMaskServerBabyjubPubkeyY",
+        getOptionEncoder(fixEncoderSize(getBytesEncoder(), 32)),
+      ],
+      ["zkMaskServerKeyVersion", getOptionEncoder(getU64Encoder())],
+      ["zkMaskCircuitVersion", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -353,6 +391,10 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["arciumRevealCuPriceMicro", getOptionDecoder(getU64Decoder())],
     ["stockpileRefillMinEntryBps", getOptionDecoder(getU64Decoder())],
     ["roundRandomnessMode", getOptionDecoder(getRoundRandomnessModeDecoder())],
+    [
+      "settlementCapability",
+      getOptionDecoder(getSettlementCapabilityDecoder()),
+    ],
     ["blockhashRevealDelaySlots", getOptionDecoder(getU64Decoder())],
     ["stockpileBricksPerZincX10k", getOptionDecoder(getU64Decoder())],
     ["stockpileWinnerCount", getOptionDecoder(getU8Decoder())],
@@ -360,6 +402,16 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
       "stockpileWinnerShareBps",
       getOptionDecoder(getArrayDecoder(getU64Decoder(), { size: 5 })),
     ],
+    [
+      "zkMaskServerBabyjubPubkeyX",
+      getOptionDecoder(fixDecoderSize(getBytesDecoder(), 32)),
+    ],
+    [
+      "zkMaskServerBabyjubPubkeyY",
+      getOptionDecoder(fixDecoderSize(getBytesDecoder(), 32)),
+    ],
+    ["zkMaskServerKeyVersion", getOptionDecoder(getU64Decoder())],
+    ["zkMaskCircuitVersion", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
@@ -416,10 +468,15 @@ export type UpdateConfigAsyncInput<
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
+  settlementCapability: UpdateConfigInstructionDataArgs["settlementCapability"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
   stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
   stockpileWinnerCount: UpdateConfigInstructionDataArgs["stockpileWinnerCount"];
   stockpileWinnerShareBps: UpdateConfigInstructionDataArgs["stockpileWinnerShareBps"];
+  zkMaskServerBabyjubPubkeyX: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyX"];
+  zkMaskServerBabyjubPubkeyY: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyY"];
+  zkMaskServerKeyVersion: UpdateConfigInstructionDataArgs["zkMaskServerKeyVersion"];
+  zkMaskCircuitVersion: UpdateConfigInstructionDataArgs["zkMaskCircuitVersion"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -525,10 +582,15 @@ export type UpdateConfigInput<
   arciumRevealCuPriceMicro: UpdateConfigInstructionDataArgs["arciumRevealCuPriceMicro"];
   stockpileRefillMinEntryBps: UpdateConfigInstructionDataArgs["stockpileRefillMinEntryBps"];
   roundRandomnessMode: UpdateConfigInstructionDataArgs["roundRandomnessMode"];
+  settlementCapability: UpdateConfigInstructionDataArgs["settlementCapability"];
   blockhashRevealDelaySlots: UpdateConfigInstructionDataArgs["blockhashRevealDelaySlots"];
   stockpileBricksPerZincX10k: UpdateConfigInstructionDataArgs["stockpileBricksPerZincX10k"];
   stockpileWinnerCount: UpdateConfigInstructionDataArgs["stockpileWinnerCount"];
   stockpileWinnerShareBps: UpdateConfigInstructionDataArgs["stockpileWinnerShareBps"];
+  zkMaskServerBabyjubPubkeyX: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyX"];
+  zkMaskServerBabyjubPubkeyY: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyY"];
+  zkMaskServerKeyVersion: UpdateConfigInstructionDataArgs["zkMaskServerKeyVersion"];
+  zkMaskCircuitVersion: UpdateConfigInstructionDataArgs["zkMaskCircuitVersion"];
 };
 
 export function getUpdateConfigInstruction<
