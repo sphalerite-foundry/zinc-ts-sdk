@@ -86,6 +86,20 @@ export type Miner = {
   hiddenBonusBricksX10k: bigint;
   /** Auto-miner session PDA that created this miner, or `None` for manual and legacy miners. */
   autoMinerSession: Option<Address>;
+  /** True once a ZK mask attestation has been verified for this miner. */
+  zkMaskAttested: boolean;
+  /** Circuit nonce field element bytes for the private mask attestation. */
+  zkMaskNonce: ReadonlyUint8Array;
+  /** Circuit ciphertext field element bytes for the private mask attestation. */
+  zkMaskCiphertext: ReadonlyUint8Array;
+  /** Circuit auth-tag field element bytes for the private mask attestation. */
+  zkMaskAuthTag: ReadonlyUint8Array;
+  /** Public context hash submitted to the mask-attestation verifier. */
+  zkMaskContextHash: ReadonlyUint8Array;
+  /** Public commitment to the packed hidden tile mask. */
+  zkMaskCommitment: ReadonlyUint8Array;
+  /** Hash of the accepted proof bytes retained as a compact receipt. */
+  zkMaskProofHash: ReadonlyUint8Array;
 };
 
 export type MinerArgs = {
@@ -118,6 +132,20 @@ export type MinerArgs = {
   hiddenBonusBricksX10k: number | bigint;
   /** Auto-miner session PDA that created this miner, or `None` for manual and legacy miners. */
   autoMinerSession: OptionOrNullable<Address>;
+  /** True once a ZK mask attestation has been verified for this miner. */
+  zkMaskAttested: boolean;
+  /** Circuit nonce field element bytes for the private mask attestation. */
+  zkMaskNonce: ReadonlyUint8Array;
+  /** Circuit ciphertext field element bytes for the private mask attestation. */
+  zkMaskCiphertext: ReadonlyUint8Array;
+  /** Circuit auth-tag field element bytes for the private mask attestation. */
+  zkMaskAuthTag: ReadonlyUint8Array;
+  /** Public context hash submitted to the mask-attestation verifier. */
+  zkMaskContextHash: ReadonlyUint8Array;
+  /** Public commitment to the packed hidden tile mask. */
+  zkMaskCommitment: ReadonlyUint8Array;
+  /** Hash of the accepted proof bytes retained as a compact receipt. */
+  zkMaskProofHash: ReadonlyUint8Array;
 };
 
 /** Gets the encoder for {@link MinerArgs} account data. */
@@ -138,6 +166,13 @@ export function getMinerEncoder(): Encoder<MinerArgs> {
       ["minerIndex", getU64Encoder()],
       ["hiddenBonusBricksX10k", getU64Encoder()],
       ["autoMinerSession", getOptionEncoder(getAddressEncoder())],
+      ["zkMaskAttested", getBooleanEncoder()],
+      ["zkMaskNonce", fixEncoderSize(getBytesEncoder(), 32)],
+      ["zkMaskCiphertext", fixEncoderSize(getBytesEncoder(), 32)],
+      ["zkMaskAuthTag", fixEncoderSize(getBytesEncoder(), 32)],
+      ["zkMaskContextHash", fixEncoderSize(getBytesEncoder(), 32)],
+      ["zkMaskCommitment", fixEncoderSize(getBytesEncoder(), 32)],
+      ["zkMaskProofHash", fixEncoderSize(getBytesEncoder(), 32)],
     ]),
     (value) => ({ ...value, discriminator: MINER_DISCRIMINATOR }),
   );
@@ -160,6 +195,13 @@ export function getMinerDecoder(): Decoder<Miner> {
     ["minerIndex", getU64Decoder()],
     ["hiddenBonusBricksX10k", getU64Decoder()],
     ["autoMinerSession", getOptionDecoder(getAddressDecoder())],
+    ["zkMaskAttested", getBooleanDecoder()],
+    ["zkMaskNonce", fixDecoderSize(getBytesDecoder(), 32)],
+    ["zkMaskCiphertext", fixDecoderSize(getBytesDecoder(), 32)],
+    ["zkMaskAuthTag", fixDecoderSize(getBytesDecoder(), 32)],
+    ["zkMaskContextHash", fixDecoderSize(getBytesDecoder(), 32)],
+    ["zkMaskCommitment", fixDecoderSize(getBytesDecoder(), 32)],
+    ["zkMaskProofHash", fixDecoderSize(getBytesDecoder(), 32)],
   ]);
 }
 

@@ -57,6 +57,7 @@ export * from "./revealRoundBlockhash";
 export * from "./revealRoundRandCallback";
 export * from "./revealStockpileRandCallback";
 export * from "./selectWildcatWinner";
+export * from "./settlePrivateZkSingle";
 export * from "./settleWinningStakesBatchCallback";
 export * from "./stake";
 export * from "./topUpAutoMinerSession";

@@ -231,9 +231,7 @@ export type InitStockpileAsyncInput<
   /** Treasury account that owns the shared stockpile reward vaults. */
   treasury?: Address<TAccountTreasury>;
   zincMint: Address<TAccountZincMint>;
-  /** Newly allocated stockpile account awaiting encrypted entropy. */
   stockpile: Address<TAccountStockpile>;
-  /** Secret storage for the encrypted random value tied to this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
   stockpileExtras: Address<TAccountStockpileExtras>;
   /** Arcium signer PDA reused across queued computations. */
@@ -512,9 +510,7 @@ export type InitStockpileInput<
   /** Treasury account that owns the shared stockpile reward vaults. */
   treasury: Address<TAccountTreasury>;
   zincMint: Address<TAccountZincMint>;
-  /** Newly allocated stockpile account awaiting encrypted entropy. */
   stockpile: Address<TAccountStockpile>;
-  /** Secret storage for the encrypted random value tied to this stockpile. */
   stockpileSecret: Address<TAccountStockpileSecret>;
   stockpileExtras: Address<TAccountStockpileExtras>;
   /** Arcium signer PDA reused across queued computations. */
@@ -758,9 +754,7 @@ export type ParsedInitStockpileInstruction<
     /** Treasury account that owns the shared stockpile reward vaults. */
     treasury: TAccountMetas[3];
     zincMint: TAccountMetas[4];
-    /** Newly allocated stockpile account awaiting encrypted entropy. */
     stockpile: TAccountMetas[5];
-    /** Secret storage for the encrypted random value tied to this stockpile. */
     stockpileSecret: TAccountMetas[6];
     stockpileExtras: TAccountMetas[7];
     /** Arcium signer PDA reused across queued computations. */
