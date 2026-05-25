@@ -137,8 +137,6 @@ export type Config = {
   stockpileRefillMinEntryBps: bigint;
   /** Live randomness reveal path for closed rounds. */
   roundRandomnessMode: RoundRandomnessMode;
-  /** Live settlement capability selected by the operator. */
-  settlementCapability: SettlementCapability;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: bigint;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
@@ -147,6 +145,8 @@ export type Config = {
   stockpileWinnerCount: number;
   /** Ranked Stockpile payout shares in basis points. */
   stockpileWinnerShareBps: Array<bigint>;
+  /** Live settlement capability selected by the operator. */
+  settlementCapability: SettlementCapability;
   /** Server BabyJub public key X field element bytes accepted for ZK mask attestations. */
   zkMaskServerBabyjubPubkeyX: ReadonlyUint8Array;
   /** Server BabyJub public key Y field element bytes accepted for ZK mask attestations. */
@@ -234,8 +234,6 @@ export type ConfigArgs = {
   stockpileRefillMinEntryBps: number | bigint;
   /** Live randomness reveal path for closed rounds. */
   roundRandomnessMode: RoundRandomnessModeArgs;
-  /** Live settlement capability selected by the operator. */
-  settlementCapability: SettlementCapabilityArgs;
   /** Number of slots after close used as the blockhash reveal sample delay. */
   blockhashRevealDelaySlots: number | bigint;
   /** Stockpile bricks required per whole ZINC, in `x10k` units. */
@@ -244,6 +242,8 @@ export type ConfigArgs = {
   stockpileWinnerCount: number;
   /** Ranked Stockpile payout shares in basis points. */
   stockpileWinnerShareBps: Array<number | bigint>;
+  /** Live settlement capability selected by the operator. */
+  settlementCapability: SettlementCapabilityArgs;
   /** Server BabyJub public key X field element bytes accepted for ZK mask attestations. */
   zkMaskServerBabyjubPubkeyX: ReadonlyUint8Array;
   /** Server BabyJub public key Y field element bytes accepted for ZK mask attestations. */
@@ -298,7 +298,6 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["arciumRevealCuPriceMicro", getU64Encoder()],
       ["stockpileRefillMinEntryBps", getU64Encoder()],
       ["roundRandomnessMode", getRoundRandomnessModeEncoder()],
-      ["settlementCapability", getSettlementCapabilityEncoder()],
       ["blockhashRevealDelaySlots", getU64Encoder()],
       ["stockpileBricksPerZincX10k", getU64Encoder()],
       ["stockpileWinnerCount", getU8Encoder()],
@@ -306,6 +305,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
         "stockpileWinnerShareBps",
         getArrayEncoder(getU64Encoder(), { size: 5 }),
       ],
+      ["settlementCapability", getSettlementCapabilityEncoder()],
       ["zkMaskServerBabyjubPubkeyX", fixEncoderSize(getBytesEncoder(), 32)],
       ["zkMaskServerBabyjubPubkeyY", fixEncoderSize(getBytesEncoder(), 32)],
       ["zkMaskServerKeyVersion", getU64Encoder()],
@@ -357,11 +357,11 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["arciumRevealCuPriceMicro", getU64Decoder()],
     ["stockpileRefillMinEntryBps", getU64Decoder()],
     ["roundRandomnessMode", getRoundRandomnessModeDecoder()],
-    ["settlementCapability", getSettlementCapabilityDecoder()],
     ["blockhashRevealDelaySlots", getU64Decoder()],
     ["stockpileBricksPerZincX10k", getU64Decoder()],
     ["stockpileWinnerCount", getU8Decoder()],
     ["stockpileWinnerShareBps", getArrayDecoder(getU64Decoder(), { size: 5 })],
+    ["settlementCapability", getSettlementCapabilityDecoder()],
     ["zkMaskServerBabyjubPubkeyX", fixDecoderSize(getBytesDecoder(), 32)],
     ["zkMaskServerBabyjubPubkeyY", fixDecoderSize(getBytesDecoder(), 32)],
     ["zkMaskServerKeyVersion", getU64Decoder()],
