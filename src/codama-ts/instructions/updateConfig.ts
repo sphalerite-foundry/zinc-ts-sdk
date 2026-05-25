@@ -184,6 +184,8 @@ export type UpdateConfigInstructionData = {
   zkMaskServerKeyVersion: Option<bigint>;
   /** Accepted circuit version for ZK mask attestations. */
   zkMaskCircuitVersion: Option<bigint>;
+  /** Emergency switch that skips init-round Arcium CPI in blockhash private-ZK mode. */
+  skipArciumInitCpi: Option<boolean>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
@@ -273,6 +275,8 @@ export type UpdateConfigInstructionDataArgs = {
   zkMaskServerKeyVersion: OptionOrNullable<number | bigint>;
   /** Accepted circuit version for ZK mask attestations. */
   zkMaskCircuitVersion: OptionOrNullable<number | bigint>;
+  /** Emergency switch that skips init-round Arcium CPI in blockhash private-ZK mode. */
+  skipArciumInitCpi: OptionOrNullable<boolean>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
@@ -343,6 +347,7 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ],
       ["zkMaskServerKeyVersion", getOptionEncoder(getU64Encoder())],
       ["zkMaskCircuitVersion", getOptionEncoder(getU64Encoder())],
+      ["skipArciumInitCpi", getOptionEncoder(getBooleanEncoder())],
     ]),
     (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
   );
@@ -412,6 +417,7 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ],
     ["zkMaskServerKeyVersion", getOptionDecoder(getU64Decoder())],
     ["zkMaskCircuitVersion", getOptionDecoder(getU64Decoder())],
+    ["skipArciumInitCpi", getOptionDecoder(getBooleanDecoder())],
   ]);
 }
 
@@ -477,6 +483,7 @@ export type UpdateConfigAsyncInput<
   zkMaskServerBabyjubPubkeyY: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyY"];
   zkMaskServerKeyVersion: UpdateConfigInstructionDataArgs["zkMaskServerKeyVersion"];
   zkMaskCircuitVersion: UpdateConfigInstructionDataArgs["zkMaskCircuitVersion"];
+  skipArciumInitCpi: UpdateConfigInstructionDataArgs["skipArciumInitCpi"];
 };
 
 export async function getUpdateConfigInstructionAsync<
@@ -591,6 +598,7 @@ export type UpdateConfigInput<
   zkMaskServerBabyjubPubkeyY: UpdateConfigInstructionDataArgs["zkMaskServerBabyjubPubkeyY"];
   zkMaskServerKeyVersion: UpdateConfigInstructionDataArgs["zkMaskServerKeyVersion"];
   zkMaskCircuitVersion: UpdateConfigInstructionDataArgs["zkMaskCircuitVersion"];
+  skipArciumInitCpi: UpdateConfigInstructionDataArgs["skipArciumInitCpi"];
 };
 
 export function getUpdateConfigInstruction<

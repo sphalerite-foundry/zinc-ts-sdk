@@ -134,6 +134,7 @@ import {
   getQueueSettleWinningStakesBatchInstructionAsync,
   getQueueStockpileRevealInstructionAsync,
   getReloadAutoMinerSessionSolInstructionAsync,
+  getRemoveBuybackLiquidityInstructionAsync,
   getRevealRoundBlockhashInstructionAsync,
   getRevealRoundRandCallbackInstructionAsync,
   getRevealStockpileRandCallbackInstructionAsync,
@@ -196,6 +197,7 @@ import {
   parseQueueSettleWinningStakesBatchInstruction,
   parseQueueStockpileRevealInstruction,
   parseReloadAutoMinerSessionSolInstruction,
+  parseRemoveBuybackLiquidityInstruction,
   parseRevealRoundBlockhashInstruction,
   parseRevealRoundRandCallbackInstruction,
   parseRevealStockpileRandCallbackInstruction,
@@ -299,6 +301,7 @@ import {
   type ParsedQueueSettleWinningStakesBatchInstruction,
   type ParsedQueueStockpileRevealInstruction,
   type ParsedReloadAutoMinerSessionSolInstruction,
+  type ParsedRemoveBuybackLiquidityInstruction,
   type ParsedRevealRoundBlockhashInstruction,
   type ParsedRevealRoundRandCallbackInstruction,
   type ParsedRevealStockpileRandCallbackInstruction,
@@ -320,6 +323,7 @@ import {
   type QueueSettleWinningStakesBatchAsyncInput,
   type QueueStockpileRevealAsyncInput,
   type ReloadAutoMinerSessionSolAsyncInput,
+  type RemoveBuybackLiquidityAsyncInput,
   type RevealRoundBlockhashAsyncInput,
   type RevealRoundRandCallbackAsyncInput,
   type RevealStockpileRandCallbackAsyncInput,
@@ -342,6 +346,8 @@ import {
   findBonanzaTokenAccountPda,
   findBuybackFeeWsolTokenAccountPda,
   findBuybackFeeZincTokenAccountPda,
+  findBuybackLpWsolTokenAccountPda,
+  findBuybackLpZincTokenAccountPda,
   findBuybackPoolPda,
   findBuybackSolVaultPda,
   findBuybackZincTokenAccountPda,
@@ -630,6 +636,7 @@ export enum ZincInstruction {
   QueueSettleWinningStakesBatch,
   QueueStockpileReveal,
   ReloadAutoMinerSessionSol,
+  RemoveBuybackLiquidity,
   RevealRoundBlockhash,
   RevealRoundRandCallback,
   RevealStockpileRandCallback,
@@ -1172,6 +1179,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([162, 33, 230, 119, 49, 191, 203, 163]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.RemoveBuybackLiquidity;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([204, 143, 123, 117, 220, 68, 251, 118]),
       ),
       0,
@@ -1483,6 +1501,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.ReloadAutoMinerSessionSol;
     } & ParsedReloadAutoMinerSessionSolInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.RemoveBuybackLiquidity;
+    } & ParsedRemoveBuybackLiquidityInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.RevealRoundBlockhash;
     } & ParsedRevealRoundBlockhashInstruction<TProgram>)
@@ -1863,6 +1884,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseReloadAutoMinerSessionSolInstruction(instruction),
       };
     }
+    case ZincInstruction.RemoveBuybackLiquidity: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.RemoveBuybackLiquidity,
+        ...parseRemoveBuybackLiquidityInstruction(instruction),
+      };
+    }
     case ZincInstruction.RevealRoundBlockhash: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2207,6 +2235,10 @@ export type ZincPluginInstructions = {
     input: ReloadAutoMinerSessionSolAsyncInput,
   ) => ReturnType<typeof getReloadAutoMinerSessionSolInstructionAsync> &
     SelfPlanAndSendFunctions;
+  removeBuybackLiquidity: (
+    input: RemoveBuybackLiquidityAsyncInput,
+  ) => ReturnType<typeof getRemoveBuybackLiquidityInstructionAsync> &
+    SelfPlanAndSendFunctions;
   revealRoundBlockhash: (
     input: RevealRoundBlockhashAsyncInput,
   ) => ReturnType<typeof getRevealRoundBlockhashInstructionAsync> &
@@ -2291,6 +2323,8 @@ export type ZincPluginPdas = {
   round: typeof findRoundPda;
   roundSecret: typeof findRoundSecretPda;
   signPdaAccount: typeof findSignPdaAccountPda;
+  buybackLpZincTokenAccount: typeof findBuybackLpZincTokenAccountPda;
+  buybackLpWsolTokenAccount: typeof findBuybackLpWsolTokenAccountPda;
 };
 
 export type ZincPluginRequirements = ClientWithRpc<
@@ -2600,6 +2634,11 @@ export function zincProgram() {
               client,
               getReloadAutoMinerSessionSolInstructionAsync(input),
             ),
+          removeBuybackLiquidity: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getRemoveBuybackLiquidityInstructionAsync(input),
+            ),
           revealRoundBlockhash: (input) =>
             addSelfPlanAndSendFunctions(
               client,
@@ -2701,6 +2740,8 @@ export function zincProgram() {
           round: findRoundPda,
           roundSecret: findRoundSecretPda,
           signPdaAccount: findSignPdaAccountPda,
+          buybackLpZincTokenAccount: findBuybackLpZincTokenAccountPda,
+          buybackLpWsolTokenAccount: findBuybackLpWsolTokenAccountPda,
         },
       },
     });

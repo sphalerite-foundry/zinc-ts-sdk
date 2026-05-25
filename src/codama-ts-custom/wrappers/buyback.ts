@@ -6,7 +6,10 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import { Buffer } from "buffer";
-import { getBuybackInstructionAsync } from "../../codama-ts";
+import {
+  getBuybackInstructionAsync,
+  getRemoveBuybackLiquidityInstructionAsync,
+} from "../../codama-ts";
 import {
   METEORA_DAMM_V2_PROGRAM_ID,
   WSOL_MINT_ADDRESS,
@@ -18,6 +21,8 @@ import {
   getBuybackPoolAddress,
   getBuybackFeeWsolTokenAccountAddress,
   getBuybackFeeZincTokenAccountAddress,
+  getBuybackLpWsolTokenAccountAddress,
+  getBuybackLpZincTokenAccountAddress,
   getConfigAddress,
   getTreasuryAddress,
 } from "../pda";
@@ -60,6 +65,16 @@ export type BuildBuybackInstruction = {
 export type BuildClaimBuybackPoolFeesInstruction = {
   connection: Connection;
   signer: PublicKey;
+  zincMint?: PublicKey;
+  buybackPoolAccounts?: ClaimBuybackPoolFeesInstructionAccounts;
+};
+
+export type BuildRemoveBuybackLiquidityInstruction = {
+  connection: Connection;
+  admin: PublicKey;
+  liquidityDelta: number | bigint;
+  tokenAAmountThreshold?: number | bigint;
+  tokenBAmountThreshold?: number | bigint;
   zincMint?: PublicKey;
   buybackPoolAccounts?: ClaimBuybackPoolFeesInstructionAccounts;
 };
@@ -151,7 +166,7 @@ export async function buildBuybackInstruction({
   );
 }
 
-/** Builds one instruction that claims locked buyback LP fees into fee-only treasury custody. */
+/** Builds one instruction that claims buyback LP fees into fee-only treasury custody. */
 export async function buildClaimBuybackPoolFeesInstruction({
   connection,
   signer,
@@ -223,4 +238,51 @@ export async function buildClaimBuybackPoolFeesInstruction({
     ],
     data: CLAIM_BUYBACK_POOL_FEES_DISCRIMINATOR,
   });
+}
+
+/** Builds one instruction that removes unlocked buyback LP principal into treasury custody. */
+export async function buildRemoveBuybackLiquidityInstruction({
+  connection,
+  admin,
+  liquidityDelta,
+  tokenAAmountThreshold = 0n,
+  tokenBAmountThreshold = 0n,
+  zincMint,
+  buybackPoolAccounts,
+}: BuildRemoveBuybackLiquidityInstruction): Promise<TransactionInstruction> {
+  const treasury = getTreasuryAddress()[0];
+  let resolvedZincMint = zincMint;
+  if (!resolvedZincMint) {
+    const treasuryAccount = await fetchTreasuryAccount(connection, treasury);
+    resolvedZincMint = new PublicKey(treasuryAccount.data.zincMint);
+  }
+
+  const poolAccounts = await resolveClaimBuybackPoolFeesInstructionAccounts(
+    connection,
+    buybackPoolAccounts,
+  );
+  const instruction = await getRemoveBuybackLiquidityInstructionAsync({
+    admin: toTransactionSigner(admin),
+    treasury: toAddress(treasury),
+    zincMint: toAddress(resolvedZincMint),
+    buybackLpZincTokenAccount: toAddress(
+      getBuybackLpZincTokenAccountAddress()[0],
+    ),
+    buybackLpWsolTokenAccount: toAddress(
+      getBuybackLpWsolTokenAccountAddress()[0],
+    ),
+    poolAuthority: toAddress(poolAccounts.poolAuthority),
+    pool: toAddress(poolAccounts.pool),
+    position: toAddress(poolAccounts.position),
+    positionNftAccount: toAddress(poolAccounts.positionNftAccount),
+    tokenAVault: toAddress(poolAccounts.tokenAVault),
+    tokenBVault: toAddress(poolAccounts.tokenBVault),
+    eventAuthority: toAddress(poolAccounts.eventAuthority),
+    liquidityDelta,
+    tokenAAmountThreshold,
+    tokenBAmountThreshold,
+  });
+  return toTransactionInstruction(
+    instruction as Parameters<typeof toTransactionInstruction>[0],
+  );
 }

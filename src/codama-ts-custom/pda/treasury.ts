@@ -7,6 +7,8 @@ import {
   BONANZA_TOKEN_ACCOUNT_SEED,
   BUYBACK_FEE_WSOL_TOKEN_ACCOUNT_SEED,
   BUYBACK_FEE_ZINC_TOKEN_ACCOUNT_SEED,
+  BUYBACK_LP_WSOL_TOKEN_ACCOUNT_SEED,
+  BUYBACK_LP_ZINC_TOKEN_ACCOUNT_SEED,
   BUYBACK_TOKEN_ACCOUNT_SEED,
   ROUND_ZINC_REWARD_TOKEN_ACCOUNT_SEED,
   STAKING_TOKEN_ACCOUNT_SEED,
@@ -131,6 +133,32 @@ export function getBuybackFeeWsolTokenAccountAddress(
     [
       TEXT_ENCODER.encode(TREASURY_SEED),
       TEXT_ENCODER.encode(BUYBACK_FEE_WSOL_TOKEN_ACCOUNT_SEED),
+    ],
+    programId,
+  );
+}
+
+/** Derives the treasury-owned ZINC vault used for removed buyback LP principal. */
+export function getBuybackLpZincTokenAccountAddress(
+  programId: PublicKey = ZINC_PROGRAM_ID,
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [
+      TEXT_ENCODER.encode(TREASURY_SEED),
+      TEXT_ENCODER.encode(BUYBACK_LP_ZINC_TOKEN_ACCOUNT_SEED),
+    ],
+    programId,
+  );
+}
+
+/** Derives the treasury-owned WSOL vault used for removed buyback LP principal. */
+export function getBuybackLpWsolTokenAccountAddress(
+  programId: PublicKey = ZINC_PROGRAM_ID,
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [
+      TEXT_ENCODER.encode(TREASURY_SEED),
+      TEXT_ENCODER.encode(BUYBACK_LP_WSOL_TOKEN_ACCOUNT_SEED),
     ],
     programId,
   );

@@ -30,6 +30,10 @@ export const BUYBACK_FEE_ZINC_TOKEN_ACCOUNT_SEED =
   "buyback-fee-zinc-token-account";
 export const BUYBACK_FEE_WSOL_TOKEN_ACCOUNT_SEED =
   "buyback-fee-wsol-token-account";
+export const BUYBACK_LP_ZINC_TOKEN_ACCOUNT_SEED =
+  "buyback-lp-zinc-token-account";
+export const BUYBACK_LP_WSOL_TOKEN_ACCOUNT_SEED =
+  "buyback-lp-wsol-token-account";
 export const METADATA_SEED = "metadata";
 export const INIT_ROUND_RAND_CIRCUIT = "init_round_rand";
 export const INIT_STOCKPILE_RAND_CIRCUIT = "init_stockpile_rand";

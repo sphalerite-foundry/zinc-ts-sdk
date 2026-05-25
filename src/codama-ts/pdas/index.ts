@@ -11,6 +11,8 @@ export * from "./board";
 export * from "./bonanzaTokenAccount";
 export * from "./buybackFeeWsolTokenAccount";
 export * from "./buybackFeeZincTokenAccount";
+export * from "./buybackLpWsolTokenAccount";
+export * from "./buybackLpZincTokenAccount";
 export * from "./buybackPool";
 export * from "./buybackSolVault";
 export * from "./buybackZincTokenAccount";
