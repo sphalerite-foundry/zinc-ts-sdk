@@ -57,6 +57,7 @@ export type BuildUpdateConfigInstruction = {
   zkMaskServerBabyjubPubkeyY?: ReadonlyUint8Array;
   zkMaskServerKeyVersion?: number | bigint;
   zkMaskCircuitVersion?: number | bigint;
+  skipArciumInitCpi?: boolean;
 };
 
 export async function buildUpdateConfigInstruction({
@@ -104,6 +105,7 @@ export async function buildUpdateConfigInstruction({
   zkMaskServerBabyjubPubkeyY,
   zkMaskServerKeyVersion,
   zkMaskCircuitVersion,
+  skipArciumInitCpi,
 }: BuildUpdateConfigInstruction): Promise<TransactionInstruction> {
   const config = getConfigAddress()[0];
   const board = getBoardAddress()[0];
@@ -159,6 +161,7 @@ export async function buildUpdateConfigInstruction({
     zkMaskServerBabyjubPubkeyY: toNullable(zkMaskServerBabyjubPubkeyY),
     zkMaskServerKeyVersion: toNullable(zkMaskServerKeyVersion),
     zkMaskCircuitVersion: toNullable(zkMaskCircuitVersion),
+    skipArciumInitCpi: toNullable(skipArciumInitCpi),
     crank: crank ? toAddress(crank) : null,
   });
 

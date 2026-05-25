@@ -6,6 +6,8 @@ import {
   getBuybackPoolAddress,
   getBuybackFeeWsolTokenAccountAddress,
   getBuybackFeeZincTokenAccountAddress,
+  getBuybackLpWsolTokenAccountAddress,
+  getBuybackLpZincTokenAccountAddress,
   getBuybackZincTokenAccountAddress,
   getConfigAddress,
   getStakingRewardTokenAccountAddress,
@@ -14,6 +16,7 @@ import {
 import {
   buildBuybackInstruction,
   buildClaimBuybackPoolFeesInstruction,
+  buildRemoveBuybackLiquidityInstruction,
 } from "./buyback";
 import { getClassicAtaAddress } from "./shared";
 import {
@@ -201,5 +204,64 @@ test("buildClaimBuybackPoolFeesInstruction targets dedicated fee custody", async
   assert.deepEqual(
     [...instruction.data.subarray(0, 8)],
     [124, 86, 221, 109, 203, 99, 227, 187],
+  );
+});
+
+test("buildRemoveBuybackLiquidityInstruction targets dedicated LP custody", async () => {
+  const admin = Keypair.generate().publicKey;
+  const zincMint = Keypair.generate().publicKey;
+  const buybackPoolAccounts = {
+    poolAuthority: Keypair.generate().publicKey,
+    pool: Keypair.generate().publicKey,
+    position: Keypair.generate().publicKey,
+    positionNftAccount: Keypair.generate().publicKey,
+    tokenAVault: Keypair.generate().publicKey,
+    tokenBVault: Keypair.generate().publicKey,
+    eventAuthority: Keypair.generate().publicKey,
+  };
+
+  const instruction = await buildRemoveBuybackLiquidityInstruction({
+    connection: CONNECTION,
+    admin,
+    zincMint,
+    liquidityDelta: 42n,
+    tokenAAmountThreshold: 7n,
+    tokenBAmountThreshold: 9n,
+    buybackPoolAccounts,
+  });
+
+  assert.equal(instruction.keys[0]?.pubkey.toBase58(), admin.toBase58());
+  assert.equal(instruction.keys[0]?.isSigner, true);
+  assert.equal(
+    instruction.keys[3]?.pubkey.toBase58(),
+    getBuybackPoolAddress()[0].toBase58(),
+  );
+  assert.equal(
+    instruction.keys[4]?.pubkey.toBase58(),
+    WSOL_MINT_ADDRESS.toBase58(),
+  );
+  assert.equal(instruction.keys[5]?.pubkey.toBase58(), zincMint.toBase58());
+  assert.equal(
+    instruction.keys[6]?.pubkey.toBase58(),
+    getBuybackLpZincTokenAccountAddress()[0].toBase58(),
+  );
+  assert.equal(instruction.keys[6]?.isWritable, true);
+  assert.equal(
+    instruction.keys[7]?.pubkey.toBase58(),
+    getBuybackLpWsolTokenAccountAddress()[0].toBase58(),
+  );
+  assert.equal(instruction.keys[7]?.isWritable, true);
+  assert.equal(
+    instruction.keys[10]?.pubkey.toBase58(),
+    buybackPoolAccounts.position.toBase58(),
+  );
+  assert.equal(instruction.keys[10]?.isWritable, true);
+  assert.equal(
+    instruction.keys[11]?.pubkey.toBase58(),
+    buybackPoolAccounts.positionNftAccount.toBase58(),
+  );
+  assert.deepEqual(
+    [...instruction.data.subarray(0, 8)],
+    [162, 33, 230, 119, 49, 191, 203, 163],
   );
 });

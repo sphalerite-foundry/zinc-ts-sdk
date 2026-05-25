@@ -53,6 +53,7 @@ export * from "./queueRoundSettlement";
 export * from "./queueSettleWinningStakesBatch";
 export * from "./queueStockpileReveal";
 export * from "./reloadAutoMinerSessionSol";
+export * from "./removeBuybackLiquidity";
 export * from "./revealRoundBlockhash";
 export * from "./revealRoundRandCallback";
 export * from "./revealStockpileRandCallback";

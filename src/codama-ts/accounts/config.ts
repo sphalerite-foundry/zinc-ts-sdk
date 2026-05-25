@@ -155,6 +155,8 @@ export type Config = {
   zkMaskServerKeyVersion: bigint;
   /** Accepted circuit version for ZK mask attestations. */
   zkMaskCircuitVersion: bigint;
+  /** Emergency switch that skips the init-round Arcium CPI for blockhash private-ZK rounds. */
+  skipArciumInitCpi: boolean;
 };
 
 export type ConfigArgs = {
@@ -250,6 +252,8 @@ export type ConfigArgs = {
   zkMaskServerKeyVersion: number | bigint;
   /** Accepted circuit version for ZK mask attestations. */
   zkMaskCircuitVersion: number | bigint;
+  /** Emergency switch that skips the init-round Arcium CPI for blockhash private-ZK rounds. */
+  skipArciumInitCpi: boolean;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -306,6 +310,7 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["zkMaskServerBabyjubPubkeyY", fixEncoderSize(getBytesEncoder(), 32)],
       ["zkMaskServerKeyVersion", getU64Encoder()],
       ["zkMaskCircuitVersion", getU64Encoder()],
+      ["skipArciumInitCpi", getBooleanEncoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -361,6 +366,7 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["zkMaskServerBabyjubPubkeyY", fixDecoderSize(getBytesDecoder(), 32)],
     ["zkMaskServerKeyVersion", getU64Decoder()],
     ["zkMaskCircuitVersion", getU64Decoder()],
+    ["skipArciumInitCpi", getBooleanDecoder()],
   ]);
 }
 
@@ -423,5 +429,5 @@ export async function fetchAllMaybeConfig(
 }
 
 export function getConfigSize(): number {
-  return 493;
+  return 494;
 }

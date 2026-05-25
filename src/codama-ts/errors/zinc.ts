@@ -378,6 +378,8 @@ export const ZINC_ERROR__GROTH16_VERIFY_FAILED = 0x1823; // 6179
 export const ZINC_ERROR__GROTH16_PUBLIC_INPUT_MISMATCH = 0x1824; // 6180
 /** MissingZkMaskAttestation: Missing ZK mask attestation */
 export const ZINC_ERROR__MISSING_ZK_MASK_ATTESTATION = 0x1825; // 6181
+/** InvalidArciumInitSkipConfig: Arcium init CPI skip requires blockhash randomness and private-ZK single settlement */
+export const ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG = 0x1826; // 6182
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -425,6 +427,7 @@ export type ZincError =
   | typeof ZINC_ERROR__INSUFFICIENT_STOCKPILE_BRICKS
   | typeof ZINC_ERROR__INSUFFICIENT_STOCKPILE_ZINC
   | typeof ZINC_ERROR__INSUFFICIENT_TREASURY_LAMPORTS
+  | typeof ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG
   | typeof ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN
   | typeof ZINC_ERROR__INVALID_BATCH_ACCOUNT_COUNT
   | typeof ZINC_ERROR__INVALID_BLOCKHASH_REVEAL_DELAY
@@ -611,6 +614,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__INSUFFICIENT_STOCKPILE_BRICKS]: `Insufficient stockpile bricks`,
     [ZINC_ERROR__INSUFFICIENT_STOCKPILE_ZINC]: `Insufficient stockpile ZINC`,
     [ZINC_ERROR__INSUFFICIENT_TREASURY_LAMPORTS]: `Treasury does not have enough lamports to reimburse round creation`,
+    [ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG]: `Arcium init CPI skip requires blockhash randomness and private-ZK single settlement`,
     [ZINC_ERROR__INVALID_AUTO_MINER_ENCRYPTED_PATTERN]: `Auto-miner encrypted tile pattern is invalid`,
     [ZINC_ERROR__INVALID_BATCH_ACCOUNT_COUNT]: `Invalid batch account count`,
     [ZINC_ERROR__INVALID_BLOCKHASH_REVEAL_DELAY]: `Blockhash reveal delay must be greater than zero`,
