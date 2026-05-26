@@ -8,7 +8,7 @@ export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
 const TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
 );
-export const DEFAULT_ARCIUM_CLUSTER_OFFSET = 10000;
+export const DEFAULT_ARCIUM_CLUSTER_OFFSET = 2026;
 
 /** Converts one `PublicKey` into the codama `Address` wire format. */
 export function toAddress(pubkey: PublicKey): Address {
