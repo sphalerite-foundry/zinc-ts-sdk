@@ -23,7 +23,7 @@ export async function findDeployRoundFromAutoSessionPlayerProfilePda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy" as Address<"CmGgWsYmtjCgTrAteqG7U3hFHtUug3TCyhCRzEAsr8Sy">,
+    programAddress = "zincUFpnqYwdYMc1KfH6rKcBvbcdVtHKckKhvrHLDsV" as Address<"zincUFpnqYwdYMc1KfH6rKcBvbcdVtHKckKhvrHLDsV">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,
