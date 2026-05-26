@@ -126,6 +126,7 @@ import {
   getInitStockpileRandCompDefInstructionAsync,
   getInitStockpileWinnersInstructionAsync,
   getJoinStockpileInstructionAsync,
+  getLockBuybackLiquidityInstructionAsync,
   getMeltInstructionAsync,
   getMigrateInstruction,
   getMintZincInstructionAsync,
@@ -190,6 +191,7 @@ import {
   parseInitStockpileRandCompDefInstruction,
   parseInitStockpileWinnersInstruction,
   parseJoinStockpileInstruction,
+  parseLockBuybackLiquidityInstruction,
   parseMeltInstruction,
   parseMigrateInstruction,
   parseMintZincInstruction,
@@ -254,6 +256,7 @@ import {
   type InitStockpileRandCompDefAsyncInput,
   type InitStockpileWinnersAsyncInput,
   type JoinStockpileAsyncInput,
+  type LockBuybackLiquidityAsyncInput,
   type MeltAsyncInput,
   type MigrateInput,
   type MintZincAsyncInput,
@@ -296,6 +299,7 @@ import {
   type ParsedInitStockpileRandCompDefInstruction,
   type ParsedInitStockpileWinnersInstruction,
   type ParsedJoinStockpileInstruction,
+  type ParsedLockBuybackLiquidityInstruction,
   type ParsedMeltInstruction,
   type ParsedMigrateInstruction,
   type ParsedMintZincInstruction,
@@ -632,6 +636,7 @@ export enum ZincInstruction {
   InitStockpileRandCompDef,
   InitStockpileWinners,
   JoinStockpile,
+  LockBuybackLiquidity,
   Melt,
   Migrate,
   MintZinc,
@@ -1096,6 +1101,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([232, 167, 111, 218, 205, 250, 130, 93]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.LockBuybackLiquidity;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([42, 127, 85, 29, 150, 84, 21, 158]),
       ),
       0,
@@ -1494,6 +1510,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.JoinStockpile;
     } & ParsedJoinStockpileInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.LockBuybackLiquidity;
+    } & ParsedLockBuybackLiquidityInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.Melt;
     } & ParsedMeltInstruction<TProgram>)
   | ({
@@ -1845,6 +1864,13 @@ export function parseZincInstruction<TProgram extends string>(
       return {
         instructionType: ZincInstruction.JoinStockpile,
         ...parseJoinStockpileInstruction(instruction),
+      };
+    }
+    case ZincInstruction.LockBuybackLiquidity: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.LockBuybackLiquidity,
+        ...parseLockBuybackLiquidityInstruction(instruction),
       };
     }
     case ZincInstruction.Melt: {
@@ -2230,6 +2256,10 @@ export type ZincPluginInstructions = {
   joinStockpile: (
     input: JoinStockpileAsyncInput,
   ) => ReturnType<typeof getJoinStockpileInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  lockBuybackLiquidity: (
+    input: LockBuybackLiquidityAsyncInput,
+  ) => ReturnType<typeof getLockBuybackLiquidityInstructionAsync> &
     SelfPlanAndSendFunctions;
   melt: (
     input: MeltAsyncInput,
@@ -2629,6 +2659,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getJoinStockpileInstructionAsync(input),
+            ),
+          lockBuybackLiquidity: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getLockBuybackLiquidityInstructionAsync(input),
             ),
           melt: (input) =>
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),

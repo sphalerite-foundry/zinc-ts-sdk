@@ -45,6 +45,7 @@ export * from "./initStockpileRandCallback";
 export * from "./initStockpileRandCompDef";
 export * from "./initStockpileWinners";
 export * from "./joinStockpile";
+export * from "./lockBuybackLiquidity";
 export * from "./melt";
 export * from "./migrate";
 export * from "./mintZinc";
