@@ -137,6 +137,7 @@ import {
   getQueueStockpileRevealInstructionAsync,
   getReloadAutoMinerSessionSolInstructionAsync,
   getRemoveBuybackLiquidityInstructionAsync,
+  getRetryInitStockpileRandInstructionAsync,
   getRevealRoundBlockhashInstructionAsync,
   getRevealRoundRandCallbackInstructionAsync,
   getRevealStockpileRandCallbackInstructionAsync,
@@ -202,6 +203,7 @@ import {
   parseQueueStockpileRevealInstruction,
   parseReloadAutoMinerSessionSolInstruction,
   parseRemoveBuybackLiquidityInstruction,
+  parseRetryInitStockpileRandInstruction,
   parseRevealRoundBlockhashInstruction,
   parseRevealRoundRandCallbackInstruction,
   parseRevealStockpileRandCallbackInstruction,
@@ -310,6 +312,7 @@ import {
   type ParsedQueueStockpileRevealInstruction,
   type ParsedReloadAutoMinerSessionSolInstruction,
   type ParsedRemoveBuybackLiquidityInstruction,
+  type ParsedRetryInitStockpileRandInstruction,
   type ParsedRevealRoundBlockhashInstruction,
   type ParsedRevealRoundRandCallbackInstruction,
   type ParsedRevealStockpileRandCallbackInstruction,
@@ -332,6 +335,7 @@ import {
   type QueueStockpileRevealAsyncInput,
   type ReloadAutoMinerSessionSolAsyncInput,
   type RemoveBuybackLiquidityAsyncInput,
+  type RetryInitStockpileRandAsyncInput,
   type RevealRoundBlockhashAsyncInput,
   type RevealRoundRandCallbackAsyncInput,
   type RevealStockpileRandCallbackAsyncInput,
@@ -370,6 +374,8 @@ import {
   findStakingRewardTokenAccountPda,
   findStakingTokenAccountPda,
   findStockpileExtrasPda,
+  findStockpilePda,
+  findStockpileSecretPda,
   findStockpileSolVaultPda,
   findStockpileTokenAccountPda,
   findTreasuryPda,
@@ -647,6 +653,7 @@ export enum ZincInstruction {
   QueueStockpileReveal,
   ReloadAutoMinerSessionSol,
   RemoveBuybackLiquidity,
+  RetryInitStockpileRand,
   RevealRoundBlockhash,
   RevealRoundRandCallback,
   RevealStockpileRandCallback,
@@ -1222,6 +1229,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([230, 18, 35, 143, 73, 32, 162, 87]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.RetryInitStockpileRand;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([204, 143, 123, 117, 220, 68, 251, 118]),
       ),
       0,
@@ -1542,6 +1560,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.RemoveBuybackLiquidity;
     } & ParsedRemoveBuybackLiquidityInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.RetryInitStockpileRand;
+    } & ParsedRetryInitStockpileRandInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.RevealRoundBlockhash;
     } & ParsedRevealRoundBlockhashInstruction<TProgram>)
@@ -1943,6 +1964,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseRemoveBuybackLiquidityInstruction(instruction),
       };
     }
+    case ZincInstruction.RetryInitStockpileRand: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.RetryInitStockpileRand,
+        ...parseRetryInitStockpileRandInstruction(instruction),
+      };
+    }
     case ZincInstruction.RevealRoundBlockhash: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2299,6 +2327,10 @@ export type ZincPluginInstructions = {
     input: RemoveBuybackLiquidityAsyncInput,
   ) => ReturnType<typeof getRemoveBuybackLiquidityInstructionAsync> &
     SelfPlanAndSendFunctions;
+  retryInitStockpileRand: (
+    input: MakeOptional<RetryInitStockpileRandAsyncInput, "payer">,
+  ) => ReturnType<typeof getRetryInitStockpileRandInstructionAsync> &
+    SelfPlanAndSendFunctions;
   revealRoundBlockhash: (
     input: RevealRoundBlockhashAsyncInput,
   ) => ReturnType<typeof getRevealRoundBlockhashInstructionAsync> &
@@ -2385,6 +2417,8 @@ export type ZincPluginPdas = {
   signPdaAccount: typeof findSignPdaAccountPda;
   buybackLpZincTokenAccount: typeof findBuybackLpZincTokenAccountPda;
   buybackLpWsolTokenAccount: typeof findBuybackLpWsolTokenAccountPda;
+  stockpile: typeof findStockpilePda;
+  stockpileSecret: typeof findStockpileSecretPda;
 };
 
 export type ZincPluginRequirements = ClientWithRpc<
@@ -2709,6 +2743,14 @@ export function zincProgram() {
               client,
               getRemoveBuybackLiquidityInstructionAsync(input),
             ),
+          retryInitStockpileRand: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getRetryInitStockpileRandInstructionAsync({
+                ...input,
+                payer: input.payer ?? client.payer,
+              }),
+            ),
           revealRoundBlockhash: (input) =>
             addSelfPlanAndSendFunctions(
               client,
@@ -2812,6 +2854,8 @@ export function zincProgram() {
           signPdaAccount: findSignPdaAccountPda,
           buybackLpZincTokenAccount: findBuybackLpZincTokenAccountPda,
           buybackLpWsolTokenAccount: findBuybackLpWsolTokenAccountPda,
+          stockpile: findStockpilePda,
+          stockpileSecret: findStockpileSecretPda,
         },
       },
     });
