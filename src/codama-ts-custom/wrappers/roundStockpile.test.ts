@@ -13,36 +13,35 @@ test("resolveRoundStockpileId prefers the active stockpile", () => {
   );
 });
 
-test("resolveRoundStockpileId uses unresolved stockpile without an active stockpile", () => {
+test("resolveRoundStockpileId omits unresolved stockpile without an active stockpile", () => {
   assert.equal(
     resolveRoundStockpileId({
       activeStockpileId: undefined,
       unresolvedStockpileId: 8n,
       nextStockpileId: 9n,
     }),
-    8n,
+    undefined,
   );
 });
 
-test("resolveRoundStockpileId falls back to latest initialized stockpile between cycles", () => {
+test("resolveRoundStockpileId omits latest initialized stockpile between cycles", () => {
   assert.equal(
     resolveRoundStockpileId({
       activeStockpileId: undefined,
       unresolvedStockpileId: undefined,
       nextStockpileId: 9n,
     }),
-    8n,
+    undefined,
   );
 });
 
-test("resolveRoundStockpileId rejects before any stockpile has been initialized", () => {
-  assert.throws(
-    () =>
-      resolveRoundStockpileId({
-        activeStockpileId: undefined,
-        unresolvedStockpileId: undefined,
-        nextStockpileId: 0n,
-      }),
-    /no initialized stockpile account/,
+test("resolveRoundStockpileId omits before any stockpile has been initialized", () => {
+  assert.equal(
+    resolveRoundStockpileId({
+      activeStockpileId: undefined,
+      unresolvedStockpileId: undefined,
+      nextStockpileId: 0n,
+    }),
+    undefined,
   );
 });

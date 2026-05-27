@@ -4,20 +4,12 @@ export type RoundStockpilePointers = {
   nextStockpileId: bigint;
 };
 
-/** Resolves the stockpile account that round instructions can pass for stockpile validation. */
-export function resolveRoundStockpileId({
-  activeStockpileId,
-  unresolvedStockpileId,
-  nextStockpileId,
-}: RoundStockpilePointers): bigint {
-  if (activeStockpileId !== undefined) {
-    return activeStockpileId;
+/** Resolves the active stockpile account that round instructions can pass for validation. */
+export function resolveRoundStockpileId(
+  pointers: RoundStockpilePointers,
+): bigint | undefined {
+  if (pointers.activeStockpileId !== undefined) {
+    return pointers.activeStockpileId;
   }
-  if (unresolvedStockpileId !== undefined) {
-    return unresolvedStockpileId;
-  }
-  if (nextStockpileId > 0n) {
-    return nextStockpileId - 1n;
-  }
-  throw new Error("Board has no initialized stockpile account");
+  return undefined;
 }
