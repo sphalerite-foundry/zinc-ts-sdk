@@ -40,6 +40,7 @@ import {
   type InstructionWithData,
   type Option,
   type OptionOrNullable,
+  type ReadonlyAccount,
   type ReadonlySignerAccount,
   type ReadonlyUint8Array,
   type TransactionSigner,
@@ -50,7 +51,7 @@ import {
   getAddressFromResolvedInstructionAccount,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findAutoMinerSessionPda } from "../pdas";
+import { findAutoMinerSessionPda, findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const UPDATE_AUTO_MINER_SESSION_DISCRIMINATOR: ReadonlyUint8Array =
@@ -65,6 +66,7 @@ export function getUpdateAutoMinerSessionDiscriminatorBytes(): ReadonlyUint8Arra
 export type UpdateAutoMinerSessionInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountAutoMinerSession extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
@@ -75,6 +77,9 @@ export type UpdateAutoMinerSessionInstruction<
         ? ReadonlySignerAccount<TAccountAuthority> &
             AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountAutoMinerSession extends string
         ? WritableAccount<TAccountAutoMinerSession>
         : TAccountAutoMinerSession,
@@ -179,10 +184,13 @@ export function getUpdateAutoMinerSessionInstructionDataCodec(): Codec<
 
 export type UpdateAutoMinerSessionAsyncInput<
   TAccountAuthority extends string = string,
+  TAccountConfig extends string = string,
   TAccountAutoMinerSession extends string = string,
 > = {
   /** Wallet that owns and controls the session. */
   authority: TransactionSigner<TAccountAuthority>;
+  /** Global config that defines the only accepted auto-miner executor. */
+  config?: Address<TAccountConfig>;
   /** Player-owned auto-miner session PDA. */
   autoMinerSession?: Address<TAccountAutoMinerSession>;
   executor: UpdateAutoMinerSessionInstructionDataArgs["executor"];
@@ -199,11 +207,13 @@ export type UpdateAutoMinerSessionAsyncInput<
 
 export async function getUpdateAutoMinerSessionInstructionAsync<
   TAccountAuthority extends string,
+  TAccountConfig extends string,
   TAccountAutoMinerSession extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateAutoMinerSessionAsyncInput<
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession
   >,
   config?: { programAddress?: TProgramAddress },
@@ -211,6 +221,7 @@ export async function getUpdateAutoMinerSessionInstructionAsync<
   UpdateAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession
   >
 > {
@@ -220,6 +231,7 @@ export async function getUpdateAutoMinerSessionInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
+    config: { value: input.config ?? null, isWritable: false },
     autoMinerSession: {
       value: input.autoMinerSession ?? null,
       isWritable: true,
@@ -234,6 +246,9 @@ export async function getUpdateAutoMinerSessionInstructionAsync<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
   if (!accounts.autoMinerSession.value) {
     accounts.autoMinerSession.value = await findAutoMinerSessionPda({
       authority: getAddressFromResolvedInstructionAccount(
@@ -247,6 +262,7 @@ export async function getUpdateAutoMinerSessionInstructionAsync<
   return Object.freeze({
     accounts: [
       getAccountMeta("authority", accounts.authority),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("autoMinerSession", accounts.autoMinerSession),
     ],
     data: getUpdateAutoMinerSessionInstructionDataEncoder().encode(
@@ -256,16 +272,20 @@ export async function getUpdateAutoMinerSessionInstructionAsync<
   } as UpdateAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession
   >);
 }
 
 export type UpdateAutoMinerSessionInput<
   TAccountAuthority extends string = string,
+  TAccountConfig extends string = string,
   TAccountAutoMinerSession extends string = string,
 > = {
   /** Wallet that owns and controls the session. */
   authority: TransactionSigner<TAccountAuthority>;
+  /** Global config that defines the only accepted auto-miner executor. */
+  config: Address<TAccountConfig>;
   /** Player-owned auto-miner session PDA. */
   autoMinerSession: Address<TAccountAutoMinerSession>;
   executor: UpdateAutoMinerSessionInstructionDataArgs["executor"];
@@ -282,17 +302,20 @@ export type UpdateAutoMinerSessionInput<
 
 export function getUpdateAutoMinerSessionInstruction<
   TAccountAuthority extends string,
+  TAccountConfig extends string,
   TAccountAutoMinerSession extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: UpdateAutoMinerSessionInput<
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession
   >,
   config?: { programAddress?: TProgramAddress },
 ): UpdateAutoMinerSessionInstruction<
   TProgramAddress,
   TAccountAuthority,
+  TAccountConfig,
   TAccountAutoMinerSession
 > {
   // Program address.
@@ -301,6 +324,7 @@ export function getUpdateAutoMinerSessionInstruction<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: false },
+    config: { value: input.config ?? null, isWritable: false },
     autoMinerSession: {
       value: input.autoMinerSession ?? null,
       isWritable: true,
@@ -318,6 +342,7 @@ export function getUpdateAutoMinerSessionInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta("authority", accounts.authority),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("autoMinerSession", accounts.autoMinerSession),
     ],
     data: getUpdateAutoMinerSessionInstructionDataEncoder().encode(
@@ -327,6 +352,7 @@ export function getUpdateAutoMinerSessionInstruction<
   } as UpdateAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession
   >);
 }
@@ -339,8 +365,10 @@ export type ParsedUpdateAutoMinerSessionInstruction<
   accounts: {
     /** Wallet that owns and controls the session. */
     authority: TAccountMetas[0];
+    /** Global config that defines the only accepted auto-miner executor. */
+    config: TAccountMetas[1];
     /** Player-owned auto-miner session PDA. */
-    autoMinerSession: TAccountMetas[1];
+    autoMinerSession: TAccountMetas[2];
   };
   data: UpdateAutoMinerSessionInstructionData;
 };
@@ -353,12 +381,12 @@ export function parseUpdateAutoMinerSessionInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUpdateAutoMinerSessionInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 2) {
+  if (instruction.accounts.length < 3) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 2,
+        expectedAccountMetas: 3,
       },
     );
   }
@@ -372,6 +400,7 @@ export function parseUpdateAutoMinerSessionInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       authority: getNextAccount(),
+      config: getNextAccount(),
       autoMinerSession: getNextAccount(),
     },
     data: getUpdateAutoMinerSessionInstructionDataDecoder().decode(

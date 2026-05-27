@@ -8,7 +8,11 @@ import {
   getTopUpAutoMinerSessionInstructionDataDecoder,
   getUpdateAutoMinerSessionInstructionDataDecoder,
 } from "../../codama-ts";
-import { getAutoMinerSessionAddress, getPlayerProfileAddress } from "../pda";
+import {
+  getAutoMinerSessionAddress,
+  getConfigAddress,
+  getPlayerProfileAddress,
+} from "../pda";
 import {
   buildCancelAutoMinerSessionInstruction,
   buildInitAutoMinerSessionInstruction,
@@ -47,10 +51,14 @@ test("buildInitAutoMinerSessionInstruction derives session accounts and encodes 
   assert.equal(instruction.keys[0]?.pubkey.toBase58(), signer.toBase58());
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
-    getAutoMinerSessionAddress(signer)[0].toBase58(),
+    getConfigAddress()[0].toBase58(),
   );
   assert.equal(
     instruction.keys[2]?.pubkey.toBase58(),
+    getAutoMinerSessionAddress(signer)[0].toBase58(),
+  );
+  assert.equal(
+    instruction.keys[3]?.pubkey.toBase58(),
     getPlayerProfileAddress(signer)[0].toBase58(),
   );
   assert.equal(decodedData.executor, executor.toBase58());
@@ -81,6 +89,10 @@ test("buildUpdateAutoMinerSessionInstruction encodes paused settings", async () 
 
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
+    getConfigAddress()[0].toBase58(),
+  );
+  assert.equal(
+    instruction.keys[2]?.pubkey.toBase58(),
     getAutoMinerSessionAddress(signer)[0].toBase58(),
   );
   assert.equal(decodedData.executor, executor.toBase58());

@@ -53,6 +53,7 @@ import {
 } from "@solana/program-client-core";
 import {
   findAutoMinerSessionPda,
+  findConfigPda,
   findDeployRoundFromAutoSessionPlayerProfilePda,
 } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
@@ -69,6 +70,7 @@ export function getInitAutoMinerSessionDiscriminatorBytes(): ReadonlyUint8Array 
 export type InitAutoMinerSessionInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountAutoMinerSession extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends string | AccountMeta<string> =
@@ -82,6 +84,9 @@ export type InitAutoMinerSessionInstruction<
         ? WritableSignerAccount<TAccountAuthority> &
             AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountAutoMinerSession extends string
         ? WritableAccount<TAccountAutoMinerSession>
         : TAccountAutoMinerSession,
@@ -192,12 +197,15 @@ export function getInitAutoMinerSessionInstructionDataCodec(): Codec<
 
 export type InitAutoMinerSessionAsyncInput<
   TAccountAuthority extends string = string,
+  TAccountConfig extends string = string,
   TAccountAutoMinerSession extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns and funds the auto-miner session. */
   authority: TransactionSigner<TAccountAuthority>;
+  /** Global config that defines the only accepted auto-miner executor. */
+  config?: Address<TAccountConfig>;
   /** Player-owned auto-miner session PDA. */
   autoMinerSession?: Address<TAccountAutoMinerSession>;
   /** Lifetime deploy profile for the auto-miner authority. */
@@ -218,6 +226,7 @@ export type InitAutoMinerSessionAsyncInput<
 
 export async function getInitAutoMinerSessionInstructionAsync<
   TAccountAuthority extends string,
+  TAccountConfig extends string,
   TAccountAutoMinerSession extends string,
   TAccountPlayerProfile extends string,
   TAccountSystemProgram extends string,
@@ -225,6 +234,7 @@ export async function getInitAutoMinerSessionInstructionAsync<
 >(
   input: InitAutoMinerSessionAsyncInput<
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession,
     TAccountPlayerProfile,
     TAccountSystemProgram
@@ -234,6 +244,7 @@ export async function getInitAutoMinerSessionInstructionAsync<
   InitAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession,
     TAccountPlayerProfile,
     TAccountSystemProgram
@@ -245,6 +256,7 @@ export async function getInitAutoMinerSessionInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     autoMinerSession: {
       value: input.autoMinerSession ?? null,
       isWritable: true,
@@ -261,6 +273,9 @@ export async function getInitAutoMinerSessionInstructionAsync<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.config.value) {
+    accounts.config.value = await findConfigPda();
+  }
   if (!accounts.autoMinerSession.value) {
     accounts.autoMinerSession.value = await findAutoMinerSessionPda({
       authority: getAddressFromResolvedInstructionAccount(
@@ -287,6 +302,7 @@ export async function getInitAutoMinerSessionInstructionAsync<
   return Object.freeze({
     accounts: [
       getAccountMeta("authority", accounts.authority),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("autoMinerSession", accounts.autoMinerSession),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("systemProgram", accounts.systemProgram),
@@ -298,6 +314,7 @@ export async function getInitAutoMinerSessionInstructionAsync<
   } as InitAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession,
     TAccountPlayerProfile,
     TAccountSystemProgram
@@ -306,12 +323,15 @@ export async function getInitAutoMinerSessionInstructionAsync<
 
 export type InitAutoMinerSessionInput<
   TAccountAuthority extends string = string,
+  TAccountConfig extends string = string,
   TAccountAutoMinerSession extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   /** Wallet that owns and funds the auto-miner session. */
   authority: TransactionSigner<TAccountAuthority>;
+  /** Global config that defines the only accepted auto-miner executor. */
+  config: Address<TAccountConfig>;
   /** Player-owned auto-miner session PDA. */
   autoMinerSession: Address<TAccountAutoMinerSession>;
   /** Lifetime deploy profile for the auto-miner authority. */
@@ -332,6 +352,7 @@ export type InitAutoMinerSessionInput<
 
 export function getInitAutoMinerSessionInstruction<
   TAccountAuthority extends string,
+  TAccountConfig extends string,
   TAccountAutoMinerSession extends string,
   TAccountPlayerProfile extends string,
   TAccountSystemProgram extends string,
@@ -339,6 +360,7 @@ export function getInitAutoMinerSessionInstruction<
 >(
   input: InitAutoMinerSessionInput<
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession,
     TAccountPlayerProfile,
     TAccountSystemProgram
@@ -347,6 +369,7 @@ export function getInitAutoMinerSessionInstruction<
 ): InitAutoMinerSessionInstruction<
   TProgramAddress,
   TAccountAuthority,
+  TAccountConfig,
   TAccountAutoMinerSession,
   TAccountPlayerProfile,
   TAccountSystemProgram
@@ -357,6 +380,7 @@ export function getInitAutoMinerSessionInstruction<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
+    config: { value: input.config ?? null, isWritable: false },
     autoMinerSession: {
       value: input.autoMinerSession ?? null,
       isWritable: true,
@@ -382,6 +406,7 @@ export function getInitAutoMinerSessionInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta("authority", accounts.authority),
+      getAccountMeta("config", accounts.config),
       getAccountMeta("autoMinerSession", accounts.autoMinerSession),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("systemProgram", accounts.systemProgram),
@@ -393,6 +418,7 @@ export function getInitAutoMinerSessionInstruction<
   } as InitAutoMinerSessionInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountConfig,
     TAccountAutoMinerSession,
     TAccountPlayerProfile,
     TAccountSystemProgram
@@ -407,12 +433,14 @@ export type ParsedInitAutoMinerSessionInstruction<
   accounts: {
     /** Wallet that owns and funds the auto-miner session. */
     authority: TAccountMetas[0];
+    /** Global config that defines the only accepted auto-miner executor. */
+    config: TAccountMetas[1];
     /** Player-owned auto-miner session PDA. */
-    autoMinerSession: TAccountMetas[1];
+    autoMinerSession: TAccountMetas[2];
     /** Lifetime deploy profile for the auto-miner authority. */
-    playerProfile: TAccountMetas[2];
+    playerProfile: TAccountMetas[3];
     /** System program used for account creation and budget transfer. */
-    systemProgram: TAccountMetas[3];
+    systemProgram: TAccountMetas[4];
   };
   data: InitAutoMinerSessionInstructionData;
 };
@@ -425,12 +453,12 @@ export function parseInitAutoMinerSessionInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitAutoMinerSessionInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
+  if (instruction.accounts.length < 5) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 4,
+        expectedAccountMetas: 5,
       },
     );
   }
@@ -444,6 +472,7 @@ export function parseInitAutoMinerSessionInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       authority: getNextAccount(),
+      config: getNextAccount(),
       autoMinerSession: getNextAccount(),
       playerProfile: getNextAccount(),
       systemProgram: getNextAccount(),
