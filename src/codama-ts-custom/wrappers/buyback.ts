@@ -1,4 +1,8 @@
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import {
   Connection,
   PublicKey,
@@ -64,7 +68,7 @@ export type BuildBuybackInstruction = {
 
 export type BuildClaimBuybackPoolFeesInstruction = {
   connection: Connection;
-  signer: PublicKey;
+  admin: PublicKey;
   zincMint?: PublicKey;
   buybackPoolAccounts?: ClaimBuybackPoolFeesInstructionAccounts;
 };
@@ -166,10 +170,10 @@ export async function buildBuybackInstruction({
   );
 }
 
-/** Builds one instruction that claims buyback LP fees into fee-only treasury custody. */
+/** Builds one instruction that claims buyback LP fees and forwards them to admin ATAs. */
 export async function buildClaimBuybackPoolFeesInstruction({
   connection,
-  signer,
+  admin,
   zincMint,
   buybackPoolAccounts,
 }: BuildClaimBuybackPoolFeesInstruction): Promise<TransactionInstruction> {
@@ -189,7 +193,7 @@ export async function buildClaimBuybackPoolFeesInstruction({
   return new TransactionInstruction({
     programId: ZINC_PROGRAM_ID,
     keys: [
-      { pubkey: signer, isSigner: true, isWritable: true },
+      { pubkey: admin, isSigner: true, isWritable: true },
       { pubkey: config, isSigner: false, isWritable: false },
       { pubkey: treasury, isSigner: false, isWritable: false },
       {
@@ -206,6 +210,28 @@ export async function buildClaimBuybackPoolFeesInstruction({
       },
       {
         pubkey: getBuybackFeeWsolTokenAccountAddress()[0],
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: getAssociatedTokenAddressSync(
+          resolvedZincMint,
+          admin,
+          false,
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+        ),
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: getAssociatedTokenAddressSync(
+          WSOL_MINT_ADDRESS,
+          admin,
+          false,
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+        ),
         isSigner: false,
         isWritable: true,
       },
@@ -230,6 +256,11 @@ export async function buildClaimBuybackPoolFeesInstruction({
       },
       {
         pubkey: METEORA_DAMM_V2_PROGRAM_ID,
+        isSigner: false,
+        isWritable: false,
+      },
+      {
+        pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
         isSigner: false,
         isWritable: false,
       },

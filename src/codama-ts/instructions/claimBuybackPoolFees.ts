@@ -10,8 +10,10 @@ import {
   combineCodec,
   fixDecoderSize,
   fixEncoderSize,
+  getAddressEncoder,
   getBytesDecoder,
   getBytesEncoder,
+  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
@@ -34,6 +36,7 @@ import {
 } from "@solana/kit";
 import {
   getAccountMetaFactory,
+  getAddressFromResolvedInstructionAccount,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
 import {
@@ -56,7 +59,7 @@ export function getClaimBuybackPoolFeesDiscriminatorBytes(): ReadonlyUint8Array 
 
 export type ClaimBuybackPoolFeesInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountBuybackPool extends string | AccountMeta<string> = string,
@@ -67,6 +70,8 @@ export type ClaimBuybackPoolFeesInstruction<
     string,
   TAccountBuybackFeeWsolTokenAccount extends string | AccountMeta<string> =
     string,
+  TAccountAdminZincTokenAccount extends string | AccountMeta<string> = string,
+  TAccountAdminWsolTokenAccount extends string | AccountMeta<string> = string,
   TAccountPoolAuthority extends string | AccountMeta<string> = string,
   TAccountPool extends string | AccountMeta<string> = string,
   TAccountPosition extends string | AccountMeta<string> = string,
@@ -76,6 +81,8 @@ export type ClaimBuybackPoolFeesInstruction<
   TAccountEventAuthority extends string | AccountMeta<string> = string,
   TAccountMeteoraProgram extends string | AccountMeta<string> =
     "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
+  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
   TAccountTokenProgram extends string | AccountMeta<string> =
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
   TAccountSystemProgram extends string | AccountMeta<string> =
@@ -85,10 +92,10 @@ export type ClaimBuybackPoolFeesInstruction<
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
     [
-      TAccountSigner extends string
-        ? WritableSignerAccount<TAccountSigner> &
-            AccountSignerMeta<TAccountSigner>
-        : TAccountSigner,
+      TAccountAdmin extends string
+        ? WritableSignerAccount<TAccountAdmin> &
+            AccountSignerMeta<TAccountAdmin>
+        : TAccountAdmin,
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
@@ -110,6 +117,12 @@ export type ClaimBuybackPoolFeesInstruction<
       TAccountBuybackFeeWsolTokenAccount extends string
         ? WritableAccount<TAccountBuybackFeeWsolTokenAccount>
         : TAccountBuybackFeeWsolTokenAccount,
+      TAccountAdminZincTokenAccount extends string
+        ? WritableAccount<TAccountAdminZincTokenAccount>
+        : TAccountAdminZincTokenAccount,
+      TAccountAdminWsolTokenAccount extends string
+        ? WritableAccount<TAccountAdminWsolTokenAccount>
+        : TAccountAdminWsolTokenAccount,
       TAccountPoolAuthority extends string
         ? ReadonlyAccount<TAccountPoolAuthority>
         : TAccountPoolAuthority,
@@ -134,6 +147,9 @@ export type ClaimBuybackPoolFeesInstruction<
       TAccountMeteoraProgram extends string
         ? ReadonlyAccount<TAccountMeteoraProgram>
         : TAccountMeteoraProgram,
+      TAccountAssociatedTokenProgram extends string
+        ? ReadonlyAccount<TAccountAssociatedTokenProgram>
+        : TAccountAssociatedTokenProgram,
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
@@ -177,7 +193,7 @@ export function getClaimBuybackPoolFeesInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type ClaimBuybackPoolFeesAsyncInput<
-  TAccountSigner extends string = string,
+  TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountBuybackPool extends string = string,
@@ -185,6 +201,8 @@ export type ClaimBuybackPoolFeesAsyncInput<
   TAccountZincMint extends string = string,
   TAccountBuybackFeeZincTokenAccount extends string = string,
   TAccountBuybackFeeWsolTokenAccount extends string = string,
+  TAccountAdminZincTokenAccount extends string = string,
+  TAccountAdminWsolTokenAccount extends string = string,
   TAccountPoolAuthority extends string = string,
   TAccountPool extends string = string,
   TAccountPosition extends string = string,
@@ -193,11 +211,12 @@ export type ClaimBuybackPoolFeesAsyncInput<
   TAccountTokenBVault extends string = string,
   TAccountEventAuthority extends string = string,
   TAccountMeteoraProgram extends string = string,
+  TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
-  /** Admin or crank signer requesting the protocol LP fee claim. */
-  signer: TransactionSigner<TAccountSigner>;
+  /** Configured admin requesting the protocol LP fee claim. */
+  admin: TransactionSigner<TAccountAdmin>;
   /** Global config containing the admin, crank, and treasury settings. */
   config?: Address<TAccountConfig>;
   /** Treasury PDA that owns the Meteora position NFT and claimed fee accounts. */
@@ -212,6 +231,10 @@ export type ClaimBuybackPoolFeesAsyncInput<
   buybackFeeZincTokenAccount?: Address<TAccountBuybackFeeZincTokenAccount>;
   /** Dedicated treasury-owned token account that receives claimed WSOL LP fees. */
   buybackFeeWsolTokenAccount?: Address<TAccountBuybackFeeWsolTokenAccount>;
+  /** Admin ATA that receives the full claimed ZINC fee custody balance. */
+  adminZincTokenAccount?: Address<TAccountAdminZincTokenAccount>;
+  /** Admin ATA that receives the full claimed WSOL fee custody balance. */
+  adminWsolTokenAccount?: Address<TAccountAdminWsolTokenAccount>;
   poolAuthority: Address<TAccountPoolAuthority>;
   pool: Address<TAccountPool>;
   position: Address<TAccountPosition>;
@@ -220,6 +243,8 @@ export type ClaimBuybackPoolFeesAsyncInput<
   tokenBVault: Address<TAccountTokenBVault>;
   eventAuthority: Address<TAccountEventAuthority>;
   meteoraProgram?: Address<TAccountMeteoraProgram>;
+  /** Associated Token Program used to create admin ATAs when missing. */
+  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
   /** SPL Token Program for both pool mints and fee receiver accounts. */
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used to initialize fee receiver accounts when missing. */
@@ -227,7 +252,7 @@ export type ClaimBuybackPoolFeesAsyncInput<
 };
 
 export async function getClaimBuybackPoolFeesInstructionAsync<
-  TAccountSigner extends string,
+  TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountBuybackPool extends string,
@@ -235,6 +260,8 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
   TAccountZincMint extends string,
   TAccountBuybackFeeZincTokenAccount extends string,
   TAccountBuybackFeeWsolTokenAccount extends string,
+  TAccountAdminZincTokenAccount extends string,
+  TAccountAdminWsolTokenAccount extends string,
   TAccountPoolAuthority extends string,
   TAccountPool extends string,
   TAccountPosition extends string,
@@ -243,12 +270,13 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
   TAccountTokenBVault extends string,
   TAccountEventAuthority extends string,
   TAccountMeteoraProgram extends string,
+  TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimBuybackPoolFeesAsyncInput<
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountTreasury,
     TAccountBuybackPool,
@@ -256,6 +284,8 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountZincMint,
     TAccountBuybackFeeZincTokenAccount,
     TAccountBuybackFeeWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountAdminWsolTokenAccount,
     TAccountPoolAuthority,
     TAccountPool,
     TAccountPosition,
@@ -264,6 +294,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountTokenBVault,
     TAccountEventAuthority,
     TAccountMeteoraProgram,
+    TAccountAssociatedTokenProgram,
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
@@ -271,7 +302,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
 ): Promise<
   ClaimBuybackPoolFeesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountTreasury,
     TAccountBuybackPool,
@@ -279,6 +310,8 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountZincMint,
     TAccountBuybackFeeZincTokenAccount,
     TAccountBuybackFeeWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountAdminWsolTokenAccount,
     TAccountPoolAuthority,
     TAccountPool,
     TAccountPosition,
@@ -287,6 +320,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountTokenBVault,
     TAccountEventAuthority,
     TAccountMeteoraProgram,
+    TAccountAssociatedTokenProgram,
     TAccountTokenProgram,
     TAccountSystemProgram
   >
@@ -296,7 +330,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: false },
     buybackPool: { value: input.buybackPool ?? null, isWritable: false },
@@ -310,6 +344,14 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
       value: input.buybackFeeWsolTokenAccount ?? null,
       isWritable: true,
     },
+    adminZincTokenAccount: {
+      value: input.adminZincTokenAccount ?? null,
+      isWritable: true,
+    },
+    adminWsolTokenAccount: {
+      value: input.adminWsolTokenAccount ?? null,
+      isWritable: true,
+    },
     poolAuthority: { value: input.poolAuthority ?? null, isWritable: false },
     pool: { value: input.pool ?? null, isWritable: false },
     position: { value: input.position ?? null, isWritable: true },
@@ -321,6 +363,10 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     tokenBVault: { value: input.tokenBVault ?? null, isWritable: true },
     eventAuthority: { value: input.eventAuthority ?? null, isWritable: false },
     meteoraProgram: { value: input.meteoraProgram ?? null, isWritable: false },
+    associatedTokenProgram: {
+      value: input.associatedTokenProgram ?? null,
+      isWritable: false,
+    },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -351,13 +397,69 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     accounts.buybackFeeWsolTokenAccount.value =
       await findBuybackFeeWsolTokenAccountPda();
   }
+  if (!accounts.tokenProgram.value) {
+    accounts.tokenProgram.value =
+      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  }
+  if (!accounts.adminZincTokenAccount.value) {
+    accounts.adminZincTokenAccount.value = await getProgramDerivedAddress({
+      programAddress:
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+      seeds: [
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "admin",
+            accounts.admin.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "tokenProgram",
+            accounts.tokenProgram.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "zincMint",
+            accounts.zincMint.value,
+          ),
+        ),
+      ],
+    });
+  }
+  if (!accounts.adminWsolTokenAccount.value) {
+    accounts.adminWsolTokenAccount.value = await getProgramDerivedAddress({
+      programAddress:
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+      seeds: [
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "admin",
+            accounts.admin.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "tokenProgram",
+            accounts.tokenProgram.value,
+          ),
+        ),
+        getAddressEncoder().encode(
+          getAddressFromResolvedInstructionAccount(
+            "wsolMint",
+            accounts.wsolMint.value,
+          ),
+        ),
+      ],
+    });
+  }
   if (!accounts.meteoraProgram.value) {
     accounts.meteoraProgram.value =
       "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG" as Address<"cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG">;
   }
-  if (!accounts.tokenProgram.value) {
-    accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  if (!accounts.associatedTokenProgram.value) {
+    accounts.associatedTokenProgram.value =
+      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
@@ -367,7 +469,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("buybackPool", accounts.buybackPool),
@@ -381,6 +483,8 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
         "buybackFeeWsolTokenAccount",
         accounts.buybackFeeWsolTokenAccount,
       ),
+      getAccountMeta("adminZincTokenAccount", accounts.adminZincTokenAccount),
+      getAccountMeta("adminWsolTokenAccount", accounts.adminWsolTokenAccount),
       getAccountMeta("poolAuthority", accounts.poolAuthority),
       getAccountMeta("pool", accounts.pool),
       getAccountMeta("position", accounts.position),
@@ -389,6 +493,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
       getAccountMeta("tokenBVault", accounts.tokenBVault),
       getAccountMeta("eventAuthority", accounts.eventAuthority),
       getAccountMeta("meteoraProgram", accounts.meteoraProgram),
+      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
@@ -396,7 +501,7 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     programAddress,
   } as ClaimBuybackPoolFeesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountTreasury,
     TAccountBuybackPool,
@@ -404,6 +509,8 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountZincMint,
     TAccountBuybackFeeZincTokenAccount,
     TAccountBuybackFeeWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountAdminWsolTokenAccount,
     TAccountPoolAuthority,
     TAccountPool,
     TAccountPosition,
@@ -412,13 +519,14 @@ export async function getClaimBuybackPoolFeesInstructionAsync<
     TAccountTokenBVault,
     TAccountEventAuthority,
     TAccountMeteoraProgram,
+    TAccountAssociatedTokenProgram,
     TAccountTokenProgram,
     TAccountSystemProgram
   >);
 }
 
 export type ClaimBuybackPoolFeesInput<
-  TAccountSigner extends string = string,
+  TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
   TAccountBuybackPool extends string = string,
@@ -426,6 +534,8 @@ export type ClaimBuybackPoolFeesInput<
   TAccountZincMint extends string = string,
   TAccountBuybackFeeZincTokenAccount extends string = string,
   TAccountBuybackFeeWsolTokenAccount extends string = string,
+  TAccountAdminZincTokenAccount extends string = string,
+  TAccountAdminWsolTokenAccount extends string = string,
   TAccountPoolAuthority extends string = string,
   TAccountPool extends string = string,
   TAccountPosition extends string = string,
@@ -434,11 +544,12 @@ export type ClaimBuybackPoolFeesInput<
   TAccountTokenBVault extends string = string,
   TAccountEventAuthority extends string = string,
   TAccountMeteoraProgram extends string = string,
+  TAccountAssociatedTokenProgram extends string = string,
   TAccountTokenProgram extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
-  /** Admin or crank signer requesting the protocol LP fee claim. */
-  signer: TransactionSigner<TAccountSigner>;
+  /** Configured admin requesting the protocol LP fee claim. */
+  admin: TransactionSigner<TAccountAdmin>;
   /** Global config containing the admin, crank, and treasury settings. */
   config: Address<TAccountConfig>;
   /** Treasury PDA that owns the Meteora position NFT and claimed fee accounts. */
@@ -453,6 +564,10 @@ export type ClaimBuybackPoolFeesInput<
   buybackFeeZincTokenAccount: Address<TAccountBuybackFeeZincTokenAccount>;
   /** Dedicated treasury-owned token account that receives claimed WSOL LP fees. */
   buybackFeeWsolTokenAccount: Address<TAccountBuybackFeeWsolTokenAccount>;
+  /** Admin ATA that receives the full claimed ZINC fee custody balance. */
+  adminZincTokenAccount: Address<TAccountAdminZincTokenAccount>;
+  /** Admin ATA that receives the full claimed WSOL fee custody balance. */
+  adminWsolTokenAccount: Address<TAccountAdminWsolTokenAccount>;
   poolAuthority: Address<TAccountPoolAuthority>;
   pool: Address<TAccountPool>;
   position: Address<TAccountPosition>;
@@ -461,6 +576,8 @@ export type ClaimBuybackPoolFeesInput<
   tokenBVault: Address<TAccountTokenBVault>;
   eventAuthority: Address<TAccountEventAuthority>;
   meteoraProgram?: Address<TAccountMeteoraProgram>;
+  /** Associated Token Program used to create admin ATAs when missing. */
+  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
   /** SPL Token Program for both pool mints and fee receiver accounts. */
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used to initialize fee receiver accounts when missing. */
@@ -468,7 +585,7 @@ export type ClaimBuybackPoolFeesInput<
 };
 
 export function getClaimBuybackPoolFeesInstruction<
-  TAccountSigner extends string,
+  TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
   TAccountBuybackPool extends string,
@@ -476,6 +593,8 @@ export function getClaimBuybackPoolFeesInstruction<
   TAccountZincMint extends string,
   TAccountBuybackFeeZincTokenAccount extends string,
   TAccountBuybackFeeWsolTokenAccount extends string,
+  TAccountAdminZincTokenAccount extends string,
+  TAccountAdminWsolTokenAccount extends string,
   TAccountPoolAuthority extends string,
   TAccountPool extends string,
   TAccountPosition extends string,
@@ -484,12 +603,13 @@ export function getClaimBuybackPoolFeesInstruction<
   TAccountTokenBVault extends string,
   TAccountEventAuthority extends string,
   TAccountMeteoraProgram extends string,
+  TAccountAssociatedTokenProgram extends string,
   TAccountTokenProgram extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimBuybackPoolFeesInput<
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountTreasury,
     TAccountBuybackPool,
@@ -497,6 +617,8 @@ export function getClaimBuybackPoolFeesInstruction<
     TAccountZincMint,
     TAccountBuybackFeeZincTokenAccount,
     TAccountBuybackFeeWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountAdminWsolTokenAccount,
     TAccountPoolAuthority,
     TAccountPool,
     TAccountPosition,
@@ -505,13 +627,14 @@ export function getClaimBuybackPoolFeesInstruction<
     TAccountTokenBVault,
     TAccountEventAuthority,
     TAccountMeteoraProgram,
+    TAccountAssociatedTokenProgram,
     TAccountTokenProgram,
     TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): ClaimBuybackPoolFeesInstruction<
   TProgramAddress,
-  TAccountSigner,
+  TAccountAdmin,
   TAccountConfig,
   TAccountTreasury,
   TAccountBuybackPool,
@@ -519,6 +642,8 @@ export function getClaimBuybackPoolFeesInstruction<
   TAccountZincMint,
   TAccountBuybackFeeZincTokenAccount,
   TAccountBuybackFeeWsolTokenAccount,
+  TAccountAdminZincTokenAccount,
+  TAccountAdminWsolTokenAccount,
   TAccountPoolAuthority,
   TAccountPool,
   TAccountPosition,
@@ -527,6 +652,7 @@ export function getClaimBuybackPoolFeesInstruction<
   TAccountTokenBVault,
   TAccountEventAuthority,
   TAccountMeteoraProgram,
+  TAccountAssociatedTokenProgram,
   TAccountTokenProgram,
   TAccountSystemProgram
 > {
@@ -535,7 +661,7 @@ export function getClaimBuybackPoolFeesInstruction<
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: false },
     buybackPool: { value: input.buybackPool ?? null, isWritable: false },
@@ -549,6 +675,14 @@ export function getClaimBuybackPoolFeesInstruction<
       value: input.buybackFeeWsolTokenAccount ?? null,
       isWritable: true,
     },
+    adminZincTokenAccount: {
+      value: input.adminZincTokenAccount ?? null,
+      isWritable: true,
+    },
+    adminWsolTokenAccount: {
+      value: input.adminWsolTokenAccount ?? null,
+      isWritable: true,
+    },
     poolAuthority: { value: input.poolAuthority ?? null, isWritable: false },
     pool: { value: input.pool ?? null, isWritable: false },
     position: { value: input.position ?? null, isWritable: true },
@@ -560,6 +694,10 @@ export function getClaimBuybackPoolFeesInstruction<
     tokenBVault: { value: input.tokenBVault ?? null, isWritable: true },
     eventAuthority: { value: input.eventAuthority ?? null, isWritable: false },
     meteoraProgram: { value: input.meteoraProgram ?? null, isWritable: false },
+    associatedTokenProgram: {
+      value: input.associatedTokenProgram ?? null,
+      isWritable: false,
+    },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -573,13 +711,17 @@ export function getClaimBuybackPoolFeesInstruction<
     accounts.wsolMint.value =
       "So11111111111111111111111111111111111111112" as Address<"So11111111111111111111111111111111111111112">;
   }
+  if (!accounts.tokenProgram.value) {
+    accounts.tokenProgram.value =
+      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  }
   if (!accounts.meteoraProgram.value) {
     accounts.meteoraProgram.value =
       "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG" as Address<"cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG">;
   }
-  if (!accounts.tokenProgram.value) {
-    accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+  if (!accounts.associatedTokenProgram.value) {
+    accounts.associatedTokenProgram.value =
+      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
@@ -589,7 +731,7 @@ export function getClaimBuybackPoolFeesInstruction<
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("buybackPool", accounts.buybackPool),
@@ -603,6 +745,8 @@ export function getClaimBuybackPoolFeesInstruction<
         "buybackFeeWsolTokenAccount",
         accounts.buybackFeeWsolTokenAccount,
       ),
+      getAccountMeta("adminZincTokenAccount", accounts.adminZincTokenAccount),
+      getAccountMeta("adminWsolTokenAccount", accounts.adminWsolTokenAccount),
       getAccountMeta("poolAuthority", accounts.poolAuthority),
       getAccountMeta("pool", accounts.pool),
       getAccountMeta("position", accounts.position),
@@ -611,6 +755,7 @@ export function getClaimBuybackPoolFeesInstruction<
       getAccountMeta("tokenBVault", accounts.tokenBVault),
       getAccountMeta("eventAuthority", accounts.eventAuthority),
       getAccountMeta("meteoraProgram", accounts.meteoraProgram),
+      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
       getAccountMeta("systemProgram", accounts.systemProgram),
     ],
@@ -618,7 +763,7 @@ export function getClaimBuybackPoolFeesInstruction<
     programAddress,
   } as ClaimBuybackPoolFeesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountTreasury,
     TAccountBuybackPool,
@@ -626,6 +771,8 @@ export function getClaimBuybackPoolFeesInstruction<
     TAccountZincMint,
     TAccountBuybackFeeZincTokenAccount,
     TAccountBuybackFeeWsolTokenAccount,
+    TAccountAdminZincTokenAccount,
+    TAccountAdminWsolTokenAccount,
     TAccountPoolAuthority,
     TAccountPool,
     TAccountPosition,
@@ -634,6 +781,7 @@ export function getClaimBuybackPoolFeesInstruction<
     TAccountTokenBVault,
     TAccountEventAuthority,
     TAccountMeteoraProgram,
+    TAccountAssociatedTokenProgram,
     TAccountTokenProgram,
     TAccountSystemProgram
   >);
@@ -645,8 +793,8 @@ export type ParsedClaimBuybackPoolFeesInstruction<
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    /** Admin or crank signer requesting the protocol LP fee claim. */
-    signer: TAccountMetas[0];
+    /** Configured admin requesting the protocol LP fee claim. */
+    admin: TAccountMetas[0];
     /** Global config containing the admin, crank, and treasury settings. */
     config: TAccountMetas[1];
     /** Treasury PDA that owns the Meteora position NFT and claimed fee accounts. */
@@ -661,18 +809,24 @@ export type ParsedClaimBuybackPoolFeesInstruction<
     buybackFeeZincTokenAccount: TAccountMetas[6];
     /** Dedicated treasury-owned token account that receives claimed WSOL LP fees. */
     buybackFeeWsolTokenAccount: TAccountMetas[7];
-    poolAuthority: TAccountMetas[8];
-    pool: TAccountMetas[9];
-    position: TAccountMetas[10];
-    positionNftAccount: TAccountMetas[11];
-    tokenAVault: TAccountMetas[12];
-    tokenBVault: TAccountMetas[13];
-    eventAuthority: TAccountMetas[14];
-    meteoraProgram: TAccountMetas[15];
+    /** Admin ATA that receives the full claimed ZINC fee custody balance. */
+    adminZincTokenAccount: TAccountMetas[8];
+    /** Admin ATA that receives the full claimed WSOL fee custody balance. */
+    adminWsolTokenAccount: TAccountMetas[9];
+    poolAuthority: TAccountMetas[10];
+    pool: TAccountMetas[11];
+    position: TAccountMetas[12];
+    positionNftAccount: TAccountMetas[13];
+    tokenAVault: TAccountMetas[14];
+    tokenBVault: TAccountMetas[15];
+    eventAuthority: TAccountMetas[16];
+    meteoraProgram: TAccountMetas[17];
+    /** Associated Token Program used to create admin ATAs when missing. */
+    associatedTokenProgram: TAccountMetas[18];
     /** SPL Token Program for both pool mints and fee receiver accounts. */
-    tokenProgram: TAccountMetas[16];
+    tokenProgram: TAccountMetas[19];
     /** System Program used to initialize fee receiver accounts when missing. */
-    systemProgram: TAccountMetas[17];
+    systemProgram: TAccountMetas[20];
   };
   data: ClaimBuybackPoolFeesInstructionData;
 };
@@ -685,12 +839,12 @@ export function parseClaimBuybackPoolFeesInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimBuybackPoolFeesInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 18) {
+  if (instruction.accounts.length < 21) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 18,
+        expectedAccountMetas: 21,
       },
     );
   }
@@ -703,7 +857,7 @@ export function parseClaimBuybackPoolFeesInstruction<
   return {
     programAddress: instruction.programAddress,
     accounts: {
-      signer: getNextAccount(),
+      admin: getNextAccount(),
       config: getNextAccount(),
       treasury: getNextAccount(),
       buybackPool: getNextAccount(),
@@ -711,6 +865,8 @@ export function parseClaimBuybackPoolFeesInstruction<
       zincMint: getNextAccount(),
       buybackFeeZincTokenAccount: getNextAccount(),
       buybackFeeWsolTokenAccount: getNextAccount(),
+      adminZincTokenAccount: getNextAccount(),
+      adminWsolTokenAccount: getNextAccount(),
       poolAuthority: getNextAccount(),
       pool: getNextAccount(),
       position: getNextAccount(),
@@ -719,6 +875,7 @@ export function parseClaimBuybackPoolFeesInstruction<
       tokenBVault: getNextAccount(),
       eventAuthority: getNextAccount(),
       meteoraProgram: getNextAccount(),
+      associatedTokenProgram: getNextAccount(),
       tokenProgram: getNextAccount(),
       systemProgram: getNextAccount(),
     },

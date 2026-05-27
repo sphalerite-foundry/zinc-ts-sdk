@@ -148,7 +148,7 @@ test("buildBuybackInstruction targets the stored Meteora pool accounts", async (
 });
 
 test("buildClaimBuybackPoolFeesInstruction targets dedicated fee custody", async () => {
-  const signer = Keypair.generate().publicKey;
+  const admin = Keypair.generate().publicKey;
   const zincMint = Keypair.generate().publicKey;
   const buybackPoolAccounts = {
     poolAuthority: Keypair.generate().publicKey,
@@ -162,12 +162,12 @@ test("buildClaimBuybackPoolFeesInstruction targets dedicated fee custody", async
 
   const instruction = await buildClaimBuybackPoolFeesInstruction({
     connection: CONNECTION,
-    signer,
+    admin,
     zincMint,
     buybackPoolAccounts,
   });
 
-  assert.equal(instruction.keys[0]?.pubkey.toBase58(), signer.toBase58());
+  assert.equal(instruction.keys[0]?.pubkey.toBase58(), admin.toBase58());
   assert.equal(instruction.keys[0]?.isSigner, true);
   assert.equal(
     instruction.keys[1]?.pubkey.toBase58(),
@@ -193,12 +193,22 @@ test("buildClaimBuybackPoolFeesInstruction targets dedicated fee custody", async
   );
   assert.equal(instruction.keys[7]?.isWritable, true);
   assert.equal(
-    instruction.keys[10]?.pubkey.toBase58(),
+    instruction.keys[8]?.pubkey.toBase58(),
+    getClassicAtaAddress(admin, zincMint).toBase58(),
+  );
+  assert.equal(instruction.keys[8]?.isWritable, true);
+  assert.equal(
+    instruction.keys[9]?.pubkey.toBase58(),
+    getClassicAtaAddress(admin, WSOL_MINT_ADDRESS).toBase58(),
+  );
+  assert.equal(instruction.keys[9]?.isWritable, true);
+  assert.equal(
+    instruction.keys[12]?.pubkey.toBase58(),
     buybackPoolAccounts.position.toBase58(),
   );
-  assert.equal(instruction.keys[10]?.isWritable, true);
+  assert.equal(instruction.keys[12]?.isWritable, true);
   assert.equal(
-    instruction.keys[11]?.pubkey.toBase58(),
+    instruction.keys[13]?.pubkey.toBase58(),
     buybackPoolAccounts.positionNftAccount.toBase58(),
   );
   assert.deepEqual(
