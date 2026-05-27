@@ -179,8 +179,8 @@ export type CloseRoundAsyncInput<
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
   /** Dedicated stockpile token account that receives stockpile ZINC accrual. */
   stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
-  /** Current stockpile account that stays initialized across normal protocol operation. */
-  stockpile: Address<TAccountStockpile>;
+  /** Active stockpile account, omitted when no cycle is currently joinable. */
+  stockpile?: Address<TAccountStockpile>;
   /** SPL Token program used for minting the Bonanza accrual. */
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used to create the round-owned ZINC vault. */
@@ -393,8 +393,8 @@ export type CloseRoundInput<
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
   /** Dedicated stockpile token account that receives stockpile ZINC accrual. */
   stockpileTokenAccount: Address<TAccountStockpileTokenAccount>;
-  /** Current stockpile account that stays initialized across normal protocol operation. */
-  stockpile: Address<TAccountStockpile>;
+  /** Active stockpile account, omitted when no cycle is currently joinable. */
+  stockpile?: Address<TAccountStockpile>;
   /** SPL Token program used for minting the Bonanza accrual. */
   tokenProgram?: Address<TAccountTokenProgram>;
   /** System Program used to create the round-owned ZINC vault. */
@@ -561,8 +561,8 @@ export type ParsedCloseRoundInstruction<
     roundZincPayoutTokenAccount: TAccountMetas[8];
     /** Dedicated stockpile token account that receives stockpile ZINC accrual. */
     stockpileTokenAccount: TAccountMetas[9];
-    /** Current stockpile account that stays initialized across normal protocol operation. */
-    stockpile: TAccountMetas[10];
+    /** Active stockpile account, omitted when no cycle is currently joinable. */
+    stockpile?: TAccountMetas[10] | undefined;
     /** SPL Token program used for minting the Bonanza accrual. */
     tokenProgram: TAccountMetas[11];
     /** System Program used to create the round-owned ZINC vault. */
@@ -594,6 +594,12 @@ export function parseCloseRoundInstruction<
     accountIndex += 1;
     return accountMeta;
   };
+  const getNextOptionalAccount = () => {
+    const accountMeta = getNextAccount();
+    return accountMeta.address === ZINC_PROGRAM_ADDRESS
+      ? undefined
+      : accountMeta;
+  };
   return {
     programAddress: instruction.programAddress,
     accounts: {
@@ -607,7 +613,7 @@ export function parseCloseRoundInstruction<
       bonanzaTokenAccount: getNextAccount(),
       roundZincPayoutTokenAccount: getNextAccount(),
       stockpileTokenAccount: getNextAccount(),
-      stockpile: getNextAccount(),
+      stockpile: getNextOptionalAccount(),
       tokenProgram: getNextAccount(),
       systemProgram: getNextAccount(),
     },

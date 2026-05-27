@@ -50,7 +50,8 @@ export async function buildCloseRoundInstruction({
     unresolvedStockpileId,
     nextStockpileId: boardAccount.data.nextStockpileId,
   });
-  const stockpile = getStockpileAddress(stockpileId)[0];
+  const stockpile =
+    stockpileId !== undefined ? getStockpileAddress(stockpileId)[0] : null;
   const instruction = await getCloseRoundInstructionAsync({
     signer: toTransactionSigner(signer),
     config: toAddress(config),
@@ -62,7 +63,7 @@ export async function buildCloseRoundInstruction({
     bonanzaTokenAccount: treasuryAccount.data.bonanzaTokenAccount,
     roundZincPayoutTokenAccount: toAddress(roundZincPayoutTokenAccount),
     stockpileTokenAccount: treasuryAccount.data.stockpileTokenAccount,
-    stockpile: toAddress(stockpile),
+    stockpile: stockpile ? toAddress(stockpile) : undefined,
   });
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
