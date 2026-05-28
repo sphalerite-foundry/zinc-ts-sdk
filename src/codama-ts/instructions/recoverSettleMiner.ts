@@ -167,7 +167,7 @@ export type RecoverSettleMinerAsyncInput<
   config?: Address<TAccountConfig>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
-  /** Invalid-mask miner whose settlement result is recovered from off-chain evidence. */
+  /** Miner whose settlement result is recovered from admin-reviewed evidence. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
   playerProfile: Address<TAccountPlayerProfile>;
@@ -275,7 +275,7 @@ export type RecoverSettleMinerInput<
   config: Address<TAccountConfig>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
-  /** Invalid-mask miner whose settlement result is recovered from off-chain evidence. */
+  /** Miner whose settlement result is recovered from admin-reviewed evidence. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
   playerProfile: Address<TAccountPlayerProfile>;
@@ -371,7 +371,7 @@ export type ParsedRecoverSettleMinerInstruction<
     config: TAccountMetas[1];
     /** Revealed round currently waiting on per-miner settlement. */
     round: TAccountMetas[2];
-    /** Invalid-mask miner whose settlement result is recovered from off-chain evidence. */
+    /** Miner whose settlement result is recovered from admin-reviewed evidence. */
     miner: TAccountMetas[3];
     /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
     playerProfile: TAccountMetas[4];
