@@ -135,6 +135,7 @@ import {
   getQueueRoundSettlementInstructionAsync,
   getQueueSettleWinningStakesBatchInstructionAsync,
   getQueueStockpileRevealInstructionAsync,
+  getRecoverSettleMinerInstructionAsync,
   getReloadAutoMinerSessionSolInstructionAsync,
   getRemoveBuybackLiquidityInstructionAsync,
   getRetryInitStockpileRandInstructionAsync,
@@ -201,6 +202,7 @@ import {
   parseQueueRoundSettlementInstruction,
   parseQueueSettleWinningStakesBatchInstruction,
   parseQueueStockpileRevealInstruction,
+  parseRecoverSettleMinerInstruction,
   parseReloadAutoMinerSessionSolInstruction,
   parseRemoveBuybackLiquidityInstruction,
   parseRetryInitStockpileRandInstruction,
@@ -310,6 +312,7 @@ import {
   type ParsedQueueRoundSettlementInstruction,
   type ParsedQueueSettleWinningStakesBatchInstruction,
   type ParsedQueueStockpileRevealInstruction,
+  type ParsedRecoverSettleMinerInstruction,
   type ParsedReloadAutoMinerSessionSolInstruction,
   type ParsedRemoveBuybackLiquidityInstruction,
   type ParsedRetryInitStockpileRandInstruction,
@@ -333,6 +336,7 @@ import {
   type QueueRoundSettlementAsyncInput,
   type QueueSettleWinningStakesBatchAsyncInput,
   type QueueStockpileRevealAsyncInput,
+  type RecoverSettleMinerAsyncInput,
   type ReloadAutoMinerSessionSolAsyncInput,
   type RemoveBuybackLiquidityAsyncInput,
   type RetryInitStockpileRandAsyncInput,
@@ -651,6 +655,7 @@ export enum ZincInstruction {
   QueueRoundSettlement,
   QueueSettleWinningStakesBatch,
   QueueStockpileReveal,
+  RecoverSettleMiner,
   ReloadAutoMinerSessionSol,
   RemoveBuybackLiquidity,
   RetryInitStockpileRand,
@@ -1207,6 +1212,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([107, 18, 214, 148, 17, 176, 106, 169]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.RecoverSettleMiner;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([26, 170, 147, 196, 38, 148, 159, 234]),
       ),
       0,
@@ -1554,6 +1570,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.QueueStockpileReveal;
     } & ParsedQueueStockpileRevealInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.RecoverSettleMiner;
+    } & ParsedRecoverSettleMinerInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ReloadAutoMinerSessionSol;
     } & ParsedReloadAutoMinerSessionSolInstruction<TProgram>)
@@ -1950,6 +1969,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseQueueStockpileRevealInstruction(instruction),
       };
     }
+    case ZincInstruction.RecoverSettleMiner: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.RecoverSettleMiner,
+        ...parseRecoverSettleMinerInstruction(instruction),
+      };
+    }
     case ZincInstruction.ReloadAutoMinerSessionSol: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2318,6 +2344,10 @@ export type ZincPluginInstructions = {
   queueStockpileReveal: (
     input: QueueStockpileRevealAsyncInput,
   ) => ReturnType<typeof getQueueStockpileRevealInstructionAsync> &
+    SelfPlanAndSendFunctions;
+  recoverSettleMiner: (
+    input: RecoverSettleMinerAsyncInput,
+  ) => ReturnType<typeof getRecoverSettleMinerInstructionAsync> &
     SelfPlanAndSendFunctions;
   reloadAutoMinerSessionSol: (
     input: ReloadAutoMinerSessionSolAsyncInput,
@@ -2732,6 +2762,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(
               client,
               getQueueStockpileRevealInstructionAsync(input),
+            ),
+          recoverSettleMiner: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getRecoverSettleMinerInstructionAsync(input),
             ),
           reloadAutoMinerSessionSol: (input) =>
             addSelfPlanAndSendFunctions(
