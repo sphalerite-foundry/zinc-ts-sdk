@@ -382,6 +382,16 @@ export const ZINC_ERROR__GROTH16_PUBLIC_INPUT_MISMATCH = 0x1825; // 6181
 export const ZINC_ERROR__MISSING_ZK_MASK_ATTESTATION = 0x1826; // 6182
 /** InvalidArciumInitSkipConfig: Arcium init CPI skip requires blockhash randomness and private-ZK single settlement */
 export const ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG = 0x1827; // 6183
+/** InvalidDeployMask: Deploy encrypted mask payload is invalid */
+export const ZINC_ERROR__INVALID_DEPLOY_MASK = 0x1828; // 6184
+/** InvalidSettlementMask: Settlement encrypted mask payload is invalid */
+export const ZINC_ERROR__INVALID_SETTLEMENT_MASK = 0x1829; // 6185
+/** InvalidRecoveryEvidenceHash: Recovery evidence hash is invalid */
+export const ZINC_ERROR__INVALID_RECOVERY_EVIDENCE_HASH = 0x182a; // 6186
+/** InvalidRecoverySelectedCount: Recovery selected tile count is invalid */
+export const ZINC_ERROR__INVALID_RECOVERY_SELECTED_COUNT = 0x182b; // 6187
+/** InvalidRecoveryWinningStake: Recovery winning stake does not match the selected tile count */
+export const ZINC_ERROR__INVALID_RECOVERY_WINNING_STAKE = 0x182c; // 6188
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -436,10 +446,15 @@ export type ZincError =
   | typeof ZINC_ERROR__INVALID_CURVE_PARAMETER
   | typeof ZINC_ERROR__INVALID_CURVE_ZINC_SHARE_BPS
   | typeof ZINC_ERROR__INVALID_DEPLOY_FEE_BPS
+  | typeof ZINC_ERROR__INVALID_DEPLOY_MASK
+  | typeof ZINC_ERROR__INVALID_RECOVERY_EVIDENCE_HASH
+  | typeof ZINC_ERROR__INVALID_RECOVERY_SELECTED_COUNT
+  | typeof ZINC_ERROR__INVALID_RECOVERY_WINNING_STAKE
   | typeof ZINC_ERROR__INVALID_ROUND_DURATION
   | typeof ZINC_ERROR__INVALID_ROUND_ID
   | typeof ZINC_ERROR__INVALID_ROUND_RANDOMNESS_MODE
   | typeof ZINC_ERROR__INVALID_ROUND_START_DELAY
+  | typeof ZINC_ERROR__INVALID_SETTLEMENT_MASK
   | typeof ZINC_ERROR__INVALID_STOCKPILE_DURATION
   | typeof ZINC_ERROR__INVALID_STOCKPILE_EXTRA_AMOUNT
   | typeof ZINC_ERROR__INVALID_STOCKPILE_ID
@@ -624,10 +639,15 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__INVALID_CURVE_PARAMETER]: `Curve parameter is invalid`,
     [ZINC_ERROR__INVALID_CURVE_ZINC_SHARE_BPS]: `Curve ZINC share schedule is invalid`,
     [ZINC_ERROR__INVALID_DEPLOY_FEE_BPS]: `Deploy fee schedule is invalid`,
+    [ZINC_ERROR__INVALID_DEPLOY_MASK]: `Deploy encrypted mask payload is invalid`,
+    [ZINC_ERROR__INVALID_RECOVERY_EVIDENCE_HASH]: `Recovery evidence hash is invalid`,
+    [ZINC_ERROR__INVALID_RECOVERY_SELECTED_COUNT]: `Recovery selected tile count is invalid`,
+    [ZINC_ERROR__INVALID_RECOVERY_WINNING_STAKE]: `Recovery winning stake does not match the selected tile count`,
     [ZINC_ERROR__INVALID_ROUND_DURATION]: `Round duration must be greater than zero`,
     [ZINC_ERROR__INVALID_ROUND_ID]: `Invalid round id`,
     [ZINC_ERROR__INVALID_ROUND_RANDOMNESS_MODE]: `Round randomness mode does not allow this reveal path`,
     [ZINC_ERROR__INVALID_ROUND_START_DELAY]: `Round start delay must be greater than zero`,
+    [ZINC_ERROR__INVALID_SETTLEMENT_MASK]: `Settlement encrypted mask payload is invalid`,
     [ZINC_ERROR__INVALID_STOCKPILE_DURATION]: `Stockpile duration must be greater than zero`,
     [ZINC_ERROR__INVALID_STOCKPILE_EXTRA_AMOUNT]: `Stockpile extra amount must be greater than zero`,
     [ZINC_ERROR__INVALID_STOCKPILE_ID]: `Invalid stockpile id`,
