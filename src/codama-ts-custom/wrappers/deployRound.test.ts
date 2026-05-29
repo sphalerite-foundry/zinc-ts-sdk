@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { address } from "@solana/kit";
 import {
+  ComputeBudgetProgram,
   Keypair,
   PublicKey,
   type AccountInfo,
@@ -15,7 +16,12 @@ import {
   getStockpileAddress,
 } from "../pda";
 import { ZINC_PROGRAM_ID } from "../constants";
-import { buildDeployRoundInstruction } from "./deployRound";
+import { DEFAULT_MAX_COMPUTE_UNIT_LIMIT } from "../utils/sol-helpers";
+import {
+  DEPLOY_ROUND_HEAP_FRAME_BYTES,
+  buildDeployRoundInstruction,
+  buildDeployRoundInstructions,
+} from "./deployRound";
 
 const ROUND_ID = 22n;
 const TOTAL_AMOUNT = 1_000_000_000n;
@@ -304,4 +310,64 @@ test("buildDeployRoundInstruction omits stockpile before any cycle exists", asyn
     instruction.keys[9]?.pubkey.toBase58(),
     ZINC_PROGRAM_ID.toBase58(),
   );
+});
+
+test("buildDeployRoundInstruction keeps the singular API Zinc-only", async () => {
+  const signer = Keypair.generate().publicKey;
+  const instruction = await buildInstructionWithAffiliateState({
+    signer,
+    storedAffiliate: null,
+    requestedAffiliate: null,
+  });
+
+  assert.equal(instruction.programId.toBase58(), ZINC_PROGRAM_ID.toBase58());
+  assert.notEqual(
+    instruction.programId.toBase58(),
+    ComputeBudgetProgram.programId.toBase58(),
+  );
+});
+
+test("buildDeployRoundInstructions prepends deploy compute-budget defaults", async () => {
+  const signer = Keypair.generate().publicKey;
+  const connection = createFakeConnection({ signer });
+  const input = {
+    connection,
+    signer,
+    affiliate: null,
+    roundId: ROUND_ID,
+    totalAmount: TOTAL_AMOUNT,
+    maskEncryptionKey: MASK_ENCRYPTION_KEY,
+    maskNonce: MASK_NONCE,
+    maskCiphertext: MASK_CIPHERTEXT,
+  };
+  const deployInstruction = await buildDeployRoundInstruction(input);
+  const instructions = await buildDeployRoundInstructions(input);
+  const expectedComputeUnitLimitInstruction =
+    ComputeBudgetProgram.setComputeUnitLimit({
+      units: DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
+    });
+  const expectedHeapFrameInstruction = ComputeBudgetProgram.requestHeapFrame({
+    bytes: DEPLOY_ROUND_HEAP_FRAME_BYTES,
+  });
+
+  assert.equal(instructions.length, 3);
+  assert.equal(
+    instructions[0]?.programId.toBase58(),
+    ComputeBudgetProgram.programId.toBase58(),
+  );
+  assert.deepEqual(
+    instructions[0]?.data,
+    expectedComputeUnitLimitInstruction.data,
+  );
+  assert.equal(
+    instructions[1]?.programId.toBase58(),
+    ComputeBudgetProgram.programId.toBase58(),
+  );
+  assert.deepEqual(instructions[1]?.data, expectedHeapFrameInstruction.data);
+  assert.equal(
+    instructions[2]?.programId.toBase58(),
+    ZINC_PROGRAM_ID.toBase58(),
+  );
+  assert.deepEqual(instructions[2]?.keys, deployInstruction.keys);
+  assert.deepEqual(instructions[2]?.data, deployInstruction.data);
 });
