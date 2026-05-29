@@ -1,10 +1,16 @@
 import { type ReadonlyUint8Array } from "@solana/kit";
-import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import {
+  ComputeBudgetProgram,
+  Connection,
+  PublicKey,
+  TransactionInstruction,
+} from "@solana/web3.js";
 import {
   getDeployRoundInstructionAsync,
   type ZkMaskAttestationArgsArgs,
 } from "../../codama-ts";
 import {
+  DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
   toTransactionInstruction,
   toTransactionSigner,
 } from "../utils/sol-helpers";
@@ -34,6 +40,8 @@ export type BuildDeployRoundInstruction = {
   /** Optional reusable ZK mask attestation required by ZK-capable config modes. */
   zkMaskAttestation?: ZkMaskAttestationArgsArgs | null;
 };
+
+export const DEPLOY_ROUND_HEAP_FRAME_BYTES = 256 * 1024;
 
 /** Builds one deploy-round instruction while preserving immutable affiliate binding semantics. */
 export async function buildDeployRoundInstruction({
@@ -108,4 +116,19 @@ export async function buildDeployRoundInstruction({
   return toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
   );
+}
+
+/** Builds deploy-round instructions with the required compute-budget prelude. */
+export async function buildDeployRoundInstructions(
+  input: BuildDeployRoundInstruction,
+): Promise<TransactionInstruction[]> {
+  return [
+    ComputeBudgetProgram.setComputeUnitLimit({
+      units: DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
+    }),
+    ComputeBudgetProgram.requestHeapFrame({
+      bytes: DEPLOY_ROUND_HEAP_FRAME_BYTES,
+    }),
+    await buildDeployRoundInstruction(input),
+  ];
 }
