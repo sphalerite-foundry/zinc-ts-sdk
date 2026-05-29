@@ -42,6 +42,8 @@ export const REVEAL_STOCKPILE_RAND_CIRCUIT = "reveal_stockpile_rand";
 export const SETTLE_WINNING_STAKES_BATCH_CIRCUIT =
   "settle_winning_stakes_batch";
 export const SETTLE_WINNING_STAKES_BATCH_SIZE = 4;
+// Mirrors `programs/zinc/src/state/miner.rs` `Miner::SIZE`.
+export const MINER_ACCOUNT_SIZE_BYTES = 440;
 export const ZINC_PROGRAM_ID = new PublicKey(ZINC_PROGRAM_ADDRESS);
 export const WSOL_MINT_ADDRESS = new PublicKey(
   "So11111111111111111111111111111111111111112",
