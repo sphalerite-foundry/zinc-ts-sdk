@@ -6,6 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
+export * from "./affiliateProfile";
 export * from "./autoMinerSession";
 export * from "./board";
 export * from "./bonanzaTokenAccount";
