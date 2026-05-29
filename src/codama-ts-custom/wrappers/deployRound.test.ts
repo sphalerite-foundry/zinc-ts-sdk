@@ -312,10 +312,26 @@ test("buildDeployRoundInstruction omits stockpile before any cycle exists", asyn
   );
 });
 
+test("buildDeployRoundInstruction keeps the singular API Zinc-only", async () => {
+  const signer = Keypair.generate().publicKey;
+  const instruction = await buildInstructionWithAffiliateState({
+    signer,
+    storedAffiliate: null,
+    requestedAffiliate: null,
+  });
+
+  assert.equal(instruction.programId.toBase58(), ZINC_PROGRAM_ID.toBase58());
+  assert.notEqual(
+    instruction.programId.toBase58(),
+    ComputeBudgetProgram.programId.toBase58(),
+  );
+});
+
 test("buildDeployRoundInstructions prepends deploy compute-budget defaults", async () => {
   const signer = Keypair.generate().publicKey;
-  const instructions = await buildDeployRoundInstructions({
-    connection: createFakeConnection({ signer }),
+  const connection = createFakeConnection({ signer });
+  const input = {
+    connection,
     signer,
     affiliate: null,
     roundId: ROUND_ID,
@@ -323,7 +339,9 @@ test("buildDeployRoundInstructions prepends deploy compute-budget defaults", asy
     maskEncryptionKey: MASK_ENCRYPTION_KEY,
     maskNonce: MASK_NONCE,
     maskCiphertext: MASK_CIPHERTEXT,
-  });
+  };
+  const deployInstruction = await buildDeployRoundInstruction(input);
+  const instructions = await buildDeployRoundInstructions(input);
   const expectedComputeUnitLimitInstruction =
     ComputeBudgetProgram.setComputeUnitLimit({
       units: DEFAULT_MAX_COMPUTE_UNIT_LIMIT,
@@ -350,4 +368,6 @@ test("buildDeployRoundInstructions prepends deploy compute-budget defaults", asy
     instructions[2]?.programId.toBase58(),
     ZINC_PROGRAM_ID.toBase58(),
   );
+  assert.deepEqual(instructions[2]?.keys, deployInstruction.keys);
+  assert.deepEqual(instructions[2]?.data, deployInstruction.data);
 });
