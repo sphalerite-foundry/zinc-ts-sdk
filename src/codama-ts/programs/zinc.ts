@@ -136,6 +136,7 @@ import {
   getQueueSettleWinningStakesBatchInstructionAsync,
   getQueueStockpileRevealInstructionAsync,
   getRecoverSettleMinerInstructionAsync,
+  getRegisterAffiliateInstructionAsync,
   getReloadAutoMinerSessionSolInstructionAsync,
   getRemoveBuybackLiquidityInstructionAsync,
   getRetryInitStockpileRandInstructionAsync,
@@ -203,6 +204,7 @@ import {
   parseQueueSettleWinningStakesBatchInstruction,
   parseQueueStockpileRevealInstruction,
   parseRecoverSettleMinerInstruction,
+  parseRegisterAffiliateInstruction,
   parseReloadAutoMinerSessionSolInstruction,
   parseRemoveBuybackLiquidityInstruction,
   parseRetryInitStockpileRandInstruction,
@@ -313,6 +315,7 @@ import {
   type ParsedQueueSettleWinningStakesBatchInstruction,
   type ParsedQueueStockpileRevealInstruction,
   type ParsedRecoverSettleMinerInstruction,
+  type ParsedRegisterAffiliateInstruction,
   type ParsedReloadAutoMinerSessionSolInstruction,
   type ParsedRemoveBuybackLiquidityInstruction,
   type ParsedRetryInitStockpileRandInstruction,
@@ -337,6 +340,7 @@ import {
   type QueueSettleWinningStakesBatchAsyncInput,
   type QueueStockpileRevealAsyncInput,
   type RecoverSettleMinerAsyncInput,
+  type RegisterAffiliateAsyncInput,
   type ReloadAutoMinerSessionSolAsyncInput,
   type RemoveBuybackLiquidityAsyncInput,
   type RetryInitStockpileRandAsyncInput,
@@ -357,6 +361,7 @@ import {
   type WrapBuybackSolAsyncInput,
 } from "../instructions";
 import {
+  findAffiliateProfilePda,
   findAutoMinerSessionPda,
   findBoardPda,
   findBonanzaTokenAccountPda,
@@ -656,6 +661,7 @@ export enum ZincInstruction {
   QueueSettleWinningStakesBatch,
   QueueStockpileReveal,
   RecoverSettleMiner,
+  RegisterAffiliate,
   ReloadAutoMinerSessionSol,
   RemoveBuybackLiquidity,
   RetryInitStockpileRand,
@@ -1223,6 +1229,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([87, 121, 99, 184, 126, 63, 103, 217]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.RegisterAffiliate;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([26, 170, 147, 196, 38, 148, 159, 234]),
       ),
       0,
@@ -1573,6 +1590,9 @@ export type ParsedZincInstruction<
   | ({
       instructionType: ZincInstruction.RecoverSettleMiner;
     } & ParsedRecoverSettleMinerInstruction<TProgram>)
+  | ({
+      instructionType: ZincInstruction.RegisterAffiliate;
+    } & ParsedRegisterAffiliateInstruction<TProgram>)
   | ({
       instructionType: ZincInstruction.ReloadAutoMinerSessionSol;
     } & ParsedReloadAutoMinerSessionSolInstruction<TProgram>)
@@ -1976,6 +1996,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseRecoverSettleMinerInstruction(instruction),
       };
     }
+    case ZincInstruction.RegisterAffiliate: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.RegisterAffiliate,
+        ...parseRegisterAffiliateInstruction(instruction),
+      };
+    }
     case ZincInstruction.ReloadAutoMinerSessionSol: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2349,6 +2376,10 @@ export type ZincPluginInstructions = {
     input: RecoverSettleMinerAsyncInput,
   ) => ReturnType<typeof getRecoverSettleMinerInstructionAsync> &
     SelfPlanAndSendFunctions;
+  registerAffiliate: (
+    input: RegisterAffiliateAsyncInput,
+  ) => ReturnType<typeof getRegisterAffiliateInstructionAsync> &
+    SelfPlanAndSendFunctions;
   reloadAutoMinerSessionSol: (
     input: ReloadAutoMinerSessionSolAsyncInput,
   ) => ReturnType<typeof getReloadAutoMinerSessionSolInstructionAsync> &
@@ -2445,6 +2476,7 @@ export type ZincPluginPdas = {
   round: typeof findRoundPda;
   roundSecret: typeof findRoundSecretPda;
   signPdaAccount: typeof findSignPdaAccountPda;
+  affiliateProfile: typeof findAffiliateProfilePda;
   buybackLpZincTokenAccount: typeof findBuybackLpZincTokenAccountPda;
   buybackLpWsolTokenAccount: typeof findBuybackLpWsolTokenAccountPda;
   stockpile: typeof findStockpilePda;
@@ -2768,6 +2800,11 @@ export function zincProgram() {
               client,
               getRecoverSettleMinerInstructionAsync(input),
             ),
+          registerAffiliate: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getRegisterAffiliateInstructionAsync(input),
+            ),
           reloadAutoMinerSessionSol: (input) =>
             addSelfPlanAndSendFunctions(
               client,
@@ -2887,6 +2924,7 @@ export function zincProgram() {
           round: findRoundPda,
           roundSecret: findRoundSecretPda,
           signPdaAccount: findSignPdaAccountPda,
+          affiliateProfile: findAffiliateProfilePda,
           buybackLpZincTokenAccount: findBuybackLpZincTokenAccountPda,
           buybackLpWsolTokenAccount: findBuybackLpWsolTokenAccountPda,
           stockpile: findStockpilePda,

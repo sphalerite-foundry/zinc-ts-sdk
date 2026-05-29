@@ -55,6 +55,7 @@ export * from "./queueRoundSettlement";
 export * from "./queueSettleWinningStakesBatch";
 export * from "./queueStockpileReveal";
 export * from "./recoverSettleMiner";
+export * from "./registerAffiliate";
 export * from "./reloadAutoMinerSessionSol";
 export * from "./removeBuybackLiquidity";
 export * from "./retryInitStockpileRand";
