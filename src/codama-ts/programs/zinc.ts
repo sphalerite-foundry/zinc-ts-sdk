@@ -44,6 +44,7 @@ import {
   getPlayerProfileCodec,
   getRoundCodec,
   getRoundSecretCodec,
+  getRoundWildcatEntriesCodec,
   getStakePositionCodec,
   getStockpileCodec,
   getStockpileExtrasCodec,
@@ -71,6 +72,8 @@ import {
   type RoundArgs,
   type RoundSecret,
   type RoundSecretArgs,
+  type RoundWildcatEntries,
+  type RoundWildcatEntriesArgs,
   type StakePosition,
   type StakePositionArgs,
   type Stockpile,
@@ -129,6 +132,7 @@ import {
   getLockBuybackLiquidityInstructionAsync,
   getMeltInstructionAsync,
   getMigrateInstruction,
+  getMigrateWildcatEntriesInstructionAsync,
   getMintZincInstructionAsync,
   getPayoutStockpileExtraInstructionAsync,
   getPayoutStockpileInstructionAsync,
@@ -197,6 +201,7 @@ import {
   parseLockBuybackLiquidityInstruction,
   parseMeltInstruction,
   parseMigrateInstruction,
+  parseMigrateWildcatEntriesInstruction,
   parseMintZincInstruction,
   parsePayoutStockpileExtraInstruction,
   parsePayoutStockpileInstruction,
@@ -265,6 +270,7 @@ import {
   type LockBuybackLiquidityAsyncInput,
   type MeltAsyncInput,
   type MigrateInput,
+  type MigrateWildcatEntriesAsyncInput,
   type MintZincAsyncInput,
   type ParsedBuybackInstruction,
   type ParsedCancelAutoMinerSessionInstruction,
@@ -308,6 +314,7 @@ import {
   type ParsedLockBuybackLiquidityInstruction,
   type ParsedMeltInstruction,
   type ParsedMigrateInstruction,
+  type ParsedMigrateWildcatEntriesInstruction,
   type ParsedMintZincInstruction,
   type ParsedPayoutStockpileExtraInstruction,
   type ParsedPayoutStockpileInstruction,
@@ -405,6 +412,7 @@ export enum ZincAccount {
   PlayerProfile,
   Round,
   RoundSecret,
+  RoundWildcatEntries,
   StakePosition,
   Stockpile,
   StockpileExtras,
@@ -532,6 +540,17 @@ export function identifyZincAccount(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([111, 39, 254, 161, 121, 25, 6, 83]),
+      ),
+      0,
+    )
+  ) {
+    return ZincAccount.RoundWildcatEntries;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([78, 165, 30, 111, 171, 125, 11, 220]),
       ),
       0,
@@ -654,6 +673,7 @@ export enum ZincInstruction {
   LockBuybackLiquidity,
   Melt,
   Migrate,
+  MigrateWildcatEntries,
   MintZinc,
   PayoutStockpile,
   PayoutStockpileExtra,
@@ -1152,6 +1172,17 @@ export function identifyZincInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([129, 138, 87, 200, 45, 17, 129, 106]),
+      ),
+      0,
+    )
+  ) {
+    return ZincInstruction.MigrateWildcatEntries;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([80, 143, 133, 161, 167, 234, 77, 127]),
       ),
       0,
@@ -1570,6 +1601,9 @@ export type ParsedZincInstruction<
       instructionType: ZincInstruction.Migrate;
     } & ParsedMigrateInstruction<TProgram>)
   | ({
+      instructionType: ZincInstruction.MigrateWildcatEntries;
+    } & ParsedMigrateWildcatEntriesInstruction<TProgram>)
+  | ({
       instructionType: ZincInstruction.MintZinc;
     } & ParsedMintZincInstruction<TProgram>)
   | ({
@@ -1947,6 +1981,13 @@ export function parseZincInstruction<TProgram extends string>(
         ...parseMigrateInstruction(instruction),
       };
     }
+    case ZincInstruction.MigrateWildcatEntries: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ZincInstruction.MigrateWildcatEntries,
+        ...parseMigrateWildcatEntriesInstruction(instruction),
+      };
+    }
     case ZincInstruction.MintZinc: {
       assertIsInstructionWithAccounts(instruction);
       return {
@@ -2164,6 +2205,8 @@ export type ZincPluginAccounts = {
     SelfFetchFunctions<RoundArgs, Round>;
   roundSecret: ReturnType<typeof getRoundSecretCodec> &
     SelfFetchFunctions<RoundSecretArgs, RoundSecret>;
+  roundWildcatEntries: ReturnType<typeof getRoundWildcatEntriesCodec> &
+    SelfFetchFunctions<RoundWildcatEntriesArgs, RoundWildcatEntries>;
   stakePosition: ReturnType<typeof getStakePositionCodec> &
     SelfFetchFunctions<StakePositionArgs, StakePosition>;
   stockpile: ReturnType<typeof getStockpileCodec> &
@@ -2348,6 +2391,10 @@ export type ZincPluginInstructions = {
   migrate: (
     input: MigrateInput,
   ) => ReturnType<typeof getMigrateInstruction> & SelfPlanAndSendFunctions;
+  migrateWildcatEntries: (
+    input: MigrateWildcatEntriesAsyncInput,
+  ) => ReturnType<typeof getMigrateWildcatEntriesInstructionAsync> &
+    SelfPlanAndSendFunctions;
   mintZinc: (
     input: MintZincAsyncInput,
   ) => ReturnType<typeof getMintZincInstructionAsync> &
@@ -2516,6 +2563,10 @@ export function zincProgram() {
           playerProfile: addSelfFetchFunctions(client, getPlayerProfileCodec()),
           round: addSelfFetchFunctions(client, getRoundCodec()),
           roundSecret: addSelfFetchFunctions(client, getRoundSecretCodec()),
+          roundWildcatEntries: addSelfFetchFunctions(
+            client,
+            getRoundWildcatEntriesCodec(),
+          ),
           stakePosition: addSelfFetchFunctions(client, getStakePositionCodec()),
           stockpile: addSelfFetchFunctions(client, getStockpileCodec()),
           stockpileExtras: addSelfFetchFunctions(
@@ -2765,6 +2816,11 @@ export function zincProgram() {
             addSelfPlanAndSendFunctions(client, getMeltInstructionAsync(input)),
           migrate: (input) =>
             addSelfPlanAndSendFunctions(client, getMigrateInstruction(input)),
+          migrateWildcatEntries: (input) =>
+            addSelfPlanAndSendFunctions(
+              client,
+              getMigrateWildcatEntriesInstructionAsync(input),
+            ),
           mintZinc: (input) =>
             addSelfPlanAndSendFunctions(
               client,

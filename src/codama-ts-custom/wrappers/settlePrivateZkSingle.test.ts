@@ -12,6 +12,7 @@ import {
   getPlayerProfileAddress,
   getRoundAddress,
   getRoundSecretAddress,
+  getRoundWildcatEntriesAddress,
   getTreasuryAddress,
 } from "../pda";
 import {
@@ -54,19 +55,23 @@ test("settlePrivateZkSingle wires proof outputs without Arcium or round-secret a
   assert.deepEqual(Array.from(decoded.proof), Array.from(proof));
   assert.equal(decoded.winningStake, 333_333_333n);
   assert.equal(decoded.selectedCount, 3);
-  assert.equal(web3Instruction.keys.length, 7);
+  assert.equal(web3Instruction.keys.length, 8);
   assert.equal(web3Instruction.keys[0]?.pubkey.toBase58(), signer.toBase58());
   assert.equal(web3Instruction.keys[0]?.isSigner, true);
   assert.equal(web3Instruction.keys[0]?.isWritable, true);
   assert.equal(web3Instruction.keys[3]?.pubkey.toBase58(), round.toBase58());
   assert.equal(web3Instruction.keys[3]?.isWritable, true);
-  assert.equal(web3Instruction.keys[4]?.pubkey.toBase58(), miner.toBase58());
-  assert.equal(web3Instruction.keys[4]?.isWritable, true);
+  assert.notEqual(
+    web3Instruction.keys[4]?.pubkey.toBase58(),
+    getRoundWildcatEntriesAddress(ROUND_ID)[0].toBase58(),
+  );
+  assert.equal(web3Instruction.keys[5]?.pubkey.toBase58(), miner.toBase58());
+  assert.equal(web3Instruction.keys[5]?.isWritable, true);
   assert.equal(
-    web3Instruction.keys[5]?.pubkey.toBase58(),
+    web3Instruction.keys[6]?.pubkey.toBase58(),
     playerProfile.toBase58(),
   );
-  assert.equal(web3Instruction.keys[5]?.isWritable, true);
+  assert.equal(web3Instruction.keys[6]?.isWritable, true);
   assert.ok(
     !accountKeys.includes(getRoundSecretAddress(ROUND_ID)[0].toBase58()),
   );

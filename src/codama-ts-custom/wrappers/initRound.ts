@@ -17,6 +17,7 @@ import {
   getBoardAddress,
   getConfigAddress,
   getRoundAddress,
+  getRoundWildcatEntriesAddress,
   getRoundSecretAddress,
   getTreasuryAddress,
 } from "../pda";
@@ -57,6 +58,7 @@ export async function buildInitRoundInstruction({
   const clusterOffset = resolveArciumClusterOffset(arciumClusterOffset);
   const computationOffsetBn = new BN(BigInt(computationOffset).toString());
   const round = getRoundAddress(resolvedRoundId)[0];
+  const roundWildcatEntries = getRoundWildcatEntriesAddress(resolvedRoundId)[0];
   const roundSecret = getRoundSecretAddress(resolvedRoundId)[0];
   const mxeAccount = getMXEAccAddress(ZINC_PROGRAM_ID);
   const mempoolAccount = getMempoolAccAddress(clusterOffset);
@@ -86,7 +88,13 @@ export async function buildInitRoundInstruction({
     roundId: resolvedRoundId,
     computationOffset,
   });
-  return toTransactionInstruction(
+  const transactionInstruction = toTransactionInstruction(
     instruction as Parameters<typeof toTransactionInstruction>[0],
   );
+  transactionInstruction.keys.push({
+    pubkey: roundWildcatEntries,
+    isSigner: false,
+    isWritable: true,
+  });
+  return transactionInstruction;
 }

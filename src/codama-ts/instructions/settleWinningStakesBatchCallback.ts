@@ -62,6 +62,7 @@ export type SettleWinningStakesBatchCallbackInstruction<
   TAccountInstructionsSysvar extends string | AccountMeta<string> =
     "Sysvar1nstructions1111111111111111111111111",
   TAccountRound extends string | AccountMeta<string> = string,
+  TAccountRoundWildcatEntries extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
@@ -90,6 +91,9 @@ export type SettleWinningStakesBatchCallbackInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
+      TAccountRoundWildcatEntries extends string
+        ? WritableAccount<TAccountRoundWildcatEntries>
+        : TAccountRoundWildcatEntries,
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
@@ -153,6 +157,7 @@ export type SettleWinningStakesBatchCallbackAsyncInput<
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
 > = {
@@ -167,6 +172,8 @@ export type SettleWinningStakesBatchCallbackAsyncInput<
   instructionsSysvar?: Address<TAccountInstructionsSysvar>;
   /** Round being advanced through batched settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Config containing the Bonanza hit divisor used at final settlement. */
   config?: Address<TAccountConfig>;
   /** Treasury Bonanza state that may snapshot the live pot into this round on the final callback. */
@@ -182,6 +189,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
@@ -194,6 +202,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountConfig,
     TAccountTreasury
   >,
@@ -208,6 +217,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountConfig,
     TAccountTreasury
   >
@@ -230,6 +240,10 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
       isWritable: false,
     },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
   };
@@ -267,6 +281,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
       getAccountMeta("clusterAccount", accounts.clusterAccount),
       getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
     ],
@@ -283,6 +298,7 @@ export async function getSettleWinningStakesBatchCallbackInstructionAsync<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountConfig,
     TAccountTreasury
   >);
@@ -296,6 +312,7 @@ export type SettleWinningStakesBatchCallbackInput<
   TAccountClusterAccount extends string = string,
   TAccountInstructionsSysvar extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountConfig extends string = string,
   TAccountTreasury extends string = string,
 > = {
@@ -310,6 +327,8 @@ export type SettleWinningStakesBatchCallbackInput<
   instructionsSysvar?: Address<TAccountInstructionsSysvar>;
   /** Round being advanced through batched settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Config containing the Bonanza hit divisor used at final settlement. */
   config: Address<TAccountConfig>;
   /** Treasury Bonanza state that may snapshot the live pot into this round on the final callback. */
@@ -325,6 +344,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
   TAccountClusterAccount extends string,
   TAccountInstructionsSysvar extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountConfig extends string,
   TAccountTreasury extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
@@ -337,6 +357,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountConfig,
     TAccountTreasury
   >,
@@ -350,6 +371,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
   TAccountClusterAccount,
   TAccountInstructionsSysvar,
   TAccountRound,
+  TAccountRoundWildcatEntries,
   TAccountConfig,
   TAccountTreasury
 > {
@@ -371,6 +393,10 @@ export function getSettleWinningStakesBatchCallbackInstruction<
       isWritable: false,
     },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     config: { value: input.config ?? null, isWritable: false },
     treasury: { value: input.treasury ?? null, isWritable: true },
   };
@@ -402,6 +428,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
       getAccountMeta("clusterAccount", accounts.clusterAccount),
       getAccountMeta("instructionsSysvar", accounts.instructionsSysvar),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("config", accounts.config),
       getAccountMeta("treasury", accounts.treasury),
     ],
@@ -418,6 +445,7 @@ export function getSettleWinningStakesBatchCallbackInstruction<
     TAccountClusterAccount,
     TAccountInstructionsSysvar,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountConfig,
     TAccountTreasury
   >);
@@ -440,10 +468,12 @@ export type ParsedSettleWinningStakesBatchCallbackInstruction<
     instructionsSysvar: TAccountMetas[5];
     /** Round being advanced through batched settlement. */
     round: TAccountMetas[6];
+    /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+    roundWildcatEntries?: TAccountMetas[7] | undefined;
     /** Config containing the Bonanza hit divisor used at final settlement. */
-    config: TAccountMetas[7];
+    config: TAccountMetas[8];
     /** Treasury Bonanza state that may snapshot the live pot into this round on the final callback. */
-    treasury: TAccountMetas[8];
+    treasury: TAccountMetas[9];
   };
   data: SettleWinningStakesBatchCallbackInstructionData;
 };
@@ -456,12 +486,12 @@ export function parseSettleWinningStakesBatchCallbackInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSettleWinningStakesBatchCallbackInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 9) {
+  if (instruction.accounts.length < 10) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 9,
+        expectedAccountMetas: 10,
       },
     );
   }
@@ -470,6 +500,12 @@ export function parseSettleWinningStakesBatchCallbackInstruction<
     const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
     accountIndex += 1;
     return accountMeta;
+  };
+  const getNextOptionalAccount = () => {
+    const accountMeta = getNextAccount();
+    return accountMeta.address === ZINC_PROGRAM_ADDRESS
+      ? undefined
+      : accountMeta;
   };
   return {
     programAddress: instruction.programAddress,
@@ -481,6 +517,7 @@ export function parseSettleWinningStakesBatchCallbackInstruction<
       clusterAccount: getNextAccount(),
       instructionsSysvar: getNextAccount(),
       round: getNextAccount(),
+      roundWildcatEntries: getNextOptionalAccount(),
       config: getNextAccount(),
       treasury: getNextAccount(),
     },
