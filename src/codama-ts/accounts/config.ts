@@ -23,6 +23,8 @@ import {
   getBooleanEncoder,
   getBytesDecoder,
   getBytesEncoder,
+  getOptionDecoder,
+  getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
   getU32Decoder,
@@ -34,14 +36,16 @@ import {
   transformEncoder,
   type Account,
   type Address,
+  type Codec,
+  type Decoder,
   type EncodedAccount,
+  type Encoder,
   type FetchAccountConfig,
   type FetchAccountsConfig,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
   type MaybeAccount,
   type MaybeEncodedAccount,
+  type Option,
+  type OptionOrNullable,
   type ReadonlyUint8Array,
 } from "@solana/kit";
 import {
@@ -163,6 +167,8 @@ export type Config = {
   wildcatEntryCapacity: number;
   /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
   wildcatSidecarEnabled: boolean;
+  /** First round id that must use sidecar storage when sidecar mode is enabled. */
+  wildcatSidecarActivationRoundId: Option<bigint>;
 };
 
 export type ConfigArgs = {
@@ -264,10 +270,12 @@ export type ConfigArgs = {
   wildcatEntryCapacity: number;
   /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
   wildcatSidecarEnabled: boolean;
+  /** First round id that must use sidecar storage when sidecar mode is enabled. */
+  wildcatSidecarActivationRoundId: OptionOrNullable<number | bigint>;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
-export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
+export function getConfigEncoder(): Encoder<ConfigArgs> {
   return transformEncoder(
     getStructEncoder([
       ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
@@ -323,13 +331,14 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["skipArciumInitCpi", getBooleanEncoder()],
       ["wildcatEntryCapacity", getU32Encoder()],
       ["wildcatSidecarEnabled", getBooleanEncoder()],
+      ["wildcatSidecarActivationRoundId", getOptionEncoder(getU64Encoder())],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
 }
 
 /** Gets the decoder for {@link Config} account data. */
-export function getConfigDecoder(): FixedSizeDecoder<Config> {
+export function getConfigDecoder(): Decoder<Config> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
     ["admin", getAddressDecoder()],
@@ -381,11 +390,12 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["skipArciumInitCpi", getBooleanDecoder()],
     ["wildcatEntryCapacity", getU32Decoder()],
     ["wildcatSidecarEnabled", getBooleanDecoder()],
+    ["wildcatSidecarActivationRoundId", getOptionDecoder(getU64Decoder())],
   ]);
 }
 
 /** Gets the codec for {@link Config} account data. */
-export function getConfigCodec(): FixedSizeCodec<ConfigArgs, Config> {
+export function getConfigCodec(): Codec<ConfigArgs, Config> {
   return combineCodec(getConfigEncoder(), getConfigDecoder());
 }
 
@@ -440,8 +450,4 @@ export async function fetchAllMaybeConfig(
 ): Promise<MaybeAccount<Config>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeConfig(maybeAccount));
-}
-
-export function getConfigSize(): number {
-  return 499;
 }
