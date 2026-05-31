@@ -117,10 +117,6 @@ export type Config = {
   wildcatRoundFrequency: bigint;
   /** Direct-winner ZINC share reserved for Wildcat winners, in ppm. */
   wildcatWinnerZincSharePpm: bigint;
-  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
-  wildcatEntryCapacity: number;
-  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
-  wildcatSidecarEnabled: boolean;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: bigint;
   /** ZINC fee skim for round winner claims, in basis points. */
@@ -163,6 +159,10 @@ export type Config = {
   zkMaskCircuitVersion: bigint;
   /** Emergency switch that skips the init-round Arcium CPI for blockhash private-ZK rounds. */
   skipArciumInitCpi: boolean;
+  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
+  wildcatEntryCapacity: number;
+  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
+  wildcatSidecarEnabled: boolean;
 };
 
 export type ConfigArgs = {
@@ -218,10 +218,6 @@ export type ConfigArgs = {
   wildcatRoundFrequency: number | bigint;
   /** Direct-winner ZINC share reserved for Wildcat winners, in ppm. */
   wildcatWinnerZincSharePpm: number | bigint;
-  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
-  wildcatEntryCapacity: number;
-  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
-  wildcatSidecarEnabled: boolean;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: number | bigint;
   /** ZINC fee skim for round winner claims, in basis points. */
@@ -264,6 +260,10 @@ export type ConfigArgs = {
   zkMaskCircuitVersion: number | bigint;
   /** Emergency switch that skips the init-round Arcium CPI for blockhash private-ZK rounds. */
   skipArciumInitCpi: boolean;
+  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
+  wildcatEntryCapacity: number;
+  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
+  wildcatSidecarEnabled: boolean;
 };
 
 /** Gets the encoder for {@link ConfigArgs} account data. */
@@ -297,8 +297,6 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["deployAffiliateBonusBricksX10k", getU64Encoder()],
       ["wildcatRoundFrequency", getU64Encoder()],
       ["wildcatWinnerZincSharePpm", getU64Encoder()],
-      ["wildcatEntryCapacity", getU32Encoder()],
-      ["wildcatSidecarEnabled", getBooleanEncoder()],
       ["bonanzaHitDivisor", getU64Encoder()],
       ["roundClaimZincFeeBps", getU64Encoder()],
       ["stockpileEntryMinZincFee", getU64Encoder()],
@@ -323,6 +321,8 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
       ["zkMaskServerKeyVersion", getU64Encoder()],
       ["zkMaskCircuitVersion", getU64Encoder()],
       ["skipArciumInitCpi", getBooleanEncoder()],
+      ["wildcatEntryCapacity", getU32Encoder()],
+      ["wildcatSidecarEnabled", getBooleanEncoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR }),
   );
@@ -358,8 +358,6 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["deployAffiliateBonusBricksX10k", getU64Decoder()],
     ["wildcatRoundFrequency", getU64Decoder()],
     ["wildcatWinnerZincSharePpm", getU64Decoder()],
-    ["wildcatEntryCapacity", getU32Decoder()],
-    ["wildcatSidecarEnabled", getBooleanDecoder()],
     ["bonanzaHitDivisor", getU64Decoder()],
     ["roundClaimZincFeeBps", getU64Decoder()],
     ["stockpileEntryMinZincFee", getU64Decoder()],
@@ -381,6 +379,8 @@ export function getConfigDecoder(): FixedSizeDecoder<Config> {
     ["zkMaskServerKeyVersion", getU64Decoder()],
     ["zkMaskCircuitVersion", getU64Decoder()],
     ["skipArciumInitCpi", getBooleanDecoder()],
+    ["wildcatEntryCapacity", getU32Decoder()],
+    ["wildcatSidecarEnabled", getBooleanDecoder()],
   ]);
 }
 
