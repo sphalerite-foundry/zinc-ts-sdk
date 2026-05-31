@@ -40,6 +40,7 @@ export type BuildUpdateConfigInstruction = {
   wildcatWinnerZincSharePpm?: number | bigint;
   wildcatEntryCapacity?: number;
   wildcatSidecarEnabled?: boolean;
+  wildcatSidecarActivationRoundId?: number | bigint;
   bonanzaHitDivisor?: number | bigint;
   roundClaimZincFeeBps?: number | bigint;
   stockpileEntryMinZincFee?: number | bigint;
@@ -90,6 +91,7 @@ export async function buildUpdateConfigInstruction({
   wildcatWinnerZincSharePpm,
   wildcatEntryCapacity,
   wildcatSidecarEnabled,
+  wildcatSidecarActivationRoundId,
   bonanzaHitDivisor,
   roundClaimZincFeeBps,
   stockpileEntryMinZincFee,
@@ -148,6 +150,9 @@ export async function buildUpdateConfigInstruction({
     wildcatWinnerZincSharePpm: toNullable(wildcatWinnerZincSharePpm),
     wildcatEntryCapacity: toNullable(wildcatEntryCapacity),
     wildcatSidecarEnabled: toNullable(wildcatSidecarEnabled),
+    wildcatSidecarActivationRoundId: toNullable(
+      wildcatSidecarActivationRoundId,
+    ),
     bonanzaHitDivisor: toNullable(bonanzaHitDivisor),
     roundClaimZincFeeBps: toNullable(roundClaimZincFeeBps),
     stockpileEntryMinZincFee: toNullable(stockpileEntryMinZincFee),
