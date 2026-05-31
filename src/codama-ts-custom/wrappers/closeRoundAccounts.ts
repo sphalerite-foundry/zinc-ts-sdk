@@ -6,6 +6,7 @@ import {
   getConfigAddress,
   getRoundAddress,
   getRoundSecretAddress,
+  getRoundWildcatEntriesAddress,
   getRoundZincPayoutTokenAccountAddress,
   getTreasuryAddress,
 } from "../pda";
@@ -41,11 +42,17 @@ export async function buildCloseRoundAccountsInstruction({
     treasury,
     zincMint,
   )[0];
+  const roundWildcatEntries = getRoundWildcatEntriesAddress(roundId)[0];
+  const roundWildcatEntriesAccount =
+    await connection.getAccountInfo(roundWildcatEntries);
   const instruction = getCloseRoundAccountsInstruction({
     signer: toTransactionSigner(signer),
     config: toAddress(getConfigAddress()[0]),
     board: toAddress(getBoardAddress()[0]),
     round: toAddress(getRoundAddress(roundId)[0]),
+    roundWildcatEntries: roundWildcatEntriesAccount
+      ? toAddress(roundWildcatEntries)
+      : undefined,
     roundSecret: toAddress(roundSecret ?? getRoundSecretAddress(roundId)[0]),
     treasury: toAddress(treasury),
     zincMint: toAddress(zincMint),

@@ -1,6 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getRoundDecoder, type Round } from "../../codama-ts/accounts";
 import {
+  ROUND_WILDCAT_ENTRIES_SEED,
   ROUND_SEED,
   ROUND_ZINC_PAYOUT_TOKEN_ACCOUNT_SEED,
   ZINC_PROGRAM_ID,
@@ -23,6 +24,17 @@ export function getRoundAddress(
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [TEXT_ENCODER.encode(ROUND_SEED), getRoundIdBytes(roundId)],
+    programId,
+  );
+}
+
+/** Derives the per-round Wildcat entries sidecar PDA. */
+export function getRoundWildcatEntriesAddress(
+  roundId: number | bigint,
+  programId: PublicKey = ZINC_PROGRAM_ID,
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [TEXT_ENCODER.encode(ROUND_WILDCAT_ENTRIES_SEED), getRoundIdBytes(roundId)],
     programId,
   );
 }

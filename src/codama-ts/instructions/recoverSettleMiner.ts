@@ -63,6 +63,7 @@ export type RecoverSettleMinerInstruction<
   TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
+  TAccountRoundWildcatEntries extends string | AccountMeta<string> = string,
   TAccountMiner extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
@@ -81,6 +82,9 @@ export type RecoverSettleMinerInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
+      TAccountRoundWildcatEntries extends string
+        ? WritableAccount<TAccountRoundWildcatEntries>
+        : TAccountRoundWildcatEntries,
       TAccountMiner extends string
         ? WritableAccount<TAccountMiner>
         : TAccountMiner,
@@ -157,6 +161,7 @@ export type RecoverSettleMinerAsyncInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountMiner extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
@@ -167,6 +172,8 @@ export type RecoverSettleMinerAsyncInput<
   config?: Address<TAccountConfig>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Miner whose settlement result is recovered from admin-reviewed evidence. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
@@ -183,6 +190,7 @@ export async function getRecoverSettleMinerInstructionAsync<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountMiner extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
@@ -192,6 +200,7 @@ export async function getRecoverSettleMinerInstructionAsync<
     TAccountAdmin,
     TAccountConfig,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -203,6 +212,7 @@ export async function getRecoverSettleMinerInstructionAsync<
     TAccountAdmin,
     TAccountConfig,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -216,6 +226,10 @@ export async function getRecoverSettleMinerInstructionAsync<
     admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     miner: { value: input.miner ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
@@ -242,6 +256,7 @@ export async function getRecoverSettleMinerInstructionAsync<
       getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("miner", accounts.miner),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
@@ -255,6 +270,7 @@ export async function getRecoverSettleMinerInstructionAsync<
     TAccountAdmin,
     TAccountConfig,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -265,6 +281,7 @@ export type RecoverSettleMinerInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountMiner extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
@@ -275,6 +292,8 @@ export type RecoverSettleMinerInput<
   config: Address<TAccountConfig>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Miner whose settlement result is recovered from admin-reviewed evidence. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
@@ -291,6 +310,7 @@ export function getRecoverSettleMinerInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountMiner extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
@@ -300,6 +320,7 @@ export function getRecoverSettleMinerInstruction<
     TAccountAdmin,
     TAccountConfig,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -310,6 +331,7 @@ export function getRecoverSettleMinerInstruction<
   TAccountAdmin,
   TAccountConfig,
   TAccountRound,
+  TAccountRoundWildcatEntries,
   TAccountMiner,
   TAccountPlayerProfile,
   TAccountTreasury
@@ -322,6 +344,10 @@ export function getRecoverSettleMinerInstruction<
     admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     miner: { value: input.miner ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
@@ -340,6 +366,7 @@ export function getRecoverSettleMinerInstruction<
       getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("miner", accounts.miner),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
@@ -353,6 +380,7 @@ export function getRecoverSettleMinerInstruction<
     TAccountAdmin,
     TAccountConfig,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -371,12 +399,14 @@ export type ParsedRecoverSettleMinerInstruction<
     config: TAccountMetas[1];
     /** Revealed round currently waiting on per-miner settlement. */
     round: TAccountMetas[2];
+    /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+    roundWildcatEntries?: TAccountMetas[3] | undefined;
     /** Miner whose settlement result is recovered from admin-reviewed evidence. */
-    miner: TAccountMetas[3];
+    miner: TAccountMetas[4];
     /** Player profile that receives the same hidden-bonus bricks as normal settlement. */
-    playerProfile: TAccountMetas[4];
+    playerProfile: TAccountMetas[5];
     /** Treasury Bonanza state that may snapshot the live pot when this is the final miner. */
-    treasury: TAccountMetas[5];
+    treasury: TAccountMetas[6];
   };
   data: RecoverSettleMinerInstructionData;
 };
@@ -389,12 +419,12 @@ export function parseRecoverSettleMinerInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedRecoverSettleMinerInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 6) {
+  if (instruction.accounts.length < 7) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 6,
+        expectedAccountMetas: 7,
       },
     );
   }
@@ -404,12 +434,19 @@ export function parseRecoverSettleMinerInstruction<
     accountIndex += 1;
     return accountMeta;
   };
+  const getNextOptionalAccount = () => {
+    const accountMeta = getNextAccount();
+    return accountMeta.address === ZINC_PROGRAM_ADDRESS
+      ? undefined
+      : accountMeta;
+  };
   return {
     programAddress: instruction.programAddress,
     accounts: {
       admin: getNextAccount(),
       config: getNextAccount(),
       round: getNextAccount(),
+      roundWildcatEntries: getNextOptionalAccount(),
       miner: getNextAccount(),
       playerProfile: getNextAccount(),
       treasury: getNextAccount(),

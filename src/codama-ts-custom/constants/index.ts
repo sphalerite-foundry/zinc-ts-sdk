@@ -4,6 +4,7 @@ import { ZINC_PROGRAM_ADDRESS } from "../../codama-ts";
 export const CONFIG_SEED = "config";
 export const BOARD_SEED = "board";
 export const ROUND_SEED = "round";
+export const ROUND_WILDCAT_ENTRIES_SEED = "round-wildcat";
 export const ROUND_SECRET_SEED = "round-secret";
 export const STOCKPILE_SEED = "stockpile";
 export const STOCKPILE_SECRET_SEED = "stockpile-secret";

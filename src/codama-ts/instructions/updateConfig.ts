@@ -22,6 +22,8 @@ import {
   getOptionEncoder,
   getStructDecoder,
   getStructEncoder,
+  getU32Decoder,
+  getU32Encoder,
   getU64Decoder,
   getU64Encoder,
   getU8Decoder,
@@ -146,6 +148,10 @@ export type UpdateConfigInstructionData = {
   wildcatRoundFrequency: Option<bigint>;
   /** Direct-winner ZINC share reserved for Wildcat winners, in ppm. */
   wildcatWinnerZincSharePpm: Option<bigint>;
+  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
+  wildcatEntryCapacity: Option<number>;
+  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
+  wildcatSidecarEnabled: Option<boolean>;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: Option<bigint>;
   /** ZINC fee skim for round winner claims, in basis points. */
@@ -237,6 +243,10 @@ export type UpdateConfigInstructionDataArgs = {
   wildcatRoundFrequency: OptionOrNullable<number | bigint>;
   /** Direct-winner ZINC share reserved for Wildcat winners, in ppm. */
   wildcatWinnerZincSharePpm: OptionOrNullable<number | bigint>;
+  /** Max Wildcat candidate ranges stored in each new sidecar PDA. */
+  wildcatEntryCapacity: OptionOrNullable<number>;
+  /** Whether new Wildcat candidate ranges are written to the sidecar PDA. */
+  wildcatSidecarEnabled: OptionOrNullable<boolean>;
   /** Bonanza roll modulo divisor; `1` makes every winner-positive round eligible. */
   bonanzaHitDivisor: OptionOrNullable<number | bigint>;
   /** ZINC fee skim for round winner claims, in basis points. */
@@ -313,6 +323,8 @@ export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigIns
       ["deployAffiliateBonusBricksX10k", getOptionEncoder(getU64Encoder())],
       ["wildcatRoundFrequency", getOptionEncoder(getU64Encoder())],
       ["wildcatWinnerZincSharePpm", getOptionEncoder(getU64Encoder())],
+      ["wildcatEntryCapacity", getOptionEncoder(getU32Encoder())],
+      ["wildcatSidecarEnabled", getOptionEncoder(getBooleanEncoder())],
       ["bonanzaHitDivisor", getOptionEncoder(getU64Encoder())],
       ["roundClaimZincFeeBps", getOptionEncoder(getU64Encoder())],
       ["stockpileEntryMinZincFee", getOptionEncoder(getU64Encoder())],
@@ -386,6 +398,8 @@ export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigIns
     ["deployAffiliateBonusBricksX10k", getOptionDecoder(getU64Decoder())],
     ["wildcatRoundFrequency", getOptionDecoder(getU64Decoder())],
     ["wildcatWinnerZincSharePpm", getOptionDecoder(getU64Decoder())],
+    ["wildcatEntryCapacity", getOptionDecoder(getU32Decoder())],
+    ["wildcatSidecarEnabled", getOptionDecoder(getBooleanDecoder())],
     ["bonanzaHitDivisor", getOptionDecoder(getU64Decoder())],
     ["roundClaimZincFeeBps", getOptionDecoder(getU64Decoder())],
     ["stockpileEntryMinZincFee", getOptionDecoder(getU64Decoder())],
@@ -464,6 +478,8 @@ export type UpdateConfigAsyncInput<
   deployAffiliateBonusBricksX10k: UpdateConfigInstructionDataArgs["deployAffiliateBonusBricksX10k"];
   wildcatRoundFrequency: UpdateConfigInstructionDataArgs["wildcatRoundFrequency"];
   wildcatWinnerZincSharePpm: UpdateConfigInstructionDataArgs["wildcatWinnerZincSharePpm"];
+  wildcatEntryCapacity: UpdateConfigInstructionDataArgs["wildcatEntryCapacity"];
+  wildcatSidecarEnabled: UpdateConfigInstructionDataArgs["wildcatSidecarEnabled"];
   bonanzaHitDivisor: UpdateConfigInstructionDataArgs["bonanzaHitDivisor"];
   roundClaimZincFeeBps: UpdateConfigInstructionDataArgs["roundClaimZincFeeBps"];
   stockpileEntryMinZincFee: UpdateConfigInstructionDataArgs["stockpileEntryMinZincFee"];
@@ -579,6 +595,8 @@ export type UpdateConfigInput<
   deployAffiliateBonusBricksX10k: UpdateConfigInstructionDataArgs["deployAffiliateBonusBricksX10k"];
   wildcatRoundFrequency: UpdateConfigInstructionDataArgs["wildcatRoundFrequency"];
   wildcatWinnerZincSharePpm: UpdateConfigInstructionDataArgs["wildcatWinnerZincSharePpm"];
+  wildcatEntryCapacity: UpdateConfigInstructionDataArgs["wildcatEntryCapacity"];
+  wildcatSidecarEnabled: UpdateConfigInstructionDataArgs["wildcatSidecarEnabled"];
   bonanzaHitDivisor: UpdateConfigInstructionDataArgs["bonanzaHitDivisor"];
   roundClaimZincFeeBps: UpdateConfigInstructionDataArgs["roundClaimZincFeeBps"];
   stockpileEntryMinZincFee: UpdateConfigInstructionDataArgs["stockpileEntryMinZincFee"];

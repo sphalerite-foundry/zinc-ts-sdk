@@ -39,30 +39,32 @@ import {
 import { findConfigPda } from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
-export const SELECT_WILDCAT_WINNER_DISCRIMINATOR: ReadonlyUint8Array =
-  new Uint8Array([210, 209, 137, 205, 217, 146, 10, 237]);
+export const MIGRATE_WILDCAT_ENTRIES_DISCRIMINATOR: ReadonlyUint8Array =
+  new Uint8Array([129, 138, 87, 200, 45, 17, 129, 106]);
 
-export function getSelectWildcatWinnerDiscriminatorBytes(): ReadonlyUint8Array {
+export function getMigrateWildcatEntriesDiscriminatorBytes(): ReadonlyUint8Array {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    SELECT_WILDCAT_WINNER_DISCRIMINATOR,
+    MIGRATE_WILDCAT_ENTRIES_DISCRIMINATOR,
   );
 }
 
-export type SelectWildcatWinnerInstruction<
+export type MigrateWildcatEntriesInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
-  TAccountSigner extends string | AccountMeta<string> = string,
+  TAccountAdmin extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
   TAccountRoundWildcatEntries extends string | AccountMeta<string> = string,
+  TAccountSystemProgram extends string | AccountMeta<string> =
+    "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
     [
-      TAccountSigner extends string
-        ? WritableSignerAccount<TAccountSigner> &
-            AccountSignerMeta<TAccountSigner>
-        : TAccountSigner,
+      TAccountAdmin extends string
+        ? WritableSignerAccount<TAccountAdmin> &
+            AccountSignerMeta<TAccountAdmin>
+        : TAccountAdmin,
       TAccountConfig extends string
         ? ReadonlyAccount<TAccountConfig>
         : TAccountConfig,
@@ -70,81 +72,90 @@ export type SelectWildcatWinnerInstruction<
         ? WritableAccount<TAccountRound>
         : TAccountRound,
       TAccountRoundWildcatEntries extends string
-        ? ReadonlyAccount<TAccountRoundWildcatEntries>
+        ? WritableAccount<TAccountRoundWildcatEntries>
         : TAccountRoundWildcatEntries,
+      TAccountSystemProgram extends string
+        ? ReadonlyAccount<TAccountSystemProgram>
+        : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
 
-export type SelectWildcatWinnerInstructionData = {
+export type MigrateWildcatEntriesInstructionData = {
   discriminator: ReadonlyUint8Array;
 };
 
-export type SelectWildcatWinnerInstructionDataArgs = {};
+export type MigrateWildcatEntriesInstructionDataArgs = {};
 
-export function getSelectWildcatWinnerInstructionDataEncoder(): FixedSizeEncoder<SelectWildcatWinnerInstructionDataArgs> {
+export function getMigrateWildcatEntriesInstructionDataEncoder(): FixedSizeEncoder<MigrateWildcatEntriesInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
     (value) => ({
       ...value,
-      discriminator: SELECT_WILDCAT_WINNER_DISCRIMINATOR,
+      discriminator: MIGRATE_WILDCAT_ENTRIES_DISCRIMINATOR,
     }),
   );
 }
 
-export function getSelectWildcatWinnerInstructionDataDecoder(): FixedSizeDecoder<SelectWildcatWinnerInstructionData> {
+export function getMigrateWildcatEntriesInstructionDataDecoder(): FixedSizeDecoder<MigrateWildcatEntriesInstructionData> {
   return getStructDecoder([
     ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
-export function getSelectWildcatWinnerInstructionDataCodec(): FixedSizeCodec<
-  SelectWildcatWinnerInstructionDataArgs,
-  SelectWildcatWinnerInstructionData
+export function getMigrateWildcatEntriesInstructionDataCodec(): FixedSizeCodec<
+  MigrateWildcatEntriesInstructionDataArgs,
+  MigrateWildcatEntriesInstructionData
 > {
   return combineCodec(
-    getSelectWildcatWinnerInstructionDataEncoder(),
-    getSelectWildcatWinnerInstructionDataDecoder(),
+    getMigrateWildcatEntriesInstructionDataEncoder(),
+    getMigrateWildcatEntriesInstructionDataDecoder(),
   );
 }
 
-export type SelectWildcatWinnerAsyncInput<
-  TAccountSigner extends string = string,
+export type MigrateWildcatEntriesAsyncInput<
+  TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountRoundWildcatEntries extends string = string,
+  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to resolve Wildcat selection. */
-  signer: TransactionSigner<TAccountSigner>;
-  /** Global config containing Wildcat settings and crank authority. */
+  /** Admin signer that pays for the sidecar and authorizes the migration. */
+  admin: TransactionSigner<TAccountAdmin>;
+  /** Global config containing sidecar capacity and admin authority. */
   config?: Address<TAccountConfig>;
-  /** Settled round whose Wildcat draw is being scanned. */
+  /** Round whose legacy Wildcat entries are being copied. */
   round: Address<TAccountRound>;
-  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
-  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
+  /** Destination Wildcat sidecar for this round. */
+  roundWildcatEntries: Address<TAccountRoundWildcatEntries>;
+  /** System program used to allocate the sidecar PDA. */
+  systemProgram?: Address<TAccountSystemProgram>;
 };
 
-export async function getSelectWildcatWinnerInstructionAsync<
-  TAccountSigner extends string,
+export async function getMigrateWildcatEntriesInstructionAsync<
+  TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
   TAccountRoundWildcatEntries extends string,
+  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: SelectWildcatWinnerAsyncInput<
-    TAccountSigner,
+  input: MigrateWildcatEntriesAsyncInput<
+    TAccountAdmin,
     TAccountConfig,
     TAccountRound,
-    TAccountRoundWildcatEntries
+    TAccountRoundWildcatEntries,
+    TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
-  SelectWildcatWinnerInstruction<
+  MigrateWildcatEntriesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountRound,
-    TAccountRoundWildcatEntries
+    TAccountRoundWildcatEntries,
+    TAccountSystemProgram
   >
 > {
   // Program address.
@@ -152,13 +163,14 @@ export async function getSelectWildcatWinnerInstructionAsync<
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
     roundWildcatEntries: {
       value: input.roundWildcatEntries ?? null,
-      isWritable: false,
+      isWritable: true,
     },
+    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -169,132 +181,155 @@ export async function getSelectWildcatWinnerInstructionAsync<
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
+  if (!accounts.systemProgram.value) {
+    accounts.systemProgram.value =
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
       getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
+      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getSelectWildcatWinnerInstructionDataEncoder().encode({}),
+    data: getMigrateWildcatEntriesInstructionDataEncoder().encode({}),
     programAddress,
-  } as SelectWildcatWinnerInstruction<
+  } as MigrateWildcatEntriesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountRound,
-    TAccountRoundWildcatEntries
+    TAccountRoundWildcatEntries,
+    TAccountSystemProgram
   >);
 }
 
-export type SelectWildcatWinnerInput<
-  TAccountSigner extends string = string,
+export type MigrateWildcatEntriesInput<
+  TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
   TAccountRound extends string = string,
   TAccountRoundWildcatEntries extends string = string,
+  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to resolve Wildcat selection. */
-  signer: TransactionSigner<TAccountSigner>;
-  /** Global config containing Wildcat settings and crank authority. */
+  /** Admin signer that pays for the sidecar and authorizes the migration. */
+  admin: TransactionSigner<TAccountAdmin>;
+  /** Global config containing sidecar capacity and admin authority. */
   config: Address<TAccountConfig>;
-  /** Settled round whose Wildcat draw is being scanned. */
+  /** Round whose legacy Wildcat entries are being copied. */
   round: Address<TAccountRound>;
-  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
-  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
+  /** Destination Wildcat sidecar for this round. */
+  roundWildcatEntries: Address<TAccountRoundWildcatEntries>;
+  /** System program used to allocate the sidecar PDA. */
+  systemProgram?: Address<TAccountSystemProgram>;
 };
 
-export function getSelectWildcatWinnerInstruction<
-  TAccountSigner extends string,
+export function getMigrateWildcatEntriesInstruction<
+  TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountRound extends string,
   TAccountRoundWildcatEntries extends string,
+  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
-  input: SelectWildcatWinnerInput<
-    TAccountSigner,
+  input: MigrateWildcatEntriesInput<
+    TAccountAdmin,
     TAccountConfig,
     TAccountRound,
-    TAccountRoundWildcatEntries
+    TAccountRoundWildcatEntries,
+    TAccountSystemProgram
   >,
   config?: { programAddress?: TProgramAddress },
-): SelectWildcatWinnerInstruction<
+): MigrateWildcatEntriesInstruction<
   TProgramAddress,
-  TAccountSigner,
+  TAccountAdmin,
   TAccountConfig,
   TAccountRound,
-  TAccountRoundWildcatEntries
+  TAccountRoundWildcatEntries,
+  TAccountSystemProgram
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
 
   // Original accounts.
   const originalAccounts = {
-    signer: { value: input.signer ?? null, isWritable: true },
+    admin: { value: input.admin ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
     roundWildcatEntries: {
       value: input.roundWildcatEntries ?? null,
-      isWritable: false,
+      isWritable: true,
     },
+    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
     ResolvedInstructionAccount
   >;
 
+  // Resolve default values.
+  if (!accounts.systemProgram.value) {
+    accounts.systemProgram.value =
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+  }
+
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
-      getAccountMeta("signer", accounts.signer),
+      getAccountMeta("admin", accounts.admin),
       getAccountMeta("config", accounts.config),
       getAccountMeta("round", accounts.round),
       getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
+      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
-    data: getSelectWildcatWinnerInstructionDataEncoder().encode({}),
+    data: getMigrateWildcatEntriesInstructionDataEncoder().encode({}),
     programAddress,
-  } as SelectWildcatWinnerInstruction<
+  } as MigrateWildcatEntriesInstruction<
     TProgramAddress,
-    TAccountSigner,
+    TAccountAdmin,
     TAccountConfig,
     TAccountRound,
-    TAccountRoundWildcatEntries
+    TAccountRoundWildcatEntries,
+    TAccountSystemProgram
   >);
 }
 
-export type ParsedSelectWildcatWinnerInstruction<
+export type ParsedMigrateWildcatEntriesInstruction<
   TProgram extends string = typeof ZINC_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    /** Crank signer authorized to resolve Wildcat selection. */
-    signer: TAccountMetas[0];
-    /** Global config containing Wildcat settings and crank authority. */
+    /** Admin signer that pays for the sidecar and authorizes the migration. */
+    admin: TAccountMetas[0];
+    /** Global config containing sidecar capacity and admin authority. */
     config: TAccountMetas[1];
-    /** Settled round whose Wildcat draw is being scanned. */
+    /** Round whose legacy Wildcat entries are being copied. */
     round: TAccountMetas[2];
-    /** Optional Wildcat sidecar used by sidecar-mode rounds. */
-    roundWildcatEntries?: TAccountMetas[3] | undefined;
+    /** Destination Wildcat sidecar for this round. */
+    roundWildcatEntries: TAccountMetas[3];
+    /** System program used to allocate the sidecar PDA. */
+    systemProgram: TAccountMetas[4];
   };
-  data: SelectWildcatWinnerInstructionData;
+  data: MigrateWildcatEntriesInstructionData;
 };
 
-export function parseSelectWildcatWinnerInstruction<
+export function parseMigrateWildcatEntriesInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
-): ParsedSelectWildcatWinnerInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
+): ParsedMigrateWildcatEntriesInstruction<TProgram, TAccountMetas> {
+  if (instruction.accounts.length < 5) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 4,
+        expectedAccountMetas: 5,
       },
     );
   }
@@ -304,21 +339,16 @@ export function parseSelectWildcatWinnerInstruction<
     accountIndex += 1;
     return accountMeta;
   };
-  const getNextOptionalAccount = () => {
-    const accountMeta = getNextAccount();
-    return accountMeta.address === ZINC_PROGRAM_ADDRESS
-      ? undefined
-      : accountMeta;
-  };
   return {
     programAddress: instruction.programAddress,
     accounts: {
-      signer: getNextAccount(),
+      admin: getNextAccount(),
       config: getNextAccount(),
       round: getNextAccount(),
-      roundWildcatEntries: getNextOptionalAccount(),
+      roundWildcatEntries: getNextAccount(),
+      systemProgram: getNextAccount(),
     },
-    data: getSelectWildcatWinnerInstructionDataDecoder().decode(
+    data: getMigrateWildcatEntriesInstructionDataDecoder().decode(
       instruction.data,
     ),
   };

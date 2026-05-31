@@ -57,6 +57,7 @@ export type CloseRoundAccountsInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
+  TAccountRoundWildcatEntries extends string | AccountMeta<string> = string,
   TAccountRoundSecret extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
   TAccountZincMint extends string | AccountMeta<string> = string,
@@ -83,6 +84,9 @@ export type CloseRoundAccountsInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
+      TAccountRoundWildcatEntries extends string
+        ? WritableAccount<TAccountRoundWildcatEntries>
+        : TAccountRoundWildcatEntries,
       TAccountRoundSecret extends string
         ? WritableAccount<TAccountRoundSecret>
         : TAccountRoundSecret,
@@ -142,6 +146,7 @@ export type CloseRoundAccountsAsyncInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountRoundSecret extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
@@ -157,6 +162,8 @@ export type CloseRoundAccountsAsyncInput<
   board?: Address<TAccountBoard>;
   /** Fully cleaned round account being closed to the crank signer. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar being closed with the round when present. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Matching round-secret account being closed to the crank signer. */
   roundSecret: Address<TAccountRoundSecret>;
   /** Canonical treasury PDA used to validate the payout sweep destination. */
@@ -176,6 +183,7 @@ export async function getCloseRoundAccountsInstructionAsync<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountRoundSecret extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
@@ -189,6 +197,7 @@ export async function getCloseRoundAccountsInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountRoundSecret,
     TAccountTreasury,
     TAccountZincMint,
@@ -204,6 +213,7 @@ export async function getCloseRoundAccountsInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountRoundSecret,
     TAccountTreasury,
     TAccountZincMint,
@@ -221,6 +231,10 @@ export async function getCloseRoundAccountsInstructionAsync<
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     roundSecret: { value: input.roundSecret ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
@@ -287,6 +301,7 @@ export async function getCloseRoundAccountsInstructionAsync<
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("roundSecret", accounts.roundSecret),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
@@ -305,6 +320,7 @@ export async function getCloseRoundAccountsInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountRoundSecret,
     TAccountTreasury,
     TAccountZincMint,
@@ -319,6 +335,7 @@ export type CloseRoundAccountsInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountRoundSecret extends string = string,
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
@@ -334,6 +351,8 @@ export type CloseRoundAccountsInput<
   board: Address<TAccountBoard>;
   /** Fully cleaned round account being closed to the crank signer. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar being closed with the round when present. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Matching round-secret account being closed to the crank signer. */
   roundSecret: Address<TAccountRoundSecret>;
   /** Canonical treasury PDA used to validate the payout sweep destination. */
@@ -353,6 +372,7 @@ export function getCloseRoundAccountsInstruction<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountRoundSecret extends string,
   TAccountTreasury extends string,
   TAccountZincMint extends string,
@@ -366,6 +386,7 @@ export function getCloseRoundAccountsInstruction<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountRoundSecret,
     TAccountTreasury,
     TAccountZincMint,
@@ -380,6 +401,7 @@ export function getCloseRoundAccountsInstruction<
   TAccountConfig,
   TAccountBoard,
   TAccountRound,
+  TAccountRoundWildcatEntries,
   TAccountRoundSecret,
   TAccountTreasury,
   TAccountZincMint,
@@ -396,6 +418,10 @@ export function getCloseRoundAccountsInstruction<
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     roundSecret: { value: input.roundSecret ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
@@ -427,6 +453,7 @@ export function getCloseRoundAccountsInstruction<
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("roundSecret", accounts.roundSecret),
       getAccountMeta("treasury", accounts.treasury),
       getAccountMeta("zincMint", accounts.zincMint),
@@ -445,6 +472,7 @@ export function getCloseRoundAccountsInstruction<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountRoundSecret,
     TAccountTreasury,
     TAccountZincMint,
@@ -468,18 +496,20 @@ export type ParsedCloseRoundAccountsInstruction<
     board: TAccountMetas[2];
     /** Fully cleaned round account being closed to the crank signer. */
     round: TAccountMetas[3];
+    /** Optional Wildcat sidecar being closed with the round when present. */
+    roundWildcatEntries?: TAccountMetas[4] | undefined;
     /** Matching round-secret account being closed to the crank signer. */
-    roundSecret: TAccountMetas[4];
+    roundSecret: TAccountMetas[5];
     /** Canonical treasury PDA used to validate the payout sweep destination. */
-    treasury: TAccountMetas[5];
+    treasury: TAccountMetas[6];
     /** Protocol ZINC mint used by the round payout vault. */
-    zincMint: TAccountMetas[6];
+    zincMint: TAccountMetas[7];
     /** Round-owned ZINC vault being swept and closed. */
-    roundZincPayoutTokenAccount: TAccountMetas[7];
+    roundZincPayoutTokenAccount: TAccountMetas[8];
     /** Treasury curve-admin vault that receives residual round ZINC dust. */
-    curveAdminTokenAccount: TAccountMetas[8];
+    curveAdminTokenAccount: TAccountMetas[9];
     /** SPL Token program used to sweep and close the round ZINC vault. */
-    tokenProgram: TAccountMetas[9];
+    tokenProgram: TAccountMetas[10];
   };
   data: CloseRoundAccountsInstructionData;
 };
@@ -492,12 +522,12 @@ export function parseCloseRoundAccountsInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseRoundAccountsInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 10) {
+  if (instruction.accounts.length < 11) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 10,
+        expectedAccountMetas: 11,
       },
     );
   }
@@ -507,6 +537,12 @@ export function parseCloseRoundAccountsInstruction<
     accountIndex += 1;
     return accountMeta;
   };
+  const getNextOptionalAccount = () => {
+    const accountMeta = getNextAccount();
+    return accountMeta.address === ZINC_PROGRAM_ADDRESS
+      ? undefined
+      : accountMeta;
+  };
   return {
     programAddress: instruction.programAddress,
     accounts: {
@@ -514,6 +550,7 @@ export function parseCloseRoundAccountsInstruction<
       config: getNextAccount(),
       board: getNextAccount(),
       round: getNextAccount(),
+      roundWildcatEntries: getNextOptionalAccount(),
       roundSecret: getNextAccount(),
       treasury: getNextAccount(),
       zincMint: getNextAccount(),

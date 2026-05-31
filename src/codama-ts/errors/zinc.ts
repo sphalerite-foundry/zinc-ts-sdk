@@ -358,40 +358,48 @@ export const ZINC_ERROR__WILDCAT_ALREADY_CLAIMED = 0x1819; // 6169
 export const ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE = 0x181a; // 6170
 /** WildcatEntryCapacityExceeded: Wildcat entry capacity is exhausted */
 export const ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED = 0x181b; // 6171
+/** WrongWildcatEntries: Wrong Wildcat entries sidecar */
+export const ZINC_ERROR__WRONG_WILDCAT_ENTRIES = 0x181c; // 6172
+/** WildcatEntriesMissing: Wildcat entries sidecar is missing */
+export const ZINC_ERROR__WILDCAT_ENTRIES_MISSING = 0x181d; // 6173
+/** InvalidWildcatEntryCapacity: Wildcat entry capacity is invalid */
+export const ZINC_ERROR__INVALID_WILDCAT_ENTRY_CAPACITY = 0x181e; // 6174
+/** WildcatEntriesAlreadyMigrated: Wildcat entries have already been migrated */
+export const ZINC_ERROR__WILDCAT_ENTRIES_ALREADY_MIGRATED = 0x181f; // 6175
 /** InvalidWildcatWinnerZincSharePpm: Wildcat winner ZINC share exceeds one million ppm */
-export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x181c; // 6172
+export const ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM = 0x1820; // 6176
 /** ClosePdaCannotCloseBoard: Board cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x181d; // 6173
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_BOARD = 0x1821; // 6177
 /** ClosePdaCannotCloseTreasury: Treasury cannot be closed with close_pda */
-export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x181e; // 6174
+export const ZINC_ERROR__CLOSE_PDA_CANNOT_CLOSE_TREASURY = 0x1822; // 6178
 /** RoundNotNextSequential: Ready round is not the next sequential round */
-export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x181f; // 6175
+export const ZINC_ERROR__ROUND_NOT_NEXT_SEQUENTIAL = 0x1823; // 6179
 /** Groth16DeserializeProofA: Groth16 proof A point could not be deserialized */
-export const ZINC_ERROR__GROTH16_DESERIALIZE_PROOF_A = 0x1820; // 6176
+export const ZINC_ERROR__GROTH16_DESERIALIZE_PROOF_A = 0x1824; // 6180
 /** Groth16SerializeProofA: Groth16 proof A point could not be serialized */
-export const ZINC_ERROR__GROTH16_SERIALIZE_PROOF_A = 0x1821; // 6177
+export const ZINC_ERROR__GROTH16_SERIALIZE_PROOF_A = 0x1825; // 6181
 /** Groth16ExtractProofA: Groth16 proof A bytes could not be extracted */
-export const ZINC_ERROR__GROTH16_EXTRACT_PROOF_A = 0x1822; // 6178
+export const ZINC_ERROR__GROTH16_EXTRACT_PROOF_A = 0x1826; // 6182
 /** Groth16CreateFailed: Groth16 verifier could not be created */
-export const ZINC_ERROR__GROTH16_CREATE_FAILED = 0x1823; // 6179
+export const ZINC_ERROR__GROTH16_CREATE_FAILED = 0x1827; // 6183
 /** Groth16VerifyFailed: Groth16 proof verification failed */
-export const ZINC_ERROR__GROTH16_VERIFY_FAILED = 0x1824; // 6180
+export const ZINC_ERROR__GROTH16_VERIFY_FAILED = 0x1828; // 6184
 /** Groth16PublicInputMismatch: Groth16 public inputs do not match the expected context */
-export const ZINC_ERROR__GROTH16_PUBLIC_INPUT_MISMATCH = 0x1825; // 6181
+export const ZINC_ERROR__GROTH16_PUBLIC_INPUT_MISMATCH = 0x1829; // 6185
 /** MissingZkMaskAttestation: Missing ZK mask attestation */
-export const ZINC_ERROR__MISSING_ZK_MASK_ATTESTATION = 0x1826; // 6182
+export const ZINC_ERROR__MISSING_ZK_MASK_ATTESTATION = 0x182a; // 6186
 /** InvalidArciumInitSkipConfig: Arcium init CPI skip requires blockhash randomness and private-ZK single settlement */
-export const ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG = 0x1827; // 6183
+export const ZINC_ERROR__INVALID_ARCIUM_INIT_SKIP_CONFIG = 0x182b; // 6187
 /** InvalidDeployMask: Deploy encrypted mask payload is invalid */
-export const ZINC_ERROR__INVALID_DEPLOY_MASK = 0x1828; // 6184
+export const ZINC_ERROR__INVALID_DEPLOY_MASK = 0x182c; // 6188
 /** InvalidSettlementMask: Settlement encrypted mask payload is invalid */
-export const ZINC_ERROR__INVALID_SETTLEMENT_MASK = 0x1829; // 6185
+export const ZINC_ERROR__INVALID_SETTLEMENT_MASK = 0x182d; // 6189
 /** InvalidRecoveryEvidenceHash: Recovery evidence hash is invalid */
-export const ZINC_ERROR__INVALID_RECOVERY_EVIDENCE_HASH = 0x182a; // 6186
+export const ZINC_ERROR__INVALID_RECOVERY_EVIDENCE_HASH = 0x182e; // 6190
 /** InvalidRecoverySelectedCount: Recovery selected tile count is invalid */
-export const ZINC_ERROR__INVALID_RECOVERY_SELECTED_COUNT = 0x182b; // 6187
+export const ZINC_ERROR__INVALID_RECOVERY_SELECTED_COUNT = 0x182f; // 6191
 /** InvalidRecoveryWinningStake: Recovery winning stake does not match the selected tile count */
-export const ZINC_ERROR__INVALID_RECOVERY_WINNING_STAKE = 0x182c; // 6188
+export const ZINC_ERROR__INVALID_RECOVERY_WINNING_STAKE = 0x1830; // 6192
 
 export type ZincError =
   | typeof ZINC_ERROR__ABORTED_COMPUTATION
@@ -460,6 +468,7 @@ export type ZincError =
   | typeof ZINC_ERROR__INVALID_STOCKPILE_ID
   | typeof ZINC_ERROR__INVALID_STOCKPILE_WINNER_CONFIG
   | typeof ZINC_ERROR__INVALID_STOCKPILE_WINNER_RANK
+  | typeof ZINC_ERROR__INVALID_WILDCAT_ENTRY_CAPACITY
   | typeof ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM
   | typeof ZINC_ERROR__INVALID_ZINC_MINT_METADATA
   | typeof ZINC_ERROR__METEORA_INSTRUCTION_SERIALIZATION_FAILED
@@ -544,6 +553,8 @@ export type ZincError =
   | typeof ZINC_ERROR__WILDCAT_ALREADY_CLAIMED
   | typeof ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE
   | typeof ZINC_ERROR__WILDCAT_CLAIM_NOT_READY
+  | typeof ZINC_ERROR__WILDCAT_ENTRIES_ALREADY_MIGRATED
+  | typeof ZINC_ERROR__WILDCAT_ENTRIES_MISSING
   | typeof ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED
   | typeof ZINC_ERROR__WILDCAT_SELECTION_COMPLETE
   | typeof ZINC_ERROR__WILDCAT_SELECTION_NOT_READY
@@ -576,6 +587,7 @@ export type ZincError =
   | typeof ZINC_ERROR__WRONG_STOCKPILE_TOKEN_ACCOUNT
   | typeof ZINC_ERROR__WRONG_TREASURY
   | typeof ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT
+  | typeof ZINC_ERROR__WRONG_WILDCAT_ENTRIES
   | typeof ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT
   | typeof ZINC_ERROR__WRONG_WRAPPED_SOL_MINT
   | typeof ZINC_ERROR__WRONG_ZINC_MINT
@@ -653,6 +665,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__INVALID_STOCKPILE_ID]: `Invalid stockpile id`,
     [ZINC_ERROR__INVALID_STOCKPILE_WINNER_CONFIG]: `Invalid stockpile winner configuration`,
     [ZINC_ERROR__INVALID_STOCKPILE_WINNER_RANK]: `Invalid stockpile winner rank`,
+    [ZINC_ERROR__INVALID_WILDCAT_ENTRY_CAPACITY]: `Wildcat entry capacity is invalid`,
     [ZINC_ERROR__INVALID_WILDCAT_WINNER_ZINC_SHARE_PPM]: `Wildcat winner ZINC share exceeds one million ppm`,
     [ZINC_ERROR__INVALID_ZINC_MINT_METADATA]: `Invalid ZINC mint metadata`,
     [ZINC_ERROR__METEORA_INSTRUCTION_SERIALIZATION_FAILED]: `Meteora instruction data serialization failed`,
@@ -737,6 +750,8 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__WILDCAT_ALREADY_CLAIMED]: `Wildcat ZINC has already been claimed`,
     [ZINC_ERROR__WILDCAT_CLAIM_INCOMPLETE]: `Wildcat ZINC claim is incomplete`,
     [ZINC_ERROR__WILDCAT_CLAIM_NOT_READY]: `Wildcat ZINC claim is not ready`,
+    [ZINC_ERROR__WILDCAT_ENTRIES_ALREADY_MIGRATED]: `Wildcat entries have already been migrated`,
+    [ZINC_ERROR__WILDCAT_ENTRIES_MISSING]: `Wildcat entries sidecar is missing`,
     [ZINC_ERROR__WILDCAT_ENTRY_CAPACITY_EXCEEDED]: `Wildcat entry capacity is exhausted`,
     [ZINC_ERROR__WILDCAT_SELECTION_COMPLETE]: `Wildcat winner selection is already complete`,
     [ZINC_ERROR__WILDCAT_SELECTION_NOT_READY]: `Wildcat winner selection is not ready`,
@@ -769,6 +784,7 @@ if (process.env["NODE_ENV"] !== "production") {
     [ZINC_ERROR__WRONG_STOCKPILE_TOKEN_ACCOUNT]: `Wrong stockpile token account`,
     [ZINC_ERROR__WRONG_TREASURY]: `Wrong Treasury`,
     [ZINC_ERROR__WRONG_TREASURY_TOKEN_ACCOUNT]: `Wrong treasury token account`,
+    [ZINC_ERROR__WRONG_WILDCAT_ENTRIES]: `Wrong Wildcat entries sidecar`,
     [ZINC_ERROR__WRONG_WINNER_STOCKPILE_EXTRA_TOKEN_ACCOUNT]: `Wrong winner stockpile extra token account`,
     [ZINC_ERROR__WRONG_WRAPPED_SOL_MINT]: `Wrong wrapped SOL mint`,
     [ZINC_ERROR__WRONG_ZINC_MINT]: `Wrong ZINC mint`,

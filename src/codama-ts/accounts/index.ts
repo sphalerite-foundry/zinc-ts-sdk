@@ -16,6 +16,7 @@ export * from "./miner";
 export * from "./playerProfile";
 export * from "./round";
 export * from "./roundSecret";
+export * from "./roundWildcatEntries";
 export * from "./stakePosition";
 export * from "./stockpile";
 export * from "./stockpileExtras";

@@ -58,6 +58,7 @@ export type SettlePrivateZkSingleInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountBoard extends string | AccountMeta<string> = string,
   TAccountRound extends string | AccountMeta<string> = string,
+  TAccountRoundWildcatEntries extends string | AccountMeta<string> = string,
   TAccountMiner extends string | AccountMeta<string> = string,
   TAccountPlayerProfile extends string | AccountMeta<string> = string,
   TAccountTreasury extends string | AccountMeta<string> = string,
@@ -79,6 +80,9 @@ export type SettlePrivateZkSingleInstruction<
       TAccountRound extends string
         ? WritableAccount<TAccountRound>
         : TAccountRound,
+      TAccountRoundWildcatEntries extends string
+        ? WritableAccount<TAccountRoundWildcatEntries>
+        : TAccountRoundWildcatEntries,
       TAccountMiner extends string
         ? WritableAccount<TAccountMiner>
         : TAccountMiner,
@@ -150,6 +154,7 @@ export type SettlePrivateZkSingleAsyncInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountMiner extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
@@ -162,6 +167,8 @@ export type SettlePrivateZkSingleAsyncInput<
   board?: Address<TAccountBoard>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Miner whose private mask is being settled. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the hidden-bonus bricks. */
@@ -178,6 +185,7 @@ export async function getSettlePrivateZkSingleInstructionAsync<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountMiner extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
@@ -188,6 +196,7 @@ export async function getSettlePrivateZkSingleInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -200,6 +209,7 @@ export async function getSettlePrivateZkSingleInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -214,6 +224,10 @@ export async function getSettlePrivateZkSingleInstructionAsync<
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     miner: { value: input.miner ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
@@ -244,6 +258,7 @@ export async function getSettlePrivateZkSingleInstructionAsync<
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("miner", accounts.miner),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
@@ -258,6 +273,7 @@ export async function getSettlePrivateZkSingleInstructionAsync<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -269,6 +285,7 @@ export type SettlePrivateZkSingleInput<
   TAccountConfig extends string = string,
   TAccountBoard extends string = string,
   TAccountRound extends string = string,
+  TAccountRoundWildcatEntries extends string = string,
   TAccountMiner extends string = string,
   TAccountPlayerProfile extends string = string,
   TAccountTreasury extends string = string,
@@ -281,6 +298,8 @@ export type SettlePrivateZkSingleInput<
   board: Address<TAccountBoard>;
   /** Revealed round currently waiting on per-miner settlement. */
   round: Address<TAccountRound>;
+  /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+  roundWildcatEntries?: Address<TAccountRoundWildcatEntries>;
   /** Miner whose private mask is being settled. */
   miner: Address<TAccountMiner>;
   /** Player profile that receives the hidden-bonus bricks. */
@@ -297,6 +316,7 @@ export function getSettlePrivateZkSingleInstruction<
   TAccountConfig extends string,
   TAccountBoard extends string,
   TAccountRound extends string,
+  TAccountRoundWildcatEntries extends string,
   TAccountMiner extends string,
   TAccountPlayerProfile extends string,
   TAccountTreasury extends string,
@@ -307,6 +327,7 @@ export function getSettlePrivateZkSingleInstruction<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -318,6 +339,7 @@ export function getSettlePrivateZkSingleInstruction<
   TAccountConfig,
   TAccountBoard,
   TAccountRound,
+  TAccountRoundWildcatEntries,
   TAccountMiner,
   TAccountPlayerProfile,
   TAccountTreasury
@@ -331,6 +353,10 @@ export function getSettlePrivateZkSingleInstruction<
     config: { value: input.config ?? null, isWritable: false },
     board: { value: input.board ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
+    roundWildcatEntries: {
+      value: input.roundWildcatEntries ?? null,
+      isWritable: true,
+    },
     miner: { value: input.miner ?? null, isWritable: true },
     playerProfile: { value: input.playerProfile ?? null, isWritable: true },
     treasury: { value: input.treasury ?? null, isWritable: true },
@@ -350,6 +376,7 @@ export function getSettlePrivateZkSingleInstruction<
       getAccountMeta("config", accounts.config),
       getAccountMeta("board", accounts.board),
       getAccountMeta("round", accounts.round),
+      getAccountMeta("roundWildcatEntries", accounts.roundWildcatEntries),
       getAccountMeta("miner", accounts.miner),
       getAccountMeta("playerProfile", accounts.playerProfile),
       getAccountMeta("treasury", accounts.treasury),
@@ -364,6 +391,7 @@ export function getSettlePrivateZkSingleInstruction<
     TAccountConfig,
     TAccountBoard,
     TAccountRound,
+    TAccountRoundWildcatEntries,
     TAccountMiner,
     TAccountPlayerProfile,
     TAccountTreasury
@@ -384,12 +412,14 @@ export type ParsedSettlePrivateZkSingleInstruction<
     board: TAccountMetas[2];
     /** Revealed round currently waiting on per-miner settlement. */
     round: TAccountMetas[3];
+    /** Optional Wildcat sidecar used by sidecar-mode rounds. */
+    roundWildcatEntries?: TAccountMetas[4] | undefined;
     /** Miner whose private mask is being settled. */
-    miner: TAccountMetas[4];
+    miner: TAccountMetas[5];
     /** Player profile that receives the hidden-bonus bricks. */
-    playerProfile: TAccountMetas[5];
+    playerProfile: TAccountMetas[6];
     /** Treasury Bonanza state that may snapshot the live pot when this is the final miner. */
-    treasury: TAccountMetas[6];
+    treasury: TAccountMetas[7];
   };
   data: SettlePrivateZkSingleInstructionData;
 };
@@ -402,12 +432,12 @@ export function parseSettlePrivateZkSingleInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSettlePrivateZkSingleInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 7) {
+  if (instruction.accounts.length < 8) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 7,
+        expectedAccountMetas: 8,
       },
     );
   }
@@ -417,6 +447,12 @@ export function parseSettlePrivateZkSingleInstruction<
     accountIndex += 1;
     return accountMeta;
   };
+  const getNextOptionalAccount = () => {
+    const accountMeta = getNextAccount();
+    return accountMeta.address === ZINC_PROGRAM_ADDRESS
+      ? undefined
+      : accountMeta;
+  };
   return {
     programAddress: instruction.programAddress,
     accounts: {
@@ -424,6 +460,7 @@ export function parseSettlePrivateZkSingleInstruction<
       config: getNextAccount(),
       board: getNextAccount(),
       round: getNextAccount(),
+      roundWildcatEntries: getNextOptionalAccount(),
       miner: getNextAccount(),
       playerProfile: getNextAccount(),
       treasury: getNextAccount(),

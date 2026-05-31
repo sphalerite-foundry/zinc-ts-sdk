@@ -48,6 +48,7 @@ export * from "./joinStockpile";
 export * from "./lockBuybackLiquidity";
 export * from "./melt";
 export * from "./migrate";
+export * from "./migrateWildcatEntries";
 export * from "./mintZinc";
 export * from "./payoutStockpile";
 export * from "./payoutStockpileExtra";
