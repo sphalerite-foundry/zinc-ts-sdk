@@ -121,7 +121,7 @@ export type Round = {
   wildcatWinnerPlayer: Option<Address>;
   /** True once the selection crank has fully resolved this round's Wildcat draw. */
   wildcatSelectionComplete: boolean;
-  /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
+  /** True once the selected Wildcat payout has been credited or the draw needed no transfer. */
   wildcatClaimed: boolean;
   /** Accumulator mixed from every deploy's public and encrypted trace. */
   blockhashEntropyAccumulator: ReadonlyUint8Array;
@@ -186,7 +186,7 @@ export type RoundArgs = {
   wildcatWinnerPlayer: OptionOrNullable<Address>;
   /** True once the selection crank has fully resolved this round's Wildcat draw. */
   wildcatSelectionComplete: boolean;
-  /** True once the selected Wildcat payout has been paid or the draw needed no transfer. */
+  /** True once the selected Wildcat payout has been credited or the draw needed no transfer. */
   wildcatClaimed: boolean;
   /** Accumulator mixed from every deploy's public and encrypted trace. */
   blockhashEntropyAccumulator: ReadonlyUint8Array;

@@ -10,10 +10,8 @@ import {
   combineCodec,
   fixDecoderSize,
   fixEncoderSize,
-  getAddressEncoder,
   getBytesDecoder,
   getBytesEncoder,
-  getProgramDerivedAddress,
   getStructDecoder,
   getStructEncoder,
   SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
@@ -36,10 +34,13 @@ import {
 } from "@solana/kit";
 import {
   getAccountMetaFactory,
-  getAddressFromResolvedInstructionAccount,
   type ResolvedInstructionAccount,
 } from "@solana/program-client-core";
-import { findConfigPda, findTreasuryPda } from "../pdas";
+import {
+  findConfigPda,
+  findRoundZincRewardTokenAccountPda,
+  findTreasuryPda,
+} from "../pdas";
 import { ZINC_PROGRAM_ADDRESS } from "../programs";
 
 export const CLAIM_WILDCAT_DISCRIMINATOR: ReadonlyUint8Array = new Uint8Array([
@@ -61,14 +62,11 @@ export type ClaimWildcatInstruction<
   TAccountZincMint extends string | AccountMeta<string> = string,
   TAccountRoundZincPayoutTokenAccount extends string | AccountMeta<string> =
     string,
-  TAccountWinner extends string | AccountMeta<string> = string,
-  TAccountWinnerZincTokenAccount extends string | AccountMeta<string> = string,
-  TAccountAssociatedTokenProgram extends string | AccountMeta<string> =
-    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  TAccountWinnerPlayerProfile extends string | AccountMeta<string> = string,
+  TAccountRoundZincRewardTokenAccount extends string | AccountMeta<string> =
+    string,
   TAccountTokenProgram extends string | AccountMeta<string> =
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -85,7 +83,7 @@ export type ClaimWildcatInstruction<
         ? WritableAccount<TAccountRound>
         : TAccountRound,
       TAccountTreasury extends string
-        ? ReadonlyAccount<TAccountTreasury>
+        ? WritableAccount<TAccountTreasury>
         : TAccountTreasury,
       TAccountZincMint extends string
         ? ReadonlyAccount<TAccountZincMint>
@@ -93,21 +91,15 @@ export type ClaimWildcatInstruction<
       TAccountRoundZincPayoutTokenAccount extends string
         ? WritableAccount<TAccountRoundZincPayoutTokenAccount>
         : TAccountRoundZincPayoutTokenAccount,
-      TAccountWinner extends string
-        ? ReadonlyAccount<TAccountWinner>
-        : TAccountWinner,
-      TAccountWinnerZincTokenAccount extends string
-        ? WritableAccount<TAccountWinnerZincTokenAccount>
-        : TAccountWinnerZincTokenAccount,
-      TAccountAssociatedTokenProgram extends string
-        ? ReadonlyAccount<TAccountAssociatedTokenProgram>
-        : TAccountAssociatedTokenProgram,
+      TAccountWinnerPlayerProfile extends string
+        ? WritableAccount<TAccountWinnerPlayerProfile>
+        : TAccountWinnerPlayerProfile,
+      TAccountRoundZincRewardTokenAccount extends string
+        ? WritableAccount<TAccountRoundZincRewardTokenAccount>
+        : TAccountRoundZincRewardTokenAccount,
       TAccountTokenProgram extends string
         ? ReadonlyAccount<TAccountTokenProgram>
         : TAccountTokenProgram,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
@@ -146,33 +138,28 @@ export type ClaimWildcatAsyncInput<
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountRoundZincPayoutTokenAccount extends string = string,
-  TAccountWinner extends string = string,
-  TAccountWinnerZincTokenAccount extends string = string,
-  TAccountAssociatedTokenProgram extends string = string,
+  TAccountWinnerPlayerProfile extends string = string,
+  TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to auto-claim the selected Wildcat payout. */
+  /** Crank signer authorized to auto-credit the selected Wildcat payout. */
   signer: TransactionSigner<TAccountSigner>;
   /** Global config containing the crank authority and treasury address. */
   config?: Address<TAccountConfig>;
-  /** Round with a selected unpaid Wildcat winner. */
+  /** Round with a selected uncredited Wildcat winner. */
   round: Address<TAccountRound>;
   /** Treasury PDA that stores the canonical ZINC mint. */
   treasury?: Address<TAccountTreasury>;
   /** Protocol ZINC mint used for Wildcat payouts. */
   zincMint: Address<TAccountZincMint>;
-  /** Round-owned ZINC vault holding the selected Wildcat payout. */
+  /** Round-owned ZINC vault holding the selected Wildcat credit. */
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
-  winner: Address<TAccountWinner>;
-  /** Winner's canonical associated token account for receiving Wildcat ZINC. */
-  winnerZincTokenAccount?: Address<TAccountWinnerZincTokenAccount>;
-  /** Associated Token Program used to create the winner ATA on demand. */
-  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
-  /** SPL Token Program that owns the ZINC mint and token accounts. */
+  /** Selected winner's profile that receives claimable Wildcat ZINC credit. */
+  winnerPlayerProfile: Address<TAccountWinnerPlayerProfile>;
+  /** Treasury-owned reward vault that funds later profile ZINC claims. */
+  roundZincRewardTokenAccount?: Address<TAccountRoundZincRewardTokenAccount>;
+  /** SPL Token Program that owns the ZINC mint and token vaults. */
   tokenProgram?: Address<TAccountTokenProgram>;
-  /** System Program used if the winner ATA needs to be created. */
-  systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export async function getClaimWildcatInstructionAsync<
@@ -182,11 +169,9 @@ export async function getClaimWildcatInstructionAsync<
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountRoundZincPayoutTokenAccount extends string,
-  TAccountWinner extends string,
-  TAccountWinnerZincTokenAccount extends string,
-  TAccountAssociatedTokenProgram extends string,
+  TAccountWinnerPlayerProfile extends string,
+  TAccountRoundZincRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimWildcatAsyncInput<
@@ -196,11 +181,9 @@ export async function getClaimWildcatInstructionAsync<
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
-    TAccountWinner,
-    TAccountWinnerZincTokenAccount,
-    TAccountAssociatedTokenProgram,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountWinnerPlayerProfile,
+    TAccountRoundZincRewardTokenAccount,
+    TAccountTokenProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): Promise<
@@ -212,11 +195,9 @@ export async function getClaimWildcatInstructionAsync<
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
-    TAccountWinner,
-    TAccountWinnerZincTokenAccount,
-    TAccountAssociatedTokenProgram,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountWinnerPlayerProfile,
+    TAccountRoundZincRewardTokenAccount,
+    TAccountTokenProgram
   >
 > {
   // Program address.
@@ -227,23 +208,21 @@ export async function getClaimWildcatInstructionAsync<
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
-    treasury: { value: input.treasury ?? null, isWritable: false },
+    treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     roundZincPayoutTokenAccount: {
       value: input.roundZincPayoutTokenAccount ?? null,
       isWritable: true,
     },
-    winner: { value: input.winner ?? null, isWritable: false },
-    winnerZincTokenAccount: {
-      value: input.winnerZincTokenAccount ?? null,
+    winnerPlayerProfile: {
+      value: input.winnerPlayerProfile ?? null,
       isWritable: true,
     },
-    associatedTokenProgram: {
-      value: input.associatedTokenProgram ?? null,
-      isWritable: false,
+    roundZincRewardTokenAccount: {
+      value: input.roundZincRewardTokenAccount ?? null,
+      isWritable: true,
     },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -257,43 +236,13 @@ export async function getClaimWildcatInstructionAsync<
   if (!accounts.treasury.value) {
     accounts.treasury.value = await findTreasuryPda();
   }
+  if (!accounts.roundZincRewardTokenAccount.value) {
+    accounts.roundZincRewardTokenAccount.value =
+      await findRoundZincRewardTokenAccountPda();
+  }
   if (!accounts.tokenProgram.value) {
     accounts.tokenProgram.value =
       "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
-  }
-  if (!accounts.winnerZincTokenAccount.value) {
-    accounts.winnerZincTokenAccount.value = await getProgramDerivedAddress({
-      programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
-      seeds: [
-        getAddressEncoder().encode(
-          getAddressFromResolvedInstructionAccount(
-            "winner",
-            accounts.winner.value,
-          ),
-        ),
-        getAddressEncoder().encode(
-          getAddressFromResolvedInstructionAccount(
-            "tokenProgram",
-            accounts.tokenProgram.value,
-          ),
-        ),
-        getAddressEncoder().encode(
-          getAddressFromResolvedInstructionAccount(
-            "zincMint",
-            accounts.zincMint.value,
-          ),
-        ),
-      ],
-    });
-  }
-  if (!accounts.associatedTokenProgram.value) {
-    accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
@@ -308,11 +257,12 @@ export async function getClaimWildcatInstructionAsync<
         "roundZincPayoutTokenAccount",
         accounts.roundZincPayoutTokenAccount,
       ),
-      getAccountMeta("winner", accounts.winner),
-      getAccountMeta("winnerZincTokenAccount", accounts.winnerZincTokenAccount),
-      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
+      getAccountMeta("winnerPlayerProfile", accounts.winnerPlayerProfile),
+      getAccountMeta(
+        "roundZincRewardTokenAccount",
+        accounts.roundZincRewardTokenAccount,
+      ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
-      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getClaimWildcatInstructionDataEncoder().encode({}),
     programAddress,
@@ -324,11 +274,9 @@ export async function getClaimWildcatInstructionAsync<
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
-    TAccountWinner,
-    TAccountWinnerZincTokenAccount,
-    TAccountAssociatedTokenProgram,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountWinnerPlayerProfile,
+    TAccountRoundZincRewardTokenAccount,
+    TAccountTokenProgram
   >);
 }
 
@@ -339,33 +287,28 @@ export type ClaimWildcatInput<
   TAccountTreasury extends string = string,
   TAccountZincMint extends string = string,
   TAccountRoundZincPayoutTokenAccount extends string = string,
-  TAccountWinner extends string = string,
-  TAccountWinnerZincTokenAccount extends string = string,
-  TAccountAssociatedTokenProgram extends string = string,
+  TAccountWinnerPlayerProfile extends string = string,
+  TAccountRoundZincRewardTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountSystemProgram extends string = string,
 > = {
-  /** Crank signer authorized to auto-claim the selected Wildcat payout. */
+  /** Crank signer authorized to auto-credit the selected Wildcat payout. */
   signer: TransactionSigner<TAccountSigner>;
   /** Global config containing the crank authority and treasury address. */
   config: Address<TAccountConfig>;
-  /** Round with a selected unpaid Wildcat winner. */
+  /** Round with a selected uncredited Wildcat winner. */
   round: Address<TAccountRound>;
   /** Treasury PDA that stores the canonical ZINC mint. */
   treasury: Address<TAccountTreasury>;
   /** Protocol ZINC mint used for Wildcat payouts. */
   zincMint: Address<TAccountZincMint>;
-  /** Round-owned ZINC vault holding the selected Wildcat payout. */
+  /** Round-owned ZINC vault holding the selected Wildcat credit. */
   roundZincPayoutTokenAccount: Address<TAccountRoundZincPayoutTokenAccount>;
-  winner: Address<TAccountWinner>;
-  /** Winner's canonical associated token account for receiving Wildcat ZINC. */
-  winnerZincTokenAccount: Address<TAccountWinnerZincTokenAccount>;
-  /** Associated Token Program used to create the winner ATA on demand. */
-  associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
-  /** SPL Token Program that owns the ZINC mint and token accounts. */
+  /** Selected winner's profile that receives claimable Wildcat ZINC credit. */
+  winnerPlayerProfile: Address<TAccountWinnerPlayerProfile>;
+  /** Treasury-owned reward vault that funds later profile ZINC claims. */
+  roundZincRewardTokenAccount: Address<TAccountRoundZincRewardTokenAccount>;
+  /** SPL Token Program that owns the ZINC mint and token vaults. */
   tokenProgram?: Address<TAccountTokenProgram>;
-  /** System Program used if the winner ATA needs to be created. */
-  systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export function getClaimWildcatInstruction<
@@ -375,11 +318,9 @@ export function getClaimWildcatInstruction<
   TAccountTreasury extends string,
   TAccountZincMint extends string,
   TAccountRoundZincPayoutTokenAccount extends string,
-  TAccountWinner extends string,
-  TAccountWinnerZincTokenAccount extends string,
-  TAccountAssociatedTokenProgram extends string,
+  TAccountWinnerPlayerProfile extends string,
+  TAccountRoundZincRewardTokenAccount extends string,
   TAccountTokenProgram extends string,
-  TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof ZINC_PROGRAM_ADDRESS,
 >(
   input: ClaimWildcatInput<
@@ -389,11 +330,9 @@ export function getClaimWildcatInstruction<
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
-    TAccountWinner,
-    TAccountWinnerZincTokenAccount,
-    TAccountAssociatedTokenProgram,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountWinnerPlayerProfile,
+    TAccountRoundZincRewardTokenAccount,
+    TAccountTokenProgram
   >,
   config?: { programAddress?: TProgramAddress },
 ): ClaimWildcatInstruction<
@@ -404,11 +343,9 @@ export function getClaimWildcatInstruction<
   TAccountTreasury,
   TAccountZincMint,
   TAccountRoundZincPayoutTokenAccount,
-  TAccountWinner,
-  TAccountWinnerZincTokenAccount,
-  TAccountAssociatedTokenProgram,
-  TAccountTokenProgram,
-  TAccountSystemProgram
+  TAccountWinnerPlayerProfile,
+  TAccountRoundZincRewardTokenAccount,
+  TAccountTokenProgram
 > {
   // Program address.
   const programAddress = config?.programAddress ?? ZINC_PROGRAM_ADDRESS;
@@ -418,23 +355,21 @@ export function getClaimWildcatInstruction<
     signer: { value: input.signer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: false },
     round: { value: input.round ?? null, isWritable: true },
-    treasury: { value: input.treasury ?? null, isWritable: false },
+    treasury: { value: input.treasury ?? null, isWritable: true },
     zincMint: { value: input.zincMint ?? null, isWritable: false },
     roundZincPayoutTokenAccount: {
       value: input.roundZincPayoutTokenAccount ?? null,
       isWritable: true,
     },
-    winner: { value: input.winner ?? null, isWritable: false },
-    winnerZincTokenAccount: {
-      value: input.winnerZincTokenAccount ?? null,
+    winnerPlayerProfile: {
+      value: input.winnerPlayerProfile ?? null,
       isWritable: true,
     },
-    associatedTokenProgram: {
-      value: input.associatedTokenProgram ?? null,
-      isWritable: false,
+    roundZincRewardTokenAccount: {
+      value: input.roundZincRewardTokenAccount ?? null,
+      isWritable: true,
     },
     tokenProgram: { value: input.tokenProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -446,14 +381,6 @@ export function getClaimWildcatInstruction<
     accounts.tokenProgram.value =
       "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
   }
-  if (!accounts.associatedTokenProgram.value) {
-    accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
@@ -467,11 +394,12 @@ export function getClaimWildcatInstruction<
         "roundZincPayoutTokenAccount",
         accounts.roundZincPayoutTokenAccount,
       ),
-      getAccountMeta("winner", accounts.winner),
-      getAccountMeta("winnerZincTokenAccount", accounts.winnerZincTokenAccount),
-      getAccountMeta("associatedTokenProgram", accounts.associatedTokenProgram),
+      getAccountMeta("winnerPlayerProfile", accounts.winnerPlayerProfile),
+      getAccountMeta(
+        "roundZincRewardTokenAccount",
+        accounts.roundZincRewardTokenAccount,
+      ),
       getAccountMeta("tokenProgram", accounts.tokenProgram),
-      getAccountMeta("systemProgram", accounts.systemProgram),
     ],
     data: getClaimWildcatInstructionDataEncoder().encode({}),
     programAddress,
@@ -483,11 +411,9 @@ export function getClaimWildcatInstruction<
     TAccountTreasury,
     TAccountZincMint,
     TAccountRoundZincPayoutTokenAccount,
-    TAccountWinner,
-    TAccountWinnerZincTokenAccount,
-    TAccountAssociatedTokenProgram,
-    TAccountTokenProgram,
-    TAccountSystemProgram
+    TAccountWinnerPlayerProfile,
+    TAccountRoundZincRewardTokenAccount,
+    TAccountTokenProgram
   >);
 }
 
@@ -497,27 +423,24 @@ export type ParsedClaimWildcatInstruction<
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    /** Crank signer authorized to auto-claim the selected Wildcat payout. */
+    /** Crank signer authorized to auto-credit the selected Wildcat payout. */
     signer: TAccountMetas[0];
     /** Global config containing the crank authority and treasury address. */
     config: TAccountMetas[1];
-    /** Round with a selected unpaid Wildcat winner. */
+    /** Round with a selected uncredited Wildcat winner. */
     round: TAccountMetas[2];
     /** Treasury PDA that stores the canonical ZINC mint. */
     treasury: TAccountMetas[3];
     /** Protocol ZINC mint used for Wildcat payouts. */
     zincMint: TAccountMetas[4];
-    /** Round-owned ZINC vault holding the selected Wildcat payout. */
+    /** Round-owned ZINC vault holding the selected Wildcat credit. */
     roundZincPayoutTokenAccount: TAccountMetas[5];
-    winner: TAccountMetas[6];
-    /** Winner's canonical associated token account for receiving Wildcat ZINC. */
-    winnerZincTokenAccount: TAccountMetas[7];
-    /** Associated Token Program used to create the winner ATA on demand. */
-    associatedTokenProgram: TAccountMetas[8];
-    /** SPL Token Program that owns the ZINC mint and token accounts. */
-    tokenProgram: TAccountMetas[9];
-    /** System Program used if the winner ATA needs to be created. */
-    systemProgram: TAccountMetas[10];
+    /** Selected winner's profile that receives claimable Wildcat ZINC credit. */
+    winnerPlayerProfile: TAccountMetas[6];
+    /** Treasury-owned reward vault that funds later profile ZINC claims. */
+    roundZincRewardTokenAccount: TAccountMetas[7];
+    /** SPL Token Program that owns the ZINC mint and token vaults. */
+    tokenProgram: TAccountMetas[8];
   };
   data: ClaimWildcatInstructionData;
 };
@@ -530,12 +453,12 @@ export function parseClaimWildcatInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedClaimWildcatInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 11) {
+  if (instruction.accounts.length < 9) {
     throw new SolanaError(
       SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
       {
         actualAccountMetas: instruction.accounts.length,
-        expectedAccountMetas: 11,
+        expectedAccountMetas: 9,
       },
     );
   }
@@ -554,11 +477,9 @@ export function parseClaimWildcatInstruction<
       treasury: getNextAccount(),
       zincMint: getNextAccount(),
       roundZincPayoutTokenAccount: getNextAccount(),
-      winner: getNextAccount(),
-      winnerZincTokenAccount: getNextAccount(),
-      associatedTokenProgram: getNextAccount(),
+      winnerPlayerProfile: getNextAccount(),
+      roundZincRewardTokenAccount: getNextAccount(),
       tokenProgram: getNextAccount(),
-      systemProgram: getNextAccount(),
     },
     data: getClaimWildcatInstructionDataDecoder().decode(instruction.data),
   };
